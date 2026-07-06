@@ -638,14 +638,14 @@ export default function App() {
             )}
           </nav>
 
-          {/* Submit question Interactive Button */}
+          {/* Edit Mode Toggle Button */}
           <div className="flex items-center gap-3">
             <button
-              onClick={openQuestionModal}
-              className="px-4 py-2 bg-gradient-to-r from-[#A493F7] via-indigo-400 to-[#A493F7] text-black font-sans text-xs font-bold rounded-xl hover:shadow-[0_0_20px_rgba(164,147,247,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer flex items-center gap-1.5"
+              onClick={() => window.dispatchEvent(new CustomEvent('toggle-edit-mode'))}
+              className="px-4 py-2 bg-zinc-900 border border-zinc-700 text-white font-sans text-xs font-bold rounded-xl hover:border-purple-500 hover:shadow-[0_0_15px_rgba(164,147,247,0.5)] active:scale-95 transition-all duration-300 cursor-pointer flex items-center gap-1.5"
             >
-              <HelpCircle size={14} className="text-black" />
-              <span>Submit question</span>
+              <CheckCircle size={14} className="text-purple-400" />
+              <span>Toggle Edit Mode</span>
             </button>
           </div>
         </div>

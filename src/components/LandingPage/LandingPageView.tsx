@@ -10,6 +10,9 @@ import Work from "./Work";
 import Testimonials from "./Testimonials";
 import Footer from "./Footer";
 import VersionControlPanel from "./VersionControlPanel";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import './sticky.css';
 
 const LandingPageViewContent = () => {
   useEffect(() => {
@@ -27,9 +30,20 @@ const LandingPageViewContent = () => {
       requestAnimationFrame(raf);
     }
     
-    requestAnimationFrame(raf);
+    gsap.registerPlugin(ScrollTrigger);
+
+    lenis.on('scroll', ScrollTrigger.update);
+    
+    gsap.ticker.add((time)=>{
+      lenis.raf(time * 1000);
+    });
+    
+    gsap.ticker.lagSmoothing(0, 0);
 
     return () => {
+      gsap.ticker.remove((time)=>{
+        lenis.raf(time * 1000);
+      });
       lenis.destroy();
     };
   }, []);

@@ -162,9 +162,7 @@ const Hero = () => {
           </EditableText>
           <span className="flex items-center mx-4 md:mx-8">
             <span ref={(el) => { if (el && !pRefs.current.includes(el)) pRefs.current.push(el); }} className="hero-text opacity-0 translate-y-6 text-lg md:text-2xl text-[#A493F7] tracking-normal font-mono font-medium">
-              <EditableText section="hero" field="subtitle1">
-                {data.hero.subtitle1}
-              </EditableText>
+              {new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
             </span>
           </span>
           <EditableText section="hero" field="word3" as="span" className="flex">

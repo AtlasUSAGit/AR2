@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLandingPage } from './LandingPageContext';
 import { Save, Clock, Check, Trash2, X, AlertCircle } from 'lucide-react';
 
@@ -7,6 +7,12 @@ export const VersionControlPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [newVersionName, setNewVersionName] = useState('');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+
+  useEffect(() => {
+    const handleToggleEditMode = () => setEditMode(!isEditMode);
+    window.addEventListener('toggle-edit-mode', handleToggleEditMode);
+    return () => window.removeEventListener('toggle-edit-mode', handleToggleEditMode);
+  }, [isEditMode, setEditMode]);
 
   const activeVersion = versions.find(v => v.isActive);
 
@@ -33,20 +39,6 @@ export const VersionControlPanel: React.FC = () => {
             </div>
           </button>
         )}
-        
-        <button
-          onClick={() => setEditMode(!isEditMode)}
-          className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg transition-all group relative ${
-            isEditMode 
-              ? 'bg-purple-600 text-white border-2 border-purple-400 shadow-[0_0_15px_rgba(164,147,247,0.5)]' 
-              : 'bg-zinc-900 border border-zinc-700 text-white hover:bg-zinc-800 hover:border-purple-500'
-          }`}
-        >
-          {isEditMode ? <Check size={20} /> : <span className="font-bold font-mono text-sm">EDIT</span>}
-          <div className="absolute right-14 bg-black border border-zinc-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity text-white">
-            {isEditMode ? 'Exit Edit Mode' : 'Enter Edit Mode'}
-          </div>
-        </button>
       </div>
 
       {/* Version Control Side Panel */}

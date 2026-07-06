@@ -65,11 +65,11 @@ export interface LandingPageVersion {
 
 export const defaultLandingPageData: LandingPageVersion['content'] = {
   hero: {
-    word1: "JULY",
+    word1: "DAILY",
     subtitle1: "we turn aesthetics into experience",
-    word2: "6TH",
+    word2: "",
     subtitle3: "tech that’s light as air",
-    word3: "Briefing",
+    word3: "BRIEFING",
     heroImages: [
       "/imgs/img-1.png",
       "/imgs/img-2.png",
