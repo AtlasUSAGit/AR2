@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface HeroData {
   word1: string;
   subtitle1: string;
