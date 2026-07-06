@@ -263,10 +263,90 @@ html.light .text-purple-400 {
   color: #7c3aed !important;
 }
 
-/* Fix active button state, maintaining glow-gradient but crisp text */
 html.light .bg-gradient-to-r.from-\[\#A493F7\].to-indigo-400,
 html.light .bg-gradient-to-r.from-\[\#A493F7\].via-indigo-400.to-\[\#A493F7\] {
   color: #000000 !important;
 }
 
-
+/* --- Sticky Selection Layout Animations --- */
+.section_tabs {
+	z-index: 99;
+	position: relative;
+}
+.tabs_sticky-wrapper {
+	height: 100vh;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 5vh;
+}
+.tabs_container {
+	width: 100%;
+	max-width: 120rem;
+	margin-left: auto;
+	margin-right: auto;
+}
+.tabs_component {
+	height: 90vh;
+	grid-column-gap: 1.5rem;
+	grid-row-gap: 1.5rem;
+	grid-template-rows: auto;
+	grid-template-columns: .4fr 1fr;
+	grid-auto-columns: 1fr;
+	padding-left: 3.3%;
+	padding-right: 3.3%;
+	display: grid;
+}
+@media(max-width: 576px) {
+  .tabs_component {
+    grid-template-columns: 1fr;
+  }
+}
+.tabs_left {
+	border-radius: 1.25rem;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: stretch;
+	display: flex;
+}
+.tabs_left-top {
+	height: 100%;
+	position: relative;
+}
+.tabs_let-content {
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
+	justify-content: center;
+	display: flex;
+	position: absolute;
+	opacity: 0;
+	transition: opacity 0.5s;
+    pointer-events: none; /* Let clicks pass if not active */
+}
+.tabs_let-content.is-1 {
+	opacity: 1;
+    pointer-events: auto;
+}
+.tabs_right {
+	width: 100%;
+	height: 100%;
+	border-radius: 1.25rem;
+	position: relative;
+	overflow: hidden;
+}
+.tabs_video {
+	width: 100%;
+	height: 100%;
+	border-radius: 1.25rem;
+	object-fit: cover;
+	position: absolute;
+	opacity: 0;
+	transform: translateY(100%);
+	transition: opacity 0.5s, transform 0.5s;
+    pointer-events: none;
+}
+.tabs_video.is-1 {
+	opacity: 1;
+	transform: translateY(0);
+    pointer-events: auto;
+}

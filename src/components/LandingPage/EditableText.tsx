@@ -24,6 +24,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   const { data, isEditMode, updateData, updateArrayData, updateStyleData } = useLandingPage();
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const [toolbarRect, setToolbarRect] = useState<DOMRect | null>(null);
 
   // Get current value from context
@@ -42,6 +43,18 @@ const EditableText: React.FC<EditableTextProps> = ({
   const styleKey = arrayField && index !== undefined ? `${section}_${arrayField}_${index}_${field}` : `${section}_${field}`;
   const customStyle = data.styles?.[styleKey] || {};
 
+  const saveChanges = () => {
+    if (!inputRef.current) return;
+    const newValue = inputRef.current.value;
+    if (newValue !== currentValue) {
+      if (arrayField && index !== undefined) {
+        updateArrayData(section as keyof typeof data, arrayField, index, field, newValue);
+      } else {
+        updateData(section as keyof typeof data, field, newValue);
+      }
+    }
+  };
+
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -59,25 +72,27 @@ const EditableText: React.FC<EditableTextProps> = ({
       updateRect();
       window.addEventListener('scroll', updateRect, true);
       window.addEventListener('resize', updateRect);
+
+      const handleClickOutside = (e: MouseEvent) => {
+        const target = e.target as Node;
+        if (
+          inputRef.current && !inputRef.current.contains(target) &&
+          toolbarRef.current && !toolbarRef.current.contains(target)
+        ) {
+          setIsEditing(false);
+          saveChanges();
+        }
+      };
+      
+      document.addEventListener('mousedown', handleClickOutside);
+
       return () => {
         window.removeEventListener('scroll', updateRect, true);
         window.removeEventListener('resize', updateRect);
+        document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isEditing]);
-
-  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    setIsEditing(false);
-    const newValue = e.target.value;
-    
-    if (newValue !== currentValue) {
-      if (arrayField && index !== undefined) {
-        updateArrayData(section as keyof typeof data, arrayField, index, field, newValue);
-      } else {
-        updateData(section as keyof typeof data, field, newValue);
-      }
-    }
-  };
+  }, [isEditing, currentValue]); // Include currentValue so saveChanges captures the right closure
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     e.target.style.height = 'auto';
@@ -90,7 +105,8 @@ const EditableText: React.FC<EditableTextProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      inputRef.current?.blur();
+      setIsEditing(false);
+      saveChanges();
     }
   };
 
@@ -98,6 +114,7 @@ const EditableText: React.FC<EditableTextProps> = ({
     if (isEditing) {
       const toolbar = toolbarRect ? createPortal(
         <div 
+          ref={toolbarRef}
           style={{
             position: 'fixed',
             top: toolbarRect.top - 45,
@@ -105,7 +122,6 @@ const EditableText: React.FC<EditableTextProps> = ({
             zIndex: 99999
           }}
           className="bg-zinc-900 border border-zinc-700 p-1 flex gap-2 rounded shadow-2xl"
-          onMouseDown={(e) => e.preventDefault()} // Prevent input blur when clicking toolbar
         >
           <select 
             value={customStyle.fontFamily || ''} 
@@ -125,6 +141,13 @@ const EditableText: React.FC<EditableTextProps> = ({
             onChange={e => updateStyleData(styleKey, { fontSize: e.target.value })}
             className="bg-black text-xs text-white border border-zinc-700 rounded p-1 w-24"
           />
+          <input 
+            type="text" 
+            placeholder="Link (https://...)" 
+            value={customStyle.href || ''} 
+            onChange={e => updateStyleData(styleKey, { href: e.target.value })}
+            className="bg-black text-xs text-white border border-zinc-700 rounded p-1 w-32"
+          />
         </div>,
         document.body
       ) : null;
@@ -135,7 +158,6 @@ const EditableText: React.FC<EditableTextProps> = ({
           <textarea
             ref={inputRef}
             defaultValue={displayValue as string}
-            onBlur={handleBlur}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             className={`${className} bg-zinc-900 text-white border border-purple-500 rounded p-2 min-w-[100px] w-full focus:outline-none focus:ring-2 focus:ring-purple-500 whitespace-pre-wrap overflow-hidden resize-none`}
@@ -146,13 +168,17 @@ const EditableText: React.FC<EditableTextProps> = ({
       );
     }
 
+    const ComponentToRender = customStyle.href ? 'a' : Component;
+    const extraProps = customStyle.href ? { href: customStyle.href, target: '_blank', rel: 'noopener noreferrer' } : {};
+
     return (
-      <Component 
+      <ComponentToRender 
         onClick={(e: React.MouseEvent) => {
           e.preventDefault();
           e.stopPropagation();
           setIsEditing(true);
         }}
+        {...extraProps}
         className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap`}
         style={customStyle}
         title="Click to edit"
@@ -161,11 +187,14 @@ const EditableText: React.FC<EditableTextProps> = ({
         <div className="absolute -top-3 -right-3 bg-purple-600 text-white text-[10px] px-1.5 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50">
           Edit
         </div>
-      </Component>
+      </ComponentToRender>
     );
   }
 
-  return <Component className={`${className} whitespace-pre-wrap`} style={customStyle}>{displayValue}</Component>;
+  const ComponentToRender = customStyle.href ? 'a' : Component;
+  const extraProps = customStyle.href ? { href: customStyle.href, target: '_blank', rel: 'noopener noreferrer' } : {};
+
+  return <ComponentToRender {...extraProps} className={`${className} whitespace-pre-wrap`} style={customStyle}>{displayValue}</ComponentToRender>;
 };
 
 export default EditableText;

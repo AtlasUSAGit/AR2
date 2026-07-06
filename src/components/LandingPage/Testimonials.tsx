@@ -49,11 +49,12 @@ const Testimonials = () => {
             <div className="tabs_component">
               
               <div className="tabs_left">
-                {data.testimonials.items.map((review, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`tabs_let-content ${activeIndex === idx ? 'is-active' : ''}`}
-                  >
+                <div className="tabs_left-top">
+                  {data.testimonials.items.map((review, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`tabs_let-content ${activeIndex === idx ? 'is-1' : ''}`}
+                    >
                     <h2 className="text-4xl md:text-5xl font-bold text-purple-400 mb-6">
                       <EditableText section="testimonials" field="title" />
                     </h2>
@@ -70,13 +71,14 @@ const Testimonials = () => {
                     </div>
                   </div>
                 ))}
+                </div>
               </div>
 
               <div className="tabs_right bg-black/50 border border-zinc-800 flex items-center justify-center p-10">
                 {data.testimonials.items.map((review, idx) => (
                   <div 
                     key={idx} 
-                    className={`tabs_video ${activeIndex === idx ? 'is-active' : ''} flex items-center justify-center p-12`}
+                    className={`tabs_video ${activeIndex === idx ? 'is-1' : ''} flex items-center justify-center p-12`}
                   >
                     <EditableImage
                       section="testimonials"
