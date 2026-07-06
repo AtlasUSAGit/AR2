@@ -27,11 +27,9 @@ export interface ServiceData {
   id: number;
   title: string;
   description: string;
-  media: {
-    type: "image" | "video";
-    url: string;
-  };
-  services: string[][];
+  bullets1: string;
+  bullets2?: string;
+  bullets3?: string;
 }
 
 export interface WorkData {
@@ -107,7 +105,7 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
     title: "Selected Clients",
     description1: "Here are some brands you'll probably recognize that we've had the pleasure to work with. Cool, right? Now that we've got your attention, we often say the bigger the brand, the less room there is for creative excitement as other priorities tend to overshadow design. But fear not—we're a team of enthusiasts who always deliver, no matter the challenge!",
     description2: "No clients were ever harmed in the making of all this… wait. Yep, not even one, we've double-checked this. Design is not tequila. It can't make everyone happy",
-    number: 296,
+    number: 3,
     labelAwards: "No. awards",
     companies: [
       "/company/ibm.svg",
@@ -127,42 +125,33 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
         id: 1,
         title: "Branding",
         description: "We craft brand identities that spark recognition and loyalty — from strategy to storytelling.",
-        media: { type: "video", url: "https://www.youtube.com/embed/dA0VGEbbw4g" },
-        services: [
-          ["Brand architecture", "Brand positioning", "Naming", "Brand strategy"],
-          ["Brand development", "Brand identity", "Implementation", "Wayfinding"],
-          ["Iconography", "Illustration", "3D", "Print"]
-        ]
+        bullets1: "• Brand architecture\n• Brand positioning\n• Naming\n• Brand strategy",
+        bullets2: "• Brand development\n• Brand identity\n• Implementation\n• Wayfinding",
+        bullets3: "• Iconography\n• Illustration\n• 3D\n• Print"
       },
       {
         id: 2,
         title: "Digital Branding",
         description: "We design immersive digital experiences that blend UX, UI, and tech into one seamless journey.",
-        media: { type: "video", url: "https://www.youtube.com/embed/lJIrF4YjHfQ" },
-        services: [
-          ["User Experience", "User Interface", "Prototyping", "Web design"],
-          ["App design", "E-commerce", "Front-end", "Back-end"]
-        ]
+        bullets1: "• User Experience\n• User Interface\n• Prototyping\n• Web design",
+        bullets2: "• App design\n• E-commerce\n• Front-end\n• Back-end",
+        bullets3: ""
       },
       {
         id: 3,
         title: "Creative Design",
         description: "Bold, memorable visuals that move people — from packaging to 3D storytelling.",
-        media: { type: "video", url: "https://www.youtube.com/embed/9No-FiEInLA" },
-        services: [
-          ["Graphic Design", "Illustration", "3D Design"],
-          ["Packaging", "Editorial", "Iconography", "Collateral"]
-        ]
+        bullets1: "• Graphic Design\n• Illustration\n• 3D Design",
+        bullets2: "• Packaging\n• Editorial\n• Iconography\n• Collateral",
+        bullets3: ""
       },
       {
         id: 4,
         title: "Motion & Video",
         description: "Stories in motion — from cinematic ads to branded animations that stay unforgettable.",
-        media: { type: "video", url: "https://www.youtube.com/embed/aqz-KE-bpKQ" },
-        services: [
-          ["Motion graphics", "2D/3D Animation", "Explainers"],
-          ["Advertising", "storytelling"]
-        ]
+        bullets1: "• Motion graphics\n• 2D/3D Animation\n• Explainers",
+        bullets2: "• Advertising\n• storytelling",
+        bullets3: ""
       }
     ]
   },

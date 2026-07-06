@@ -57,46 +57,25 @@ const Card: React.FC<{ service: ServiceData; index: number }> = ({ service, inde
         </h4>
       </div>
 
-      <div className="flex-[0.7] md:flex-[0.4] flex flex-col justify-between items-start gap-7 md:gap-3 mt-6 md:mt-0">
+      <div className="flex-[0.7] md:flex-[0.8] flex flex-col justify-start items-start gap-7 md:gap-5 mt-6 md:mt-0">
         <p className="text-2xl sm:text-3xl font-light leading-snug">
           <EditableText section="work" arrayField="services" index={index} field="description" />
         </p>
 
-        <EditableImage
-          section="work"
-          onUpdateUrlOverride={(newUrl) => {
-            updateArrayData('work', 'services', index, 'media', { ...service.media, url: newUrl });
-          }}
-        >
-          {service.media.type === "image" ? (
-            <img
-              src={service.media.url}
-              alt={service.title}
-              className="h-[200px] w-full md:w-[400px] object-cover rounded-lg shadow-xl"
-            />
-          ) : (
-            <iframe
-              src={`${service.media.url}?autoplay=1&mute=1&controls=0&loop=1&playlist=${service.media.url.split("/").pop()}`}
-              title={service.title}
-              className="h-[200px] w-full md:w-[400px] object-cover mt-5 rounded-lg border border-zinc-800"
-              frameBorder="0"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
+        <div className="flex justify-start flex-wrap gap-8 md:gap-12 mt-8 md:mt-10 text-zinc-400 font-mono text-sm leading-relaxed whitespace-pre-wrap">
+          <div className="min-w-[150px]">
+            <EditableText section="work" arrayField="services" index={index} field="bullets1" />
+          </div>
+          {service.bullets2 && (
+            <div className="min-w-[150px]">
+              <EditableText section="work" arrayField="services" index={index} field="bullets2" />
+            </div>
           )}
-        </EditableImage>
-
-        <div className="flex justify-start flex-wrap gap-8 mt-8 md:mt-5 text-zinc-400 font-mono text-sm">
-          {service.services.map((group, i) => (
-            <ul key={i} className="space-y-2">
-              {group.map((item, j) => (
-                <li key={j} className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-purple-500 rounded-full inline-block"></span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          ))}
+          {service.bullets3 && (
+            <div className="min-w-[150px]">
+              <EditableText section="work" arrayField="services" index={index} field="bullets3" />
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -136,9 +136,16 @@ const EditableText: React.FC<EditableTextProps> = ({
           </select>
           <input 
             type="text" 
-            placeholder="Size (e.g. 2rem)" 
+            placeholder="Size (e.g. 24px, 2rem)" 
             value={customStyle.fontSize || ''} 
-            onChange={e => updateStyleData(styleKey, { fontSize: e.target.value })}
+            onChange={e => {
+              let val = e.target.value;
+              // If user just types a number, assume pixels
+              if (/^\d+$/.test(val)) {
+                val += 'px';
+              }
+              updateStyleData(styleKey, { fontSize: val });
+            }}
             className="bg-black text-xs text-white border border-zinc-700 rounded p-1 w-24"
           />
           <input 

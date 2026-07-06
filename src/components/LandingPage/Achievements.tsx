@@ -7,7 +7,7 @@ import EditableText from "./EditableText";
 import EditableImage from "./EditableImage";
 
 const Achievements: React.FC = () => {
-  const { data } = useLandingPage();
+  const { data, isEditMode } = useLandingPage();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const numberRef = useRef<HTMLHeadingElement | null>(null);
 
@@ -119,11 +119,14 @@ const Achievements: React.FC = () => {
             </span>
           </h5>
           <h2
-            ref={numberRef}
             className="text-8xl md:text-[9rem] font-bold tracking-tight overflow-hidden text-purple-500"
             style={{ minWidth: "6ch" }}
           >
-            0
+            {isEditMode ? (
+              <EditableText section="achievements" field="number" />
+            ) : (
+              <span ref={numberRef}>0</span>
+            )}
           </h2>
         </div>
         <h4 className="text-sm mt-5 max-w-xs md:max-w-md ml-auto overflow-hidden text-zinc-400">
