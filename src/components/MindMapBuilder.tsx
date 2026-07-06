@@ -277,26 +277,54 @@ const nodeTypes = {
   group: GroupNode,
 };
 
-const initialNodes: Node[] = [
-  {
-    id: '1',
-    type: 'text',
-    position: { x: 250, y: 150 },
-    data: { content: '# Architecture\n\n- Infinite Canvas\n- Spatial Layout' },
-    style: { width: 250, height: 180 },
-  },
-  {
-    id: '2',
-    type: 'note',
-    position: { x: 600, y: 200 },
-    data: { content: 'System Note: This links to our internal database records.' },
-    style: { width: 220, height: 150 },
-  },
-];
+import canvasRaw from '../../PRESENT_EXEC.canvas?raw';
 
-const initialEdges: Edge[] = [
-  { id: 'e1-2', source: '1', target: '2', type: 'custom', animated: true, data: { label: 'depends on' } },
-];
+let initialNodes: Node[] = [];
+let initialEdges: Edge[] = [];
+
+try {
+  const data = JSON.parse(canvasRaw);
+  const colorMap: Record<string, string> = {
+    "1": "#ff4d4f",
+    "2": "#ff7a45",
+    "3": "#ffc53d",
+    "4": "#73d13d",
+    "5": "#36cfc9",
+    "6": "#A493F7"
+  };
+
+  const handleMap = (side: string, type: 'source' | 'target') => {
+    if (side === 'top' || side === 'bottom') return undefined;
+    if (side === 'left' && type === 'source') return 'left-source';
+    if (side === 'left' && type === 'target') return 'left-target';
+    if (side === 'right' && type === 'source') return 'right-source';
+    if (side === 'right' && type === 'target') return 'right-target';
+    return undefined;
+  };
+
+  initialNodes = data.nodes.map((n: any) => ({
+    id: n.id,
+    type: 'text',
+    position: { x: n.x, y: n.y },
+    data: { content: n.text, color: colorMap[n.color] || n.color || '#A493F7', isEditing: false },
+    style: { width: n.width, height: n.height }
+  }));
+
+  initialEdges = data.edges.map((e: any) => ({
+    id: e.id,
+    source: e.fromNode,
+    target: e.toNode,
+    type: 'custom',
+    animated: true,
+    style: { stroke: colorMap[e.color] || e.color || '#A493F7', strokeWidth: 2 },
+    sourceHandle: handleMap(e.fromSide, 'source'),
+    targetHandle: handleMap(e.toSide, 'target')
+  }));
+} catch (e) {
+  console.error("Failed to parse canvas", e);
+  initialNodes = [];
+  initialEdges = [];
+}
 
 export default function MindMapBuilderWrapper({ currentUser }: { currentUser?: User | null }) {
   return (

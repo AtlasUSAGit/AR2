@@ -276,7 +276,7 @@ export default function App() {
     const success = await login(username, password);
     if (success) {
       setLoginError('');
-      setShowVideoIntro(true);
+      // Skip the intro loading screen directly to the app
     } else {
       setLoginError('Invalid credentials');
     }

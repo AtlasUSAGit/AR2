@@ -1,14 +1,17 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, GripVertical, CheckCircle, Clock, Circle, Edit2, Trash2, UploadCloud, Paperclip } from 'lucide-react';
+import { Plus, GripVertical, CheckCircle, Clock, Circle, Edit2, Trash2, UploadCloud, Paperclip, HelpCircle, List, CheckSquare } from 'lucide-react';
 
-type TaskStatus = 'todo' | 'in-progress' | 'done';
+type TaskStatus = 'todo' | 'in-progress' | 'done' | 'questions';
 
 interface Task {
   id: string;
   title: string;
   status: TaskStatus;
   attachments?: string[];
+  questionType?: 'yes-no' | 'multiple-choice';
+  options?: string[];
+  answer?: string;
 }
 
 const initialTasks: Task[] = [
@@ -116,10 +119,12 @@ export default function KanbanBoard() {
     { id: 'todo', title: 'To-Do', icon: <Circle size={16} className="text-zinc-400" />, color: 'border-zinc-500' },
     { id: 'in-progress', title: 'In Progress', icon: <Clock size={16} className="text-amber-400" />, color: 'border-amber-500' },
     { id: 'done', title: 'Done', icon: <CheckCircle size={16} className="text-emerald-400" />, color: 'border-emerald-500' },
+    { id: 'questions', title: 'Questions', icon: <HelpCircle size={16} className="text-purple-400" />, color: 'border-purple-500' },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-250px)] min-h-[500px]">
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 h-[calc(100vh-250px)] min-h-[500px]">
       <input 
         type="file" 
         className="hidden" 
@@ -206,6 +211,55 @@ export default function KanbanBoard() {
                             </button>
                           </div>
                         ))}
+                      </div>
+                    )}
+
+                    {/* Question Card UI */}
+                    {task.status === 'questions' && (
+                      <div className="mt-2 ml-6 p-2 bg-black/40 border border-zinc-800 rounded-lg flex flex-col gap-2">
+                        {!task.questionType ? (
+                          <div className="flex gap-2 text-xs">
+                            <button onClick={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, questionType: 'yes-no' } : t))} className="flex items-center gap-1 bg-zinc-800 hover:bg-zinc-700 px-2 py-1 rounded text-zinc-300">
+                              <CheckSquare size={12} /> Yes/No
+                            </button>
+                            <button onClick={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, questionType: 'multiple-choice', options: [] } : t))} className="flex items-center gap-1 bg-zinc-800 hover:bg-zinc-700 px-2 py-1 rounded text-zinc-300">
+                              <List size={12} /> Multi-Choice
+                            </button>
+                          </div>
+                        ) : task.questionType === 'yes-no' ? (
+                          <div className="flex gap-4">
+                            {['Yes', 'No'].map(opt => (
+                              <label key={opt} className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
+                                <input type="radio" name={`q-${task.id}`} checked={task.answer === opt} onChange={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, answer: opt } : t))} className="accent-purple-500" />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-1.5">
+                            {task.options?.map((opt, i) => (
+                              <label key={i} className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer group/opt">
+                                <input type="radio" name={`q-${task.id}`} checked={task.answer === opt} onChange={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, answer: opt } : t))} className="accent-purple-500" />
+                                <span className="flex-1">{opt}</span>
+                                <button onClick={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, options: t.options?.filter((_, idx) => idx !== i) } : t))} className="opacity-0 group-hover/opt:opacity-100 text-red-400 hover:text-red-300">&times;</button>
+                              </label>
+                            ))}
+                            <div className="flex items-center gap-2 mt-1">
+                              <input 
+                                type="text"
+                                placeholder="Add option..."
+                                className="flex-1 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-purple-500"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                    const val = e.currentTarget.value.trim();
+                                    setTasks(prev => prev.map(t => t.id === task.id ? { ...t, options: [...(t.options || []), val] } : t));
+                                    e.currentTarget.value = '';
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </motion.div>
