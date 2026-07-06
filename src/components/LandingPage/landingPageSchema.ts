@@ -18,6 +18,7 @@ export interface AchievementsData {
   description2: string;
   number: number;
   companies: string[];
+  labelAwards: string;
 }
 
 export interface ServiceData {
@@ -49,6 +50,19 @@ export interface TestimonialsData {
   items: TestimonialData[];
 }
 
+export interface NavData {
+  appName: string;
+  menuTitle: string;
+  btnText: string;
+  items: { title: string, img: string, link: string }[];
+}
+
+export interface FooterData {
+  email1: string;
+  email2: string;
+  copyright: string;
+}
+
 export interface LandingPageVersion {
   id: string;
   name: string;
@@ -60,6 +74,9 @@ export interface LandingPageVersion {
     achievements: AchievementsData;
     work: WorkData;
     testimonials: TestimonialsData;
+    nav: NavData;
+    footer: FooterData;
+    styles: Record<string, React.CSSProperties>;
   };
 }
 
@@ -89,6 +106,7 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
     description1: "Here are some brands you'll probably recognize that we've had the pleasure to work with. Cool, right? Now that we've got your attention, we often say the bigger the brand, the less room there is for creative excitement as other priorities tend to overshadow design. But fear not—we're a team of enthusiasts who always deliver, no matter the challenge!",
     description2: "No clients were ever harmed in the making of all this… wait. Yep, not even one, we've double-checked this. Design is not tequila. It can't make everyone happy",
     number: 296,
+    labelAwards: "No. awards",
     companies: [
       "/company/ibm.svg",
       "/company/delta.svg",
@@ -169,5 +187,22 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
         role: "Global Brand Manager, Unilever"
       }
     ]
-  }
+  },
+  nav: {
+    appName: "UKB FedComm Ops",
+    menuTitle: "System Navigation",
+    btnText: "Command Center",
+    items: [
+      { title: "Hero", img: "/imgs/img-1.png", link: "#home" },
+      { title: "Studios", img: "/imgs/img-2.png", link: "#about" },
+      { title: "Recognition", img: "/imgs/img-3.png", link: "#projects" },
+      { title: "Work", img: "/imgs/img-4.jpeg", link: "#contact" },
+    ]
+  },
+  footer: {
+    email1: "hello@ukbfc.gov",
+    email2: "contracts@ukbfc.gov",
+    copyright: "©UKBFC. 2026. WE TURN AESTHETICS INTO EXPERIENCE. ALL RIGHTS RESERVED."
+  },
+  styles: {}
 };

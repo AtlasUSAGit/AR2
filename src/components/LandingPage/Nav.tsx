@@ -1,33 +1,10 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import EditableText from "./EditableText";
+import { useLandingPage } from "./LandingPageContext";
 
 const Nav = () => {
-  const navItems = [
-    {
-      id: 1,
-      title: "Hero",
-      img: "/imgs/img-1.png",
-      link: "#home",
-    },
-    {
-      id: 2,
-      title: "Studios",
-      img: "/imgs/img-2.png",
-      link: "#about",
-    },
-    {
-      id: 3,
-      title: "Recognition",
-      img: "/imgs/img-3.png",
-      link: "#projects",
-    },
-    {
-      id: 4,
-      title: "Work",
-      img: "/imgs/img-4.jpeg",
-      link: "#contact",
-    },
-  ];
+  const { data } = useLandingPage();
   const [open, setOpen] = useState<boolean>(false);
   const [mouseHover, setMouseHover] = useState<boolean>(false);
   const activeUser = true; // Assume always logged in for AR_APP
@@ -53,7 +30,7 @@ const Nav = () => {
               transition={{ duration: 0.5, ease: "easeInOut", delay: 0.1 }}
               className="absolute"
             >
-              UKB FedComm Ops
+              <EditableText section="nav" field="appName" />
             </motion.div>
 
             <motion.div
@@ -100,13 +77,15 @@ const Nav = () => {
         className="fixed bottom-6 left-1/2 -translate-x-1/2 h-[480px] w-full max-w-xs md:max-w-xl rounded-2xl bg-zinc-950 border border-zinc-800 shadow-2xl text-white flex flex-col items-start py-6 px-8 overflow-hidden pointer-events-auto"
       >
         <div className="w-full flex justify-between items-center mb-6">
-          <h2 className="text-xl md:text-2xl font-bold text-purple-400 font-sans tracking-tight">System Navigation</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-purple-400 font-sans tracking-tight">
+            <EditableText section="nav" field="menuTitle" />
+          </h2>
           <button className={`bg-zinc-800 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-zinc-700 transition`}>
-            Command Center
+            <EditableText section="nav" field="btnText" />
           </button>
         </div>
         <ul className="w-full flex-1 overflow-y-auto pr-2" style={{ scrollbarWidth: 'none' }}>
-          {navItems.map((item, idx) => (
+          {data.nav.items.map((item, idx) => (
             <li
               key={idx}
               className="h-20 w-full flex items-center gap-4 p-4 border-b border-zinc-800/50 group cursor-pointer hover:bg-zinc-900/50 transition-colors rounded-lg"
@@ -126,7 +105,7 @@ const Nav = () => {
                 />
               </div>
               <h2 className="text-xl font-medium tracking-wide group-hover:translate-x-4 transition-transform duration-300 group-hover:text-purple-400">
-                {item.title}
+                <EditableText section="nav" arrayField="items" index={idx} field="title" />
               </h2>
             </li>
           ))}

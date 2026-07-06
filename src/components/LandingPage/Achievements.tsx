@@ -114,7 +114,9 @@ const Achievements: React.FC = () => {
       <div className="flex flex-col md:flex-row mt-12 md:mt-20 overflow-hidden">
         <div className="flex flex-col overflow-hidden">
           <h5 className="text-lg -mb-3 ml-2 overflow-hidden text-zinc-400">
-            <span className="achievements-text">No. awards</span>
+            <span className="achievements-text">
+              <EditableText section="achievements" field="labelAwards" />
+            </span>
           </h5>
           <h2
             ref={numberRef}

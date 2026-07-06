@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import EditableText from "./EditableText";
 
 const Footer = () => {
   const footerRef = useRef<HTMLDivElement | null>(null);
@@ -52,9 +53,9 @@ const Footer = () => {
       <div className="md:w-7/10 mx-auto footer-top flex flex-col md:flex-row md:justify-between md:mt-10 gap-10 text-sm text-gray-600 w-full max-w-7xl">
         <div>
           <p className="font-medium text-black">General Questions</p>
-          <p>hello@ukbfc.gov</p>
+          <p><EditableText section="footer" field="email1" /></p>
           <p className="mt-4 font-medium text-black">Business Enquiries</p>
-          <p>contracts@ukbfc.gov</p>
+          <p><EditableText section="footer" field="email2" /></p>
         </div>
 
         <div>
@@ -83,6 +84,9 @@ const Footer = () => {
           </span>
         ))}
       </h2>
+      <div className="absolute bottom-2 w-full text-center text-xs text-gray-500 font-sans tracking-widest z-10">
+        <EditableText section="footer" field="copyright" />
+      </div>
     </div>
   );
 };

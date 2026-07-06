@@ -12,6 +12,7 @@ interface LandingPageContextType {
   deleteVersion: (id: string) => void;
   updateArrayData: (section: keyof LandingPageVersion['content'], arrayField: string, index: number, field: string, value: any) => void;
   updateStringArrayData: (section: keyof LandingPageVersion['content'], arrayField: string, index: number, value: string) => void;
+  updateStyleData: (key: string, style: React.CSSProperties) => void;
 }
 
 const LandingPageContext = createContext<LandingPageContextType | undefined>(undefined);
@@ -138,8 +139,21 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const updateStyleData = (key: string, style: React.CSSProperties) => {
+    setData(prev => ({
+      ...prev,
+      styles: {
+        ...(prev.styles || {}),
+        [key]: {
+          ...((prev.styles || {})[key] || {}),
+          ...style
+        }
+      }
+    }));
+  };
+
   return (
-    <LandingPageContext.Provider value={{ data, isEditMode, setEditMode, updateData, updateArrayData, updateStringArrayData, saveVersion, loadVersion, versions, deleteVersion }}>
+    <LandingPageContext.Provider value={{ data, isEditMode, setEditMode, updateData, updateArrayData, updateStringArrayData, updateStyleData, saveVersion, loadVersion, versions, deleteVersion }}>
       {children}
     </LandingPageContext.Provider>
   );
