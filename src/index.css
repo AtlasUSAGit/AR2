@@ -1,0 +1,272 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;650;700;850&family=JetBrains+Mono:wght@400;500;750&family=Space+Grotesk:wght@500;700&family=Fahkwang:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-fahkwang: "Fahkwang", sans-serif;
+}
+
+b, strong, .font-bold, .font-semibold, .font-extrabold {
+  font-family: "Fahkwang", "Inter", sans-serif !important;
+}
+
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(164, 147, 247, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(164, 147, 247, 0.05) 1px, transparent 1px);
+}
+
+/* --- High-End Kinetic Micro-interactions & Parallax Tilt --- */
+.tilt-card {
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --scale: 1;
+  transform: perspective(1000px) rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) scale3d(var(--scale), var(--scale), 1);
+  transition: transform 0.25s cubic-bezier(0.215, 0.610, 0.355, 1.000), box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+.tilt-card:hover {
+  --scale: 1.015;
+}
+
+/* --- Card Border & Background Glow Tracking --- */
+.glow-card {
+  position: relative;
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(
+    280px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(164, 147, 247, 0.16),
+    transparent 70%
+  );
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+/* --- State Morph transitions --- */
+.state-morph-card {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Liquid progress keyframes */
+@keyframes liquidWave {
+  0% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-4px) scaleY(1.03);
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.liquid-progress-ring {
+  animation: liquidWave 6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Kinetic Pulse Line connector */
+.kinetic-pulse-bead {
+  filter: drop-shadow(0 0 4px #A493F7) drop-shadow(0 0 8px #A493F7);
+}
+
+/* --- Light Mode Color System --- */
+html.light, html.light body {
+  background-color: #ffffff !important;
+  color: #0c0c0e !important;
+}
+
+/* Page Background Resets */
+html.light .bg-\[\#030303\],
+html.light .bg-\[\#050507\],
+html.light .bg-\[\#050507\]\/80,
+html.light .bg-\[\#070709\],
+html.light .bg-black,
+html.light .bg-zinc-950,
+html.light .bg-zinc-950\/80,
+html.light .bg-zinc-950\/50,
+html.light .bg-black\/80,
+html.light .bg-black\/95 {
+  background-color: #ffffff !important;
+}
+
+/* Card and Content Panel Resets (to soft off-white for structural contrast) */
+html.light .bg-\[\#121214\],
+html.light .bg-\[\#121214\]\/95,
+html.light .bg-\[\#121216\],
+html.light .bg-\[\#121216\]\/90,
+html.light .bg-\[\#121216\]\/50,
+html.light .bg-\[\#0B0B0F\],
+html.light .bg-\[\#0B0B0F\]\/90,
+html.light .bg-\[\#0B0B0F\]\/95,
+html.light .bg-\[\#0b0b0f\],
+html.light .bg-\[\#101014\]\/95,
+html.light .bg-\[\#151224\],
+html.light .bg-\[\#0f0f13\],
+html.light .bg-zinc-900,
+html.light .bg-zinc-900\/40 {
+  background-color: #f9fafb !important;
+}
+
+html.light .bg-zinc-900\/60 { background-color: rgba(244, 244, 245, 0.8) !important; }
+
+/* Invert all blacks and whites */
+html.light .text-white { color: #0c0c0e !important; }
+html.light .text-zinc-100 { color: #0c0c0e !important; }
+html.light .text-zinc-200 { color: #1c1c20 !important; }
+html.light .text-zinc-300 { color: #2d2d34 !important; }
+html.light .text-zinc-400 { color: #4b4b53 !important; }
+html.light .text-zinc-500 { color: #6e6e78 !important; }
+html.light .text-zinc-600 { color: #8a8a95 !important; }
+html.light .text-zinc-700 { color: #a1a1aa !important; }
+
+/* Borders adjustment for Light Mode */
+html.light .border-zinc-800,
+html.light .border-zinc-850,
+html.light .border-zinc-900,
+html.light .border-zinc-700,
+html.light .border-zinc-800\/80,
+html.light .border-zinc-800\/50,
+html.light .border-zinc-800\/40,
+html.light .border-purple-500\/40,
+html.light .border-purple-500\/60,
+html.light .border-purple-400 {
+  border-color: #e4e4e7 !important;
+}
+
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #0c0c0e !important;
+  border-color: #d4d4d8 !important;
+}
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #a1a1aa !important;
+}
+
+/* Specific elements like Logo */
+html.light .logo-container {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+}
+html.light .logo-container img {
+  filter: invert(1) !important;
+}
+
+/* Flowchart nodes / steps */
+html.light .hover\:bg-zinc-800\/60:hover { background-color: #f4f4f5 !important; }
+html.light .hover\:bg-zinc-800\/40:hover { background-color: #f4f4f5 !important; }
+html.light .hover\:bg-zinc-900\/80:hover { background-color: #f4f4f5 !important; }
+
+/* Ensure modal contents stay visible and white */
+html.light .bg-\[\#0B0B0F\] {
+  background-color: #ffffff !important;
+  border-color: #e4e4e7 !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+}
+
+/* Mindmap nodes and connections */
+html.light .shadow-\[0_0_20px_rgba\(164\,147\,247\,0\.15\)\] {
+  box-shadow: 0 4px 12px rgba(164, 147, 247, 0.1) !important;
+}
+
+/* Hover scales and colors */
+html.light .hover\:text-white:hover {
+  color: #0c0c0e !important;
+}
+html.light .hover\:bg-zinc-900\/50:hover {
+  background-color: rgba(228, 228, 231, 0.5) !important;
+}
+
+/* Invert lines and paths in SVG graphics */
+html.light .stroke-zinc-800 {
+  stroke: #e4e4e7 !important;
+}
+html.light .stroke-zinc-700 {
+  stroke: #d4d4d8 !important;
+}
+
+/* Tables and logs headers */
+html.light th {
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+  border-bottom: 1px solid #e4e4e7 !important;
+}
+html.light td {
+  border-bottom: 1px solid #f4f4f5 !important;
+}
+
+/* Adjust grid pattern and overlay colors */
+html.light .bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(164, 147, 247, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(164, 147, 247, 0.08) 1px, transparent 1px) !important;
+  opacity: 0.8;
+}
+
+/* Background glows for constellations and decorative ambient dots */
+html.light .bg-purple-900\/10 {
+  background-color: rgba(164, 147, 247, 0.12) !important;
+}
+html.light .bg-indigo-900\/10 {
+  background-color: rgba(99, 102, 241, 0.12) !important;
+}
+
+/* Shadows and glow adjustments */
+html.light .glow-card::before {
+  background: radial-gradient(
+    280px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(164, 147, 247, 0.08),
+    transparent 70%
+  ) !important;
+}
+
+/* Checklist items and hub boxes */
+html.light .bg-zinc-950\/30 { background-color: #fafafa !important; }
+html.light .bg-zinc-950\/40 { background-color: #fafafa !important; }
+
+/* Ensure text on tabs and badges are extremely crisp */
+html.light .text-\[\#A493F7\] {
+  color: #6366f1 !important; /* Indigo or darker violet for better light-contrast readability */
+}
+html.light .hover\:text-\[\#A493F7\]:hover {
+  color: #6366f1 !important;
+}
+html.light .bg-amber-500\/10 {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+html.light .text-amber-400 {
+  color: #d97706 !important;
+}
+html.light .bg-purple-500\/10 {
+  background-color: rgba(168, 85, 247, 0.15) !important;
+}
+html.light .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+/* Fix active button state, maintaining glow-gradient but crisp text */
+html.light .bg-gradient-to-r.from-\[\#A493F7\].to-indigo-400,
+html.light .bg-gradient-to-r.from-\[\#A493F7\].via-indigo-400.to-\[\#A493F7\] {
+  color: #000000 !important;
+}
+
+
