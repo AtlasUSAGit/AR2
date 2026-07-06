@@ -123,7 +123,6 @@ export default function KanbanBoard() {
   ];
 
   return (
-  return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 h-[calc(100vh-250px)] min-h-[500px]">
       <input 
         type="file" 
@@ -238,11 +237,28 @@ export default function KanbanBoard() {
                         ) : (
                           <div className="flex flex-col gap-1.5">
                             {task.options?.map((opt, i) => (
-                              <label key={i} className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer group/opt">
-                                <input type="radio" name={`q-${task.id}`} checked={task.answer === opt} onChange={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, answer: opt } : t))} className="accent-purple-500" />
-                                <span className="flex-1">{opt}</span>
-                                <button onClick={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, options: t.options?.filter((_, idx) => idx !== i) } : t))} className="opacity-0 group-hover/opt:opacity-100 text-red-400 hover:text-red-300">&times;</button>
-                              </label>
+                              <div key={i} className="flex items-center gap-1.5 text-xs text-zinc-300 group/opt">
+                                <input type="radio" name={`q-${task.id}`} checked={task.answer === opt} onChange={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, answer: opt } : t))} className="accent-purple-500 cursor-pointer" />
+                                <input
+                                  type="text"
+                                  value={opt}
+                                  onChange={(e) => {
+                                    const newVal = e.target.value;
+                                    setTasks(prev => prev.map(t => {
+                                      if (t.id === task.id) {
+                                        const newOpts = [...(t.options || [])];
+                                        newOpts[i] = newVal;
+                                        // Also update answer if the selected option's text changes
+                                        const newAnswer = t.answer === opt ? newVal : t.answer;
+                                        return { ...t, options: newOpts, answer: newAnswer };
+                                      }
+                                      return t;
+                                    }));
+                                  }}
+                                  className="flex-1 bg-transparent border-none outline-none text-zinc-300 focus:text-white"
+                                />
+                                <button onClick={() => setTasks(prev => prev.map(t => t.id === task.id ? { ...t, options: t.options?.filter((_, idx) => idx !== i) } : t))} className="opacity-0 group-hover/opt:opacity-100 text-red-400 hover:text-red-300 cursor-pointer">&times;</button>
+                              </div>
                             ))}
                             <div className="flex items-center gap-2 mt-1">
                               <input 
