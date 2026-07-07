@@ -7,6 +7,10 @@
   --font-fahkwang: "Fahkwang", sans-serif;
 }
 
+body {
+  overflow-x: hidden;
+}
+
 b, strong, .font-bold, .font-semibold, .font-extrabold {
   font-family: "Fahkwang", "Inter", sans-serif !important;
 }

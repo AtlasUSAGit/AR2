@@ -446,7 +446,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050507] text-white selection:bg-[#A493F7] selection:text-black font-sans relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#050507] text-white selection:bg-[#A493F7] selection:text-black font-sans relative">
 
       {/* High-end ambient micro-interactions, canvas network, custom cursor and glow tracking */}
       <AmbientEffects />      {/* Cinematic Fullscreen Post-Login Video Introduction Overlay */}
