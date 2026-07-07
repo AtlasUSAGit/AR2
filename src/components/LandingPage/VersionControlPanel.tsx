@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useLandingPage } from './LandingPageContext';
 import { Save, Clock, Check, Trash2, X, AlertCircle, Type } from 'lucide-react';
 
@@ -24,7 +25,7 @@ export const VersionControlPanel: React.FC = () => {
     }
   };
 
-  return (
+  return createPortal(
     <>
       {/* Floating Toggle Button */}
       <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3">
@@ -160,7 +161,8 @@ export const VersionControlPanel: React.FC = () => {
           </div>
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 };
 
