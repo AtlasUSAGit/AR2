@@ -6,21 +6,20 @@ import EditableText from "./EditableText";
 
 const Testimonials = () => {
   const { data } = useLandingPage();
+  const outerRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!outerRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
 
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: containerRef.current,
+        trigger: outerRef.current,
         start: "top top",
-        end: `+=${window.innerHeight * data.testimonials.items.length}`,
+        end: "bottom bottom",
         scrub: 1,
-        pin: true,
-        anticipatePin: 1,
       },
     });
 
@@ -41,8 +40,12 @@ const Testimonials = () => {
   }, [data.testimonials.items.length]);
 
   return (
-    <div className="bg-zinc-950 text-white relative overflow-hidden z-[999]" ref={containerRef}>
-      <div className="h-screen w-full flex flex-col justify-center">
+    <div 
+      className="bg-zinc-950 text-white relative z-[50]" 
+      ref={outerRef}
+      style={{ height: `${data.testimonials.items.length * 100}vh` }}
+    >
+      <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden" ref={containerRef}>
         <div className="absolute top-20 w-full text-center">
            <h2 className="text-4xl md:text-5xl font-bold text-purple-400 tracking-wider uppercase">
              <EditableText section="testimonials" field="title" />
@@ -72,6 +75,7 @@ const Testimonials = () => {
             ))}
           </div>
         </div>
+      </div>
     </div>
   );
 };
