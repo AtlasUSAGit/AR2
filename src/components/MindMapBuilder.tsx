@@ -575,7 +575,7 @@ function MindMapBuilder({ currentUser }: { currentUser?: User | null }) {
   const COLOR_PALETTE = ['#A493F7', '#10B981', '#3B82F6', '#EF4444', '#F59E0B', '#EC4899'];
 
   return (
-    <div id="mind-map-section" className="bg-[#0B0B0F] border border-zinc-800/80 rounded-2xl p-6 relative overflow-hidden backdrop-blur-xl flex flex-col h-[800px]">
+    <div id="mind-map-section" className="bg-[#0B0B0F] border border-zinc-800/80 rounded-2xl p-6 relative overflow-hidden backdrop-blur-xl flex flex-col h-[65vh] md:h-[800px]">
       
       {/* Header Info */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 relative z-10 border-b border-zinc-800/50 pb-4">
@@ -655,9 +655,10 @@ function MindMapBuilder({ currentUser }: { currentUser?: User | null }) {
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           fitView
-          panOnScroll={true}
+          panOnScroll={window.innerWidth >= 768} // Disable on mobile to prevent trapping page scroll
+          preventScrolling={window.innerWidth >= 768} // Allow native page scroll on mobile over the canvas
           selectionOnDrag={true}
-          panOnDrag={[1, 2]} // Middle and Right mouse buttons pan, or space+drag (built into RF)
+          panOnDrag={true} // Allow drag to pan on all devices (default is [1, 2], changing to true so touch drag works)
           minZoom={0.1}
           maxZoom={4}
           className="bg-[#0f0f13]"

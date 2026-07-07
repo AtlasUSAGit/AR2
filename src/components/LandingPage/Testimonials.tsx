@@ -54,9 +54,9 @@ const Testimonials = () => {
     <div 
       className="bg-zinc-950 text-white relative z-[50]" 
       ref={outerRef}
-      style={{ height: `${data.testimonials.items.length * 100}vh` }}
+      style={{ height: `${data.testimonials.items.length * 100}dvh` }}
     >
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden" ref={containerRef}>
+      <div className="sticky top-0 h-[100dvh] w-full flex flex-col justify-center overflow-hidden" ref={containerRef}>
         <div className="absolute top-[110px] w-full text-center">
            <h2 className="text-4xl md:text-5xl font-bold text-purple-400 tracking-wider uppercase">
              <EditableText section="testimonials" field="title" />

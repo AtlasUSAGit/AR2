@@ -15,6 +15,19 @@ const Hero = () => {
 
   useEffect(() => {
     if (!containerRef.current) return;
+    
+    // CPU Optimization: Bypass the extremely heavy letter scrambling effect on mobile
+    if (window.innerWidth < 768) {
+      gsap.to(pRefs.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.3,
+        ease: "power3.out",
+        delay: 0.5
+      });
+      return;
+    }
 
     const letters = containerRef.current.querySelectorAll<HTMLSpanElement>(".letter");
     const tl = gsap.timeline();
@@ -63,6 +76,9 @@ const Hero = () => {
   // mouse trail effect
   useEffect(() => {
     if (!containerRef.current) return;
+    
+    // CPU Optimization: Disable mouse trail DOM injection entirely on mobile devices
+    if (window.innerWidth < 768) return;
 
     let lastX = 0, lastY = 0;
     const threshold = 120;
@@ -128,7 +144,7 @@ const Hero = () => {
   return (
     <div
       ref={containerRef}
-      className="relative z-[999] bg-black h-screen text-white flex flex-col items-center justify-center gap-4 md:gap-8 overflow-hidden"
+      className="relative z-[999] bg-black h-[100dvh] text-white flex flex-col items-center justify-center gap-4 md:gap-8 overflow-hidden"
     >
       {isEditMode && (
         <button

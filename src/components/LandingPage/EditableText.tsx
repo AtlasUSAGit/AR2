@@ -263,8 +263,8 @@ const EditableText: React.FC<EditableTextProps> = ({
           setIsEditing(true);
         }}
         {...extraProps}
-        className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap ${isDragging ? 'opacity-70' : ''}`}
-        style={{ display: computedDisplay, minHeight: '1.5em', minWidth: '3em', ...customStyle, transform: liveTransform }}
+        className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap max-w-full break-words ${isDragging ? 'opacity-70' : ''}`}
+        style={{ display: computedDisplay, minHeight: '1.5em', minWidth: '3em', maxWidth: '100vw', ...customStyle, transform: liveTransform }}
         title="Click to edit"
       >
         {renderBefore}
@@ -294,7 +294,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   const computedDisplay = customStyle.display || ((ComponentToRender === 'span' || ComponentToRender === 'a') ? 'inline-block' : undefined);
 
   return (
-    <ComponentToRender {...extraProps} className={`${className} whitespace-pre-wrap`} style={{ display: computedDisplay, ...customStyle }}>
+    <ComponentToRender {...extraProps} className={`${className} whitespace-pre-wrap max-w-full break-words`} style={{ display: computedDisplay, maxWidth: '100vw', ...customStyle }}>
       {renderBefore}
       {displayValue}
     </ComponentToRender>
