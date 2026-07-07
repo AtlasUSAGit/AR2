@@ -8,7 +8,6 @@ import About from "./About";
 import Achievements from "./Achievements";
 import Work from "./Work";
 import Testimonials from "./Testimonials";
-import Footer from "./Footer";
 import EditableText from "./EditableText";
 import { useLandingPage } from "./LandingPageContext";
 import VersionControlPanel from "./VersionControlPanel";
@@ -83,7 +82,6 @@ const LandingPageViewContent = () => {
       
       <div id="contact">
         <Testimonials />
-        <Footer />
       </div>
 
       <div className="absolute inset-0 pointer-events-none z-[990]">
