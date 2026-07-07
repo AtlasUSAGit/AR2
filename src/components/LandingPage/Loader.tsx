@@ -20,6 +20,12 @@ const Loader = () => {
   const loaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Skip loader on mobile for instant login experience
+    if (window.innerWidth < 768) {
+      setDone(true);
+      return;
+    }
+
     if (index < words.length - 1) {
       const interval = setInterval(() => {
         setFade(false);
