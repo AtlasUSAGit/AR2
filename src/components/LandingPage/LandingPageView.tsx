@@ -3,14 +3,12 @@ import Lenis from "@studio-freight/lenis";
 import { LandingPageProvider } from "./LandingPageContext";
 import Nav from "./Nav";
 import Loader from "./Loader";
-import { lazy, Suspense } from 'react';
 import Hero from "./Hero";
 import EditableText from "./EditableText";
-
-const About = lazy(() => import("./About"));
-const Achievements = lazy(() => import("./Achievements"));
-const Work = lazy(() => import("./Work"));
-const Testimonials = lazy(() => import("./Testimonials"));
+import About from "./About";
+import Achievements from "./Achievements";
+import Work from "./Work";
+import Testimonials from "./Testimonials";
 import { useLandingPage } from "./LandingPageContext";
 import VersionControlPanel from "./VersionControlPanel";
 import gsap from "gsap";
@@ -73,20 +71,18 @@ const LandingPageViewContent = () => {
         <Hero />
       </div>
       
-      <Suspense fallback={<div className="h-screen w-full flex items-center justify-center text-zinc-500 font-mono text-xs">Loading section...</div>}>
-        <div id="about">
-          <About />
-        </div>
-        
-        <div id="projects">
-          <Achievements />
-          <Work />
-        </div>
-        
-        <div id="contact">
-          <Testimonials />
-        </div>
-      </Suspense>
+      <div id="about">
+        <About />
+      </div>
+      
+      <div id="projects">
+        <Achievements />
+        <Work />
+      </div>
+      
+      <div id="contact">
+        <Testimonials />
+      </div>
 
       <div className="absolute inset-0 pointer-events-none z-[990]">
         {(data.freeformTexts?.items || []).map((box, index) => (
