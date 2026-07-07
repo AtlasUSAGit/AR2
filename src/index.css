@@ -2,9 +2,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Arial", Helvetica, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --font-fahkwang: "Fahkwang", sans-serif;
+  --font-fahkwang: "Times New Roman", Times, serif;
 }
 
 body {
@@ -12,7 +12,7 @@ body {
 }
 
 b, strong, .font-bold, .font-semibold, .font-extrabold {
-  font-family: "Fahkwang", "Inter", sans-serif !important;
+  font-family: "Times New Roman", Times, serif !important;
 }
 
 .bg-grid-pattern {
