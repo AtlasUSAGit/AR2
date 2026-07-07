@@ -7,15 +7,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './components/Logo';
 import CustomizableHeroLogo from './components/CustomizableHeroLogo';
-import MindMapBuilder from './components/MindMapBuilder';
-import KanbanBoard from './components/KanbanBoard';
-import DocumentHub from './components/DocumentHub';
-import AmbientEffects from './components/AmbientEffects';
-import StaticPageView from './components/StaticPageView';
-import LandingPageView from './components/LandingPage/LandingPageView';
-import UserManagement from './components/UserManagement';
-import ChangeLogs from './components/ChangeLogs';
-import AuditMap from './components/AuditMap';
+import { lazy, Suspense } from 'react';
+const MindMapBuilder = lazy(() => import('./components/MindMapBuilder'));
+const KanbanBoard = lazy(() => import('./components/KanbanBoard'));
+const DocumentHub = lazy(() => import('./components/DocumentHub'));
+const AmbientEffects = lazy(() => import('./components/AmbientEffects'));
+const StaticPageView = lazy(() => import('./components/StaticPageView'));
+const LandingPageView = lazy(() => import('./components/LandingPage/LandingPageView'));
+const UserManagement = lazy(() => import('./components/UserManagement'));
+const ChangeLogs = lazy(() => import('./components/ChangeLogs'));
+const AuditMap = lazy(() => import('./components/AuditMap'));
 import { useAppContext } from './AppContext';
 import { getUrl } from 'aws-amplify/storage';
 import { getStoredVideo, saveStoredVideo, clearStoredVideo } from './components/videoDb';
@@ -452,7 +453,10 @@ export default function App() {
     <div className="min-h-screen bg-[#050507] text-white selection:bg-[#A493F7] selection:text-black font-sans relative">
 
       {/* High-end ambient micro-interactions, canvas network, custom cursor and glow tracking */}
-      <AmbientEffects />      {/* Cinematic Fullscreen Post-Login Video Introduction Overlay */}
+      <Suspense fallback={null}>
+        <AmbientEffects />
+      </Suspense>
+      {/* Cinematic Fullscreen Post-Login Video Introduction Overlay */}
       <AnimatePresence>
         {showVideoIntro && (
           <motion.div
@@ -767,6 +771,12 @@ export default function App() {
 
       {/* ==================== ACTIVE VIEW WORKSPACES ==================== */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 space-y-12">
+        <Suspense fallback={
+          <div className="flex flex-col items-center justify-center h-[50vh] animate-pulse">
+            <div className="w-8 h-8 border-2 border-[#A493F7] border-t-transparent rounded-full animate-spin mb-4" />
+            <p className="text-[#A493F7] font-mono text-sm tracking-widest uppercase">Loading Workspace...</p>
+          </div>
+        }>
 
         {/* TAB 1: COMMAND CENTER (LANDING PAGE VIEW) */}
         {activeTab === 'home' && canReadTab('home') && (
@@ -868,7 +878,7 @@ export default function App() {
         {activeTab === 'users' && canReadTab('users') && <UserManagement />}
         {activeTab === 'logs' && canReadTab('logs') && <ChangeLogs />}
         {activeTab === 'audit-map' && canReadTab('logs') && <AuditMap />}
-
+        </Suspense>
       </main>
 
       {/* ==================== CYBER DIAGNOSTIC SCAN MODAL ==================== */}
