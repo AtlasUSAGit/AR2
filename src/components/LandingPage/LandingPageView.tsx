@@ -8,7 +8,7 @@ import About from "./About";
 import Achievements from "./Achievements";
 import Work from "./Work";
 import Testimonials from "./Testimonials";
-import Footer from "./Footer";
+
 import VersionControlPanel from "./VersionControlPanel";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -68,7 +68,6 @@ const LandingPageViewContent = () => {
       
       <div id="contact">
         <Testimonials />
-        <Footer />
       </div>
       
       <VersionControlPanel />

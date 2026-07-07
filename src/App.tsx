@@ -990,13 +990,11 @@ export default function App() {
                     ATLAS
                   </span>
                   <span className="text-[9px] font-mono text-zinc-500 tracking-widest uppercase block mt-1">
-                    Sovereign Systems
+                    USA
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-zinc-400 leading-relaxed">
-                ATLAS is a premier managed intelligence IT & sovereign systems provider, delivering Zero-Trust defense postures, GovCloud solutions, and certified 8(a) Joint Venture contracting architectures.
-              </p>
+
               <div className="flex flex-col gap-2 text-xs font-mono text-zinc-500">
                 <span>© 2026 ATLAS, LLC. All rights reserved.</span>
               </div>
@@ -1029,28 +1027,7 @@ export default function App() {
               </ul>
             </div>
 
-            {/* Security Compliance column */}
-            <div className="md:col-span-2 space-y-4">
-              <h4 className="text-xs font-mono text-[#A493F7] uppercase tracking-widest">Compliance</h4>
-              <ul className="space-y-2 text-xs text-zinc-400">
-                <li className="flex items-center gap-1.5">
-                  <Check className="text-emerald-400" size={12} />
-                  <span>8(a) SBA Certified</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <Check className="text-emerald-400" size={12} />
-                  <span>SBE Certified</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <Check className="text-emerald-400" size={12} />
-                  <span>NIST SP 800-171</span>
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <Check className="text-emerald-400" size={12} />
-                  <span>ITAR Compliant</span>
-                </li>
-              </ul>
-            </div>
+
 
           </div>
 
