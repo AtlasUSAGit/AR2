@@ -26,12 +26,11 @@ const Testimonials = () => {
 
     cardsRef.current.forEach((card, index) => {
       if (!card) return;
-      const total = data.testimonials.items.length;
-      const step = 90 / total;
-      const finalLeft = `${5 + index * step}%`;
+      const step = 30; // Space out the cards
+      const targetLeft = 5 + index * step;
       
       tl.to(card, {
-        left: finalLeft,
+        x: `-${100 - targetLeft}vw`,
         ease: "none",
       });
     });
@@ -55,8 +54,8 @@ const Testimonials = () => {
               <div 
                 key={idx}
                 ref={el => { cardsRef.current[idx] = el; }}
-                className="absolute top-1/2 -translate-y-1/2 w-[320px] md:w-[380px] bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl flex flex-col justify-between"
-                style={{ left: "100vw", height: "350px" }}
+                className="absolute top-1/2 -translate-y-1/2 w-[320px] md:w-[380px] bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl flex flex-col justify-between will-change-transform"
+                style={{ left: "100%", height: "350px" }}
               >
                 <p className="text-lg leading-relaxed text-zinc-300 italic flex-1 overflow-y-auto pr-2" style={{ scrollbarWidth: 'none' }}>
                   “<EditableText section="testimonials" arrayField="items" index={idx} field="quote" />”

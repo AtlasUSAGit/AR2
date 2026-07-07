@@ -11,6 +11,7 @@ interface EditableTextProps {
   as?: React.ElementType;
   className?: string;
   children?: React.ReactNode;
+  renderBefore?: React.ReactNode;
 }
 
 const EditableText: React.FC<EditableTextProps> = ({ 
@@ -21,7 +22,8 @@ const EditableText: React.FC<EditableTextProps> = ({
   nestedIndices,
   as: Component = 'span', 
   className = '', 
-  children 
+  children,
+  renderBefore
 }) => {
   const { data, isEditMode, updateData, updateArrayData, updateStyleData } = useLandingPage();
   const [isEditing, setIsEditing] = useState(false);
@@ -234,6 +236,9 @@ const EditableText: React.FC<EditableTextProps> = ({
     const liveY = currentTransform.current.y + dragOffset.y;
     const liveTransform = (liveX !== 0 || liveY !== 0) ? `translate(${liveX}px, ${liveY}px)` : customStyle.transform;
 
+    // Force inline-block for spans/links so they can be transformed
+    const computedDisplay = customStyle.display || ((ComponentToRender === 'span' || ComponentToRender === 'a') ? 'inline-block' : undefined);
+
     return (
       <ComponentToRender 
         onClick={(e: React.MouseEvent) => {
@@ -243,9 +248,10 @@ const EditableText: React.FC<EditableTextProps> = ({
         }}
         {...extraProps}
         className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap ${isDragging ? 'opacity-70' : ''}`}
-        style={{ ...customStyle, transform: liveTransform }}
+        style={{ display: computedDisplay, ...customStyle, transform: liveTransform }}
         title="Click to edit"
       >
+        {renderBefore}
         {displayValue}
         <div className="absolute -top-6 right-0 flex gap-1 opacity-0 group-hover:opacity-100 z-[999999] transition-opacity">
           <div 
@@ -269,8 +275,14 @@ const EditableText: React.FC<EditableTextProps> = ({
 
   const ComponentToRender = customStyle.href ? 'a' : Component;
   const extraProps = customStyle.href ? { href: customStyle.href, target: '_blank', rel: 'noopener noreferrer' } : {};
+  const computedDisplay = customStyle.display || ((ComponentToRender === 'span' || ComponentToRender === 'a') ? 'inline-block' : undefined);
 
-  return <ComponentToRender {...extraProps} className={`${className} whitespace-pre-wrap`} style={customStyle}>{displayValue}</ComponentToRender>;
+  return (
+    <ComponentToRender {...extraProps} className={`${className} whitespace-pre-wrap`} style={{ display: computedDisplay, ...customStyle }}>
+      {renderBefore}
+      {displayValue}
+    </ComponentToRender>
+  );
 };
 
 export default EditableText;

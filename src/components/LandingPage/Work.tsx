@@ -64,11 +64,17 @@ const Card: React.FC<{ service: ServiceData; index: number }> = ({ service, inde
 
         <div className="flex justify-start flex-wrap gap-8 mt-8 md:mt-5 text-zinc-400 font-mono text-sm">
           {service.services.map((group, i) => (
-            <ul key={i} className="space-y-2">
+            <ul key={i} className="space-y-2 mt-10">
               {group.map((item, j) => (
-                <li key={j} className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 bg-purple-500 rounded-full inline-block shrink-0"></span>
-                  <EditableText section="work" arrayField="services" index={index} field="services" nestedIndices={[i, j]} />
+                <li key={j} className="flex items-center">
+                  <EditableText 
+                    section="work" 
+                    arrayField="services" 
+                    index={index} 
+                    field="services" 
+                    nestedIndices={[i, j]}
+                    renderBefore={<span className="w-1.5 h-1.5 bg-purple-500 rounded-full inline-block shrink-0 mr-2"></span>}
+                  />
                 </li>
               ))}
             </ul>
