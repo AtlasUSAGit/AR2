@@ -8,13 +8,16 @@ import About from "./About";
 import Achievements from "./Achievements";
 import Work from "./Work";
 import Testimonials from "./Testimonials";
-
+import EditableText from "./EditableText";
+import { useLandingPage } from "./LandingPageContext";
 import VersionControlPanel from "./VersionControlPanel";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import './sticky.css';
 
 const LandingPageViewContent = () => {
+  const { data } = useLandingPage();
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -68,6 +71,20 @@ const LandingPageViewContent = () => {
       
       <div id="contact">
         <Testimonials />
+      </div>
+
+      <div className="absolute inset-0 pointer-events-none z-[990]">
+        {(data.freeformTexts?.items || []).map((box, index) => (
+          <div key={box.id} className="absolute pointer-events-auto" style={{ top: '100px', left: '100px' }}>
+            <EditableText 
+              section="freeformTexts" 
+              arrayField="items" 
+              index={index} 
+              field="content" 
+              className="text-xl inline-block bg-black/50 p-2 border border-zinc-800"
+            />
+          </div>
+        ))}
       </div>
       
       <VersionControlPanel />

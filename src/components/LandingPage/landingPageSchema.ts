@@ -61,6 +61,10 @@ export interface FooterData {
   copyright: string;
 }
 
+export interface FreeformTextsData {
+  items: { id: string; content: string }[];
+}
+
 export interface LandingPageVersion {
   id: string;
   name: string;
@@ -74,6 +78,7 @@ export interface LandingPageVersion {
     testimonials: TestimonialsData;
     nav: NavData;
     footer: FooterData;
+    freeformTexts: FreeformTextsData;
     styles: Record<string, React.CSSProperties>;
   };
 }
@@ -197,6 +202,9 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
     email1: "hello@ukbfc.gov",
     email2: "contracts@ukbfc.gov",
     copyright: "©UKBFC. 2026. WE TURN AESTHETICS INTO EXPERIENCE. ALL RIGHTS RESERVED."
+  },
+  freeformTexts: {
+    items: []
   },
   styles: {}
 };

@@ -13,6 +13,7 @@ interface LandingPageContextType {
   updateArrayData: (section: keyof LandingPageVersion['content'], arrayField: string, index: number, field: string, value: any, nestedIndices?: number[]) => void;
   updateStringArrayData: (section: keyof LandingPageVersion['content'], arrayField: string, index: number, value: string) => void;
   updateStyleData: (key: string, style: React.CSSProperties) => void;
+  addTextBox: () => void;
 }
 
 const LandingPageContext = createContext<LandingPageContextType | undefined>(undefined);
@@ -165,8 +166,23 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const addTextBox = () => {
+    setData(prev => {
+      const items = prev.freeformTexts?.items || [];
+      return {
+        ...prev,
+        freeformTexts: {
+          items: [
+            ...items,
+            { id: Date.now().toString(), content: "New Text Box" }
+          ]
+        }
+      };
+    });
+  };
+
   return (
-    <LandingPageContext.Provider value={{ data, isEditMode, setEditMode, updateData, updateArrayData, updateStringArrayData, updateStyleData, saveVersion, loadVersion, versions, deleteVersion }}>
+    <LandingPageContext.Provider value={{ data, isEditMode, setEditMode, updateData, updateArrayData, updateStringArrayData, updateStyleData, addTextBox, saveVersion, loadVersion, versions, deleteVersion }}>
       {children}
     </LandingPageContext.Provider>
   );

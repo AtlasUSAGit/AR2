@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLandingPage } from './LandingPageContext';
-import { Save, Clock, Check, Trash2, X, AlertCircle } from 'lucide-react';
+import { Save, Clock, Check, Trash2, X, AlertCircle, Type } from 'lucide-react';
 
 export const VersionControlPanel: React.FC = () => {
-  const { versions, saveVersion, loadVersion, deleteVersion, isEditMode, setEditMode } = useLandingPage();
+  const { versions, saveVersion, loadVersion, deleteVersion, isEditMode, setEditMode, addTextBox } = useLandingPage();
   const [isOpen, setIsOpen] = useState(false);
   const [newVersionName, setNewVersionName] = useState('');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
@@ -29,15 +29,26 @@ export const VersionControlPanel: React.FC = () => {
       {/* Floating Toggle Button */}
       <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3">
         {isEditMode && (
-          <button
-            onClick={() => setIsOpen(true)}
-            className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-700 text-white flex items-center justify-center shadow-lg hover:bg-zinc-800 hover:border-purple-500 transition-all group relative"
-          >
-            <Clock size={20} className="group-hover:text-purple-400" />
-            <div className="absolute right-14 bg-black border border-zinc-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">
-              Version History
-            </div>
-          </button>
+          <>
+            <button
+              onClick={addTextBox}
+              className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-700 text-white flex items-center justify-center shadow-lg hover:bg-zinc-800 hover:border-purple-500 transition-all group relative"
+            >
+              <Type size={20} className="group-hover:text-purple-400" />
+              <div className="absolute right-14 bg-black border border-zinc-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">
+                Add Text Box
+              </div>
+            </button>
+            <button
+              onClick={() => setIsOpen(true)}
+              className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-700 text-white flex items-center justify-center shadow-lg hover:bg-zinc-800 hover:border-purple-500 transition-all group relative"
+            >
+              <Clock size={20} className="group-hover:text-purple-400" />
+              <div className="absolute right-14 bg-black border border-zinc-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">
+                Version History
+              </div>
+            </button>
+          </>
         )}
       </div>
 
