@@ -60,6 +60,33 @@ function mergeLandingPageData(savedContent: any): LandingPageVersion['content'] 
   };
 }
 
+const applyFontMigration = (versions: LandingPageVersion[]) => {
+  let migrated = false;
+  const migratedVersions = versions.map(v => {
+    let stylesMigrated = false;
+    const newStyles = { ...(v.content?.styles || {}) };
+    for (const key in newStyles) {
+      if (newStyles[key].fontFamily) {
+        const lower = newStyles[key].fontFamily.toLowerCase();
+        if (lower.includes('fahkwang')) {
+          newStyles[key].fontFamily = "'Times New Roman', Times, serif";
+          stylesMigrated = true;
+          migrated = true;
+        } else if (lower.includes('inter') || lower.includes('space grotesk')) {
+          newStyles[key].fontFamily = "Arial, Helvetica, sans-serif";
+          stylesMigrated = true;
+          migrated = true;
+        }
+      }
+    }
+    if (stylesMigrated) {
+      return { ...v, content: { ...v.content, styles: newStyles } };
+    }
+    return v;
+  });
+  return { migratedVersions, migrated };
+};
+
 interface LandingPageContextType {
   data: LandingPageVersion['content'];
   isEditMode: boolean;
@@ -117,12 +144,22 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
         let dbVersions: LandingPageVersion[] = [];
         if (elements && elements.length > 0) {
           dbVersions = JSON.parse(elements[0].content as string) as LandingPageVersion[];
+          const { migratedVersions, migrated } = applyFontMigration(dbVersions);
+          if (migrated) {
+            dbVersions = migratedVersions;
+            syncToDb(dbVersions);
+          }
         }
 
         // HOTFIX MIGRATION: Recover local storage data that wasn't properly synced
         const storedVersionsStr = localStorage.getItem('landingPageVersions_v3');
         if (storedVersionsStr) {
-          const storedVersions = JSON.parse(storedVersionsStr) as LandingPageVersion[];
+          let storedVersions = JSON.parse(storedVersionsStr) as LandingPageVersion[];
+          const { migratedVersions, migrated } = applyFontMigration(storedVersions);
+          if (migrated) {
+            storedVersions = migratedVersions;
+            localStorage.setItem('landingPageVersions_v3', JSON.stringify(storedVersions));
+          }
           
           // If local storage has more versions, or if the DB only has the blank "Initial Version",
           // the user's data is in local storage and needs to be rescued!
@@ -161,7 +198,12 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
         // Fallback to local storage
         const storedVersions = localStorage.getItem('landingPageVersions_v3');
         if (storedVersions) {
-          const parsedVersions = JSON.parse(storedVersions) as LandingPageVersion[];
+          let parsedVersions = JSON.parse(storedVersions) as LandingPageVersion[];
+          const { migratedVersions, migrated } = applyFontMigration(parsedVersions);
+          if (migrated) {
+            parsedVersions = migratedVersions;
+            localStorage.setItem('landingPageVersions_v3', JSON.stringify(parsedVersions));
+          }
           setVersions(parsedVersions);
           const activeVersion = parsedVersions.find(v => v.isActive);
           if (activeVersion) setData(mergeLandingPageData(activeVersion.content));

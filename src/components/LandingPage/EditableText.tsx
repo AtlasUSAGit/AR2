@@ -199,6 +199,8 @@ const EditableText: React.FC<EditableTextProps> = ({
             className="bg-black text-xs text-white border border-zinc-700 rounded p-1"
           >
             <option value="">Default Font</option>
+            <option value="Arial, Helvetica, sans-serif">Arial</option>
+            <option value="'Times New Roman', Times, serif">Times New Roman</option>
             <option value="Inter, sans-serif">Inter</option>
             <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
             <option value="'Fahkwang', sans-serif">Fahkwang</option>

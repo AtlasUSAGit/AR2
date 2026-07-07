@@ -177,7 +177,7 @@ const Hero = () => {
             ))}
           </EditableText>
           <span className="flex items-center mx-4 md:mx-8">
-            <span ref={(el) => { if (el && !pRefs.current.includes(el)) pRefs.current.push(el); }} className="hero-text opacity-0 translate-y-6 text-lg md:text-2xl text-[#A493F7] tracking-normal font-mono font-medium">
+            <span ref={(el) => { if (el && !pRefs.current.includes(el)) pRefs.current.push(el); }} className="hero-text opacity-0 translate-y-6 text-lg md:text-2xl text-[#A493F7] tracking-normal font-medium" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
               {new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
             </span>
           </span>

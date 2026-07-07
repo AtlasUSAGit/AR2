@@ -202,7 +202,7 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
   },
   styles: {
     about_title: {
-      fontFamily: "'Fahkwang', sans-serif"
+      fontFamily: "'Times New Roman', Times, serif"
     },
     work_services_2_description: {
       href: "http://UKBCB.ATLASUSA.AI",
