@@ -46,7 +46,7 @@ const Testimonials = () => {
       style={{ height: `${data.testimonials.items.length * 100}vh` }}
     >
       <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden" ref={containerRef}>
-        <div className="absolute top-20 w-full text-center">
+        <div className="absolute top-[110px] w-full text-center">
            <h2 className="text-4xl md:text-5xl font-bold text-purple-400 tracking-wider uppercase">
              <EditableText section="testimonials" field="title" />
            </h2>
