@@ -8,6 +8,7 @@ import About from "./About";
 import Achievements from "./Achievements";
 import Work from "./Work";
 import Testimonials from "./Testimonials";
+import Footer from "./Footer";
 import EditableText from "./EditableText";
 import { useLandingPage } from "./LandingPageContext";
 import VersionControlPanel from "./VersionControlPanel";
@@ -20,9 +21,16 @@ const LandingPageViewContent = () => {
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
+    
+    // Force ScrollTrigger boundaries recalculation after DOM mounts
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
 
     // Disable JS smooth scrolling on mobile for buttery smooth native performance
-    if (window.innerWidth < 768) return;
+    if (window.innerWidth < 768) {
+      return () => clearTimeout(refreshTimer);
+    }
 
     const lenis = new Lenis({
       duration: 1.2,
@@ -47,6 +55,7 @@ const LandingPageViewContent = () => {
     gsap.ticker.lagSmoothing(0, 0);
 
     return () => {
+      clearTimeout(refreshTimer);
       gsap.ticker.remove((time)=>{
         lenis.raf(time * 1000);
       });
@@ -74,6 +83,7 @@ const LandingPageViewContent = () => {
       
       <div id="contact">
         <Testimonials />
+        <Footer />
       </div>
 
       <div className="absolute inset-0 pointer-events-none z-[990]">

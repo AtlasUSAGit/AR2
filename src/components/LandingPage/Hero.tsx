@@ -168,7 +168,7 @@ const Hero = () => {
       )}
 
       <div className="flex flex-col md:flex-row items-center justify-center w-full gap-4 md:gap-8 px-4">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-fahkwang font-bold overflow-hidden tracking-widest uppercase flex flex-col md:flex-row items-center whitespace-nowrap">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-fahkwang font-bold overflow-hidden tracking-widest uppercase flex flex-col md:flex-row items-center flex-wrap justify-center md:whitespace-nowrap text-center">
           <EditableText section="hero" field="word1" as="span" className="flex">
             {data.hero.word1.split("").map((char, ci) => (
               <span key={`w1-${ci}`} data-char={char} className="letter inline-block will-change-transform">

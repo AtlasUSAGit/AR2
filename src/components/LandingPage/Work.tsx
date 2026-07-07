@@ -14,16 +14,20 @@ const Work = () => {
     if (!containerRef.current) return;
     gsap.registerPlugin(ScrollTrigger);
 
-    gsap.from(".work-title span", {
-      y: "100%",
-      duration: 0.6,
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 80%",
-        end: "bottom 20%",
-        toggleActions: "play reverse play reverse",
-      },
-    });
+    const ctx = gsap.context(() => {
+      gsap.from(".work-title span", {
+        y: "100%",
+        duration: 0.6,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          toggleActions: "play reverse play reverse",
+        },
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -49,7 +53,7 @@ const Card: React.FC<{ service: ServiceData; index: number }> = ({ service, inde
   const { updateArrayData } = useLandingPage();
 
   return (
-    <div className="sticky top-0 left-0 bg-black border-t border-zinc-800 h-screen flex flex-col lg:flex-row justify-between my-5 p-4 md:p-10 overflow-hidden shadow-2xl">
+    <div className="relative md:sticky md:top-0 md:left-0 bg-black border-t border-zinc-800 h-auto md:h-[100dvh] flex flex-col lg:flex-row justify-between my-5 p-4 md:p-10 overflow-visible md:overflow-hidden shadow-2xl">
       <div className="flex-[0.3] md:flex-[0.4] flex flex-row justify-between items-start p-2">
         <h2 className="text-7xl md:text-9xl font-medium text-purple-600/50 font-mono">0{service.id}</h2>
         <h4 className="text-xl font-bold uppercase tracking-widest mt-4">

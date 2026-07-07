@@ -20,6 +20,7 @@ const Testimonials = () => {
         start: "top top",
         end: "bottom bottom",
         scrub: 1,
+        pin: containerRef.current,
         invalidateOnRefresh: true,
       },
     });
@@ -56,7 +57,7 @@ const Testimonials = () => {
       ref={outerRef}
       style={{ height: `${data.testimonials.items.length * 100}dvh` }}
     >
-      <div className="sticky top-0 h-[100dvh] w-full flex flex-col justify-center overflow-hidden" ref={containerRef}>
+      <div className="h-[100dvh] w-full flex flex-col justify-center overflow-hidden" ref={containerRef}>
         <div className="absolute top-[110px] w-full text-center">
            <h2 className="text-4xl md:text-5xl font-bold text-purple-400 tracking-wider uppercase">
              <EditableText section="testimonials" field="title" />

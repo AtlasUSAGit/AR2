@@ -12,28 +12,30 @@ const About = () => {
   useEffect(() => {
     if (!containerRef.current) return;
 
-    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      gsap.from(".about-title span", {
+        y: "100%",
+        duration: 0.6,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 50%",
+          end: "bottom 20%",
+          toggleActions: "play reverse play reverse",
+        },
+      });
 
-    gsap.from(".about-title span", {
-      y: "100%",
-      duration: 0.6,
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 50%",
-        end: "bottom 20%",
-        toggleActions: "play reverse play reverse",
-      },
-    });
+      gsap.from(".bio p span", {
+        y: "100%",
+        duration: 0.6,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 35%",
+          toggleActions: "play reverse play reverse",
+        },
+      });
+    }, containerRef);
 
-    gsap.from(".bio p span", {
-      y:"100%",
-      duration: 0.6,
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 35%",
-        toggleActions: "play reverse play reverse",
-      },
-    });
+    return () => ctx.revert();
   }, [data.about.bioText]);
 
   return (

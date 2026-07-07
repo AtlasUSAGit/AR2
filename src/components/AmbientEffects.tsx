@@ -113,8 +113,9 @@ export default function AmbientEffects() {
           }
         }
       }
-
-      animationFrameId = requestAnimationFrame(drawNetwork);
+      if (!isMobile) {
+        animationFrameId = requestAnimationFrame(drawNetwork);
+      }
     };
 
     drawNetwork();
@@ -123,6 +124,7 @@ export default function AmbientEffects() {
     // 2. GLOBAL GLOW TRACKING AND PARALLAX TILT EFFECTS
     // ----------------------------------------------------
     const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (isMobile) return;
       const elements = document.querySelectorAll('.tilt-card, .glow-card');
       
       elements.forEach((el) => {
