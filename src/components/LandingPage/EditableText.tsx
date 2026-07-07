@@ -61,6 +61,22 @@ const EditableText: React.FC<EditableTextProps> = ({
   const saveChanges = () => {
     if (!inputRef.current) return;
     const newValue = inputRef.current.value;
+    
+    let styleUpdates: any = null;
+    const newWidth = inputRef.current.style.width;
+    const newHeight = inputRef.current.style.height;
+    
+    if (newWidth && newWidth !== customStyle.width && newWidth !== '100%') {
+      styleUpdates = { ...styleUpdates, width: newWidth };
+    }
+    if (newHeight && newHeight !== customStyle.height && newHeight !== 'auto') {
+      styleUpdates = { ...styleUpdates, height: newHeight };
+    }
+
+    if (styleUpdates) {
+      updateStyleData(styleKey, styleUpdates);
+    }
+
     if (newValue !== currentValue) {
       if (arrayField && index !== undefined) {
         updateArrayData(section as keyof typeof data, arrayField, index, field, newValue, nestedIndices);
@@ -221,7 +237,7 @@ const EditableText: React.FC<EditableTextProps> = ({
             defaultValue={displayValue as string}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
-            className={`${className} bg-zinc-900 text-white border border-purple-500 rounded p-2 min-w-[100px] w-full focus:outline-none focus:ring-2 focus:ring-purple-500 whitespace-pre-wrap overflow-hidden resize-none`}
+            className={`${className} bg-zinc-900 text-white border border-purple-500 rounded p-2 min-w-[100px] w-full focus:outline-none focus:ring-2 focus:ring-purple-500 whitespace-pre-wrap overflow-hidden resize`}
             style={{ ...customStyle, display: 'block', zIndex: 1000, position: 'relative' }}
             rows={1}
           />

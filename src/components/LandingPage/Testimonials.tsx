@@ -41,7 +41,7 @@ const Testimonials = () => {
   }, [data.testimonials.items.length]);
 
   return (
-    <div className="bg-zinc-950 text-white relative overflow-hidden" ref={containerRef}>
+    <div className="bg-zinc-950 text-white relative overflow-hidden z-[999]" ref={containerRef}>
       <div className="h-screen w-full flex flex-col justify-center">
         <div className="absolute top-20 w-full text-center">
            <h2 className="text-4xl md:text-5xl font-bold text-purple-400 tracking-wider uppercase">
