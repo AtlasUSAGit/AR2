@@ -20,16 +20,27 @@ const Testimonials = () => {
         start: "top top",
         end: "bottom bottom",
         scrub: 1,
+        invalidateOnRefresh: true,
       },
     });
 
     cardsRef.current.forEach((card, index) => {
       if (!card) return;
-      const step = 30; // Space out the cards
-      const targetLeft = 5 + index * step;
       
       tl.to(card, {
-        x: `-${100 - targetLeft}vw`,
+        x: () => {
+          if (!containerRef.current) return 0;
+          const C = containerRef.current.offsetWidth;
+          const cardW = card.offsetWidth;
+          
+          if (index === 0) {
+            return -0.92 * C; // Left edge at 8% of container width (brings it slightly more on screen)
+          } else if (index === 1) {
+            return -0.5 * C - (cardW / 2); // Perfectly centered
+          } else {
+            return -0.08 * C - cardW; // Right edge at 92% of container width
+          }
+        },
         ease: "none",
       });
     });

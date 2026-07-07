@@ -264,11 +264,11 @@ const EditableText: React.FC<EditableTextProps> = ({
         }}
         {...extraProps}
         className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap ${isDragging ? 'opacity-70' : ''}`}
-        style={{ display: computedDisplay, ...customStyle, transform: liveTransform }}
+        style={{ display: computedDisplay, minHeight: '1.5em', minWidth: '3em', ...customStyle, transform: liveTransform }}
         title="Click to edit"
       >
         {renderBefore}
-        {displayValue}
+        {displayValue || <span className="opacity-40 italic">[Empty]</span>}
         <div className="absolute -top-6 right-0 flex gap-1 opacity-0 group-hover:opacity-100 z-[999999] transition-opacity">
           <div 
             className="bg-zinc-700 text-white text-[10px] px-2 py-1 rounded cursor-move pointer-events-auto hover:bg-zinc-600 shadow-lg"
