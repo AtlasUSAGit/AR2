@@ -29,6 +29,11 @@ const EditableText: React.FC<EditableTextProps> = ({
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [toolbarRect, setToolbarRect] = useState<DOMRect | null>(null);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const dragStartPos = useRef({ x: 0, y: 0 });
+  const currentTransform = useRef({ x: 0, y: 0 });
+
   // Get current value from context
   let currentValue = '';
   if (arrayField && index !== undefined) {
@@ -62,6 +67,45 @@ const EditableText: React.FC<EditableTextProps> = ({
       }
     }
   };
+
+  useEffect(() => {
+    if (customStyle.transform) {
+      const match = customStyle.transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+      if (match) {
+        currentTransform.current = { x: parseFloat(match[1]), y: parseFloat(match[2]) };
+      }
+    } else {
+      currentTransform.current = { x: 0, y: 0 };
+    }
+  }, [customStyle.transform]);
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    let localDx = 0;
+    let localDy = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      localDx = e.clientX - dragStartPos.current.x;
+      localDy = e.clientY - dragStartPos.current.y;
+      setDragOffset({ x: localDx, y: localDy });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      const newX = currentTransform.current.x + localDx;
+      const newY = currentTransform.current.y + localDy;
+      updateStyleData(styleKey, { transform: `translate(${newX}px, ${newY}px)` });
+      setDragOffset({ x: 0, y: 0 });
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, styleKey]);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -186,6 +230,10 @@ const EditableText: React.FC<EditableTextProps> = ({
     const ComponentToRender = customStyle.href ? 'a' : Component;
     const extraProps = customStyle.href ? { href: customStyle.href, target: '_blank', rel: 'noopener noreferrer' } : {};
 
+    const liveX = currentTransform.current.x + dragOffset.x;
+    const liveY = currentTransform.current.y + dragOffset.y;
+    const liveTransform = (liveX !== 0 || liveY !== 0) ? `translate(${liveX}px, ${liveY}px)` : customStyle.transform;
+
     return (
       <ComponentToRender 
         onClick={(e: React.MouseEvent) => {
@@ -194,13 +242,26 @@ const EditableText: React.FC<EditableTextProps> = ({
           setIsEditing(true);
         }}
         {...extraProps}
-        className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap`}
-        style={customStyle}
+        className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap ${isDragging ? 'opacity-70' : ''}`}
+        style={{ ...customStyle, transform: liveTransform }}
         title="Click to edit"
       >
         {displayValue}
-        <div className="absolute -top-3 -right-3 bg-purple-600 text-white text-[10px] px-1.5 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-50">
-          Edit
+        <div className="absolute -top-6 right-0 flex gap-1 opacity-0 group-hover:opacity-100 z-[999999] transition-opacity">
+          <div 
+            className="bg-zinc-700 text-white text-[10px] px-2 py-1 rounded cursor-move pointer-events-auto hover:bg-zinc-600 shadow-lg"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsDragging(true);
+              dragStartPos.current = { x: e.clientX, y: e.clientY };
+            }}
+          >
+            Move
+          </div>
+          <div className="bg-purple-600 text-white text-[10px] px-2 py-1 rounded pointer-events-none shadow-lg">
+            Edit
+          </div>
         </div>
       </ComponentToRender>
     );

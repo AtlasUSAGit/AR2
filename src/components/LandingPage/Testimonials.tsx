@@ -17,8 +17,10 @@ const Testimonials = () => {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "bottom bottom",
+        end: `+=${window.innerHeight * data.testimonials.items.length}`,
         scrub: 1,
+        pin: true,
+        anticipatePin: 1,
       },
     });
 
@@ -40,17 +42,13 @@ const Testimonials = () => {
   }, [data.testimonials.items.length]);
 
   return (
-    <div className="bg-zinc-950 text-white relative">
-      <div 
-        ref={containerRef} 
-        style={{ height: `${data.testimonials.items.length * 100}vh` }}
-      >
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
-          <div className="absolute top-20 w-full text-center">
-             <h2 className="text-4xl md:text-5xl font-bold text-purple-400 tracking-wider uppercase">
-               <EditableText section="testimonials" field="title" />
-             </h2>
-          </div>
+    <div className="bg-zinc-950 text-white relative overflow-hidden" ref={containerRef}>
+      <div className="h-screen w-full flex flex-col justify-center">
+        <div className="absolute top-20 w-full text-center">
+           <h2 className="text-4xl md:text-5xl font-bold text-purple-400 tracking-wider uppercase">
+             <EditableText section="testimonials" field="title" />
+           </h2>
+        </div>
           
           <div className="relative w-full h-[500px]">
             {data.testimonials.items.map((review, idx) => (
@@ -73,8 +71,6 @@ const Testimonials = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
       </div>
     </div>
   );
