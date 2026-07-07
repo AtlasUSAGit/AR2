@@ -19,6 +19,11 @@ const LandingPageViewContent = () => {
   const { data } = useLandingPage();
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Disable JS smooth scrolling on mobile for buttery smooth native performance
+    if (window.innerWidth < 768) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -33,8 +38,6 @@ const LandingPageViewContent = () => {
       requestAnimationFrame(raf);
     }
     
-    gsap.registerPlugin(ScrollTrigger);
-
     lenis.on('scroll', ScrollTrigger.update);
     
     gsap.ticker.add((time)=>{

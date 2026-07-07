@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LandingPageVersion, defaultLandingPageData } from './landingPageSchema';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
+
+const client = generateClient<Schema>();
 
 interface LandingPageContextType {
   data: LandingPageVersion['content'];
@@ -23,28 +27,69 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
   const [isEditMode, setEditMode] = useState(false);
   const [versions, setVersions] = useState<LandingPageVersion[]>([]);
 
-  // Load versions from localStorage on mount
-  useEffect(() => {
-    const storedVersions = localStorage.getItem('landingPageVersions');
-    if (storedVersions) {
-      const parsedVersions = JSON.parse(storedVersions) as LandingPageVersion[];
-      setVersions(parsedVersions);
-      const activeVersion = parsedVersions.find(v => v.isActive);
-      if (activeVersion) {
-        setData(activeVersion.content);
+  const syncToDb = async (newVersions: LandingPageVersion[]) => {
+    try {
+      const { data: elements } = await client.models.AppElement.list({
+        filter: { type: { eq: 'LandingPageVersions' } }
+      });
+      if (elements && elements.length > 0) {
+        await client.models.AppElement.update({
+          id: elements[0].id,
+          content: JSON.stringify(newVersions)
+        });
+      } else {
+        await client.models.AppElement.create({
+          type: 'LandingPageVersions',
+          content: JSON.stringify(newVersions),
+          isChecked: false,
+          position: 0
+        });
       }
-    } else {
-      // Create initial version
-      const initialVersion: LandingPageVersion = {
-        id: Date.now().toString(),
-        name: 'Initial Version',
-        timestamp: Date.now(),
-        isActive: true,
-        content: defaultLandingPageData
-      };
-      setVersions([initialVersion]);
-      localStorage.setItem('landingPageVersions', JSON.stringify([initialVersion]));
+    } catch (err) {
+      console.error('Failed to sync to DB', err);
     }
+  };
+
+  // Load versions from DB on mount
+  useEffect(() => {
+    const fetchVersions = async () => {
+      try {
+        const { data: elements } = await client.models.AppElement.list({
+          filter: { type: { eq: 'LandingPageVersions' } }
+        });
+        
+        if (elements && elements.length > 0) {
+          const parsedVersions = JSON.parse(elements[0].content as string) as LandingPageVersion[];
+          setVersions(parsedVersions);
+          const activeVersion = parsedVersions.find(v => v.isActive);
+          if (activeVersion) {
+            setData(activeVersion.content);
+          }
+        } else {
+          // Create initial version
+          const initialVersion: LandingPageVersion = {
+            id: Date.now().toString(),
+            name: 'Initial Version',
+            timestamp: Date.now(),
+            isActive: true,
+            content: defaultLandingPageData
+          };
+          setVersions([initialVersion]);
+          syncToDb([initialVersion]);
+        }
+      } catch (err) {
+        console.error('Error fetching landing page versions', err);
+        // Fallback to local storage
+        const storedVersions = localStorage.getItem('landingPageVersions');
+        if (storedVersions) {
+          const parsedVersions = JSON.parse(storedVersions) as LandingPageVersion[];
+          setVersions(parsedVersions);
+          const activeVersion = parsedVersions.find(v => v.isActive);
+          if (activeVersion) setData(activeVersion.content);
+        }
+      }
+    };
+    fetchVersions();
   }, []);
 
   const saveVersion = (name: string) => {
@@ -59,6 +104,7 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
     const newVersions = versions.map(v => ({ ...v, isActive: false })).concat(newVersion);
     setVersions(newVersions);
     localStorage.setItem('landingPageVersions', JSON.stringify(newVersions));
+    syncToDb(newVersions);
   };
 
   const loadVersion = (id: string) => {
@@ -71,6 +117,7 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
       }));
       setVersions(newVersions);
       localStorage.setItem('landingPageVersions', JSON.stringify(newVersions));
+      syncToDb(newVersions);
     }
   };
 
@@ -96,6 +143,7 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
     }
     setVersions(newVersions);
     localStorage.setItem('landingPageVersions', JSON.stringify(newVersions));
+    syncToDb(newVersions);
   };
 
   const updateData = (section: keyof LandingPageVersion['content'], field: string, value: any) => {

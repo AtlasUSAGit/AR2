@@ -24,8 +24,10 @@ export default function AmbientEffects() {
       radius: number;
     }> = [];
 
-    // Slightly higher density for more beautiful connection patterns
-    const particleCount = Math.min(80, Math.floor((width * height) / 18000));
+    // Slightly higher density for more beautiful connection patterns (reduced on mobile)
+    const isMobile = window.innerWidth < 768;
+    const maxParticles = isMobile ? 15 : 80;
+    const particleCount = Math.min(maxParticles, Math.floor((width * height) / (isMobile ? 35000 : 18000)));
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -86,26 +88,28 @@ export default function AmbientEffects() {
         ctx.fill();
       });
 
-      // Draw lines between nearby particles
-      ctx.lineWidth = 0.9; // Increased line width from 0.5 to 0.9
-      const connectionDistance = 150; // Increased distance from 120 to 150 to form richer lattices
+      // Draw lines between nearby particles (skip on mobile for performance)
+      if (!isMobile) {
+        ctx.lineWidth = 0.9; // Increased line width from 0.5 to 0.9
+        const connectionDistance = 150; // Increased distance from 120 to 150 to form richer lattices
 
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const p1 = particles[i];
-          const p2 = particles[j];
-          const dx = p1.x - p2.x;
-          const dy = p1.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const p1 = particles[i];
+            const p2 = particles[j];
+            const dx = p1.x - p2.x;
+            const dy = p1.y - p2.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < connectionDistance) {
-            // Enhanced line opacity multiplier (from 0.08 to 0.28)
-            const alpha = (1 - dist / connectionDistance) * 0.28;
-            ctx.strokeStyle = `rgba(164, 147, 247, ${alpha})`;
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
+            if (dist < connectionDistance) {
+              // Enhanced line opacity multiplier (from 0.08 to 0.28)
+              const alpha = (1 - dist / connectionDistance) * 0.28;
+              ctx.strokeStyle = `rgba(164, 147, 247, ${alpha})`;
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.stroke();
+            }
           }
         }
       }
