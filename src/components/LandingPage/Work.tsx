@@ -62,20 +62,17 @@ const Card: React.FC<{ service: ServiceData; index: number }> = ({ service, inde
           <EditableText section="work" arrayField="services" index={index} field="description" />
         </p>
 
-        <div className="flex justify-start flex-wrap gap-8 md:gap-12 mt-8 md:mt-10 text-zinc-400 font-mono text-sm leading-relaxed whitespace-pre-wrap">
-          <div className="min-w-[150px]">
-            <EditableText section="work" arrayField="services" index={index} field="bullets1" />
-          </div>
-          {service.bullets2 && (
-            <div className="min-w-[150px]">
-              <EditableText section="work" arrayField="services" index={index} field="bullets2" />
-            </div>
-          )}
-          {service.bullets3 && (
-            <div className="min-w-[150px]">
-              <EditableText section="work" arrayField="services" index={index} field="bullets3" />
-            </div>
-          )}
+        <div className="flex justify-start flex-wrap gap-8 mt-8 md:mt-5 text-zinc-400 font-mono text-sm">
+          {service.services.map((group, i) => (
+            <ul key={i} className="space-y-2">
+              {group.map((item, j) => (
+                <li key={j} className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-purple-500 rounded-full inline-block shrink-0"></span>
+                  <EditableText section="work" arrayField="services" index={index} field="services" nestedIndices={[i, j]} />
+                </li>
+              ))}
+            </ul>
+          ))}
         </div>
       </div>
     </div>

@@ -2,11 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 
 const images = [
   "/imgs/img-1.png",
-  "/imgs/img-2.png",
-  "/imgs/img-4.jpeg",
-  "/imgs/img-5.jpeg",
-  "/imgs/img-1.png",
-  "/imgs/img-2.png",
 ];
 
 const Slider = () => {

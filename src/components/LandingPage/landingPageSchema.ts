@@ -27,9 +27,7 @@ export interface ServiceData {
   id: number;
   title: string;
   description: string;
-  bullets1: string;
-  bullets2?: string;
-  bullets3?: string;
+  services: string[][];
 }
 
 export interface WorkData {
@@ -125,33 +123,38 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
         id: 1,
         title: "Branding",
         description: "We craft brand identities that spark recognition and loyalty — from strategy to storytelling.",
-        bullets1: "• Brand architecture\n• Brand positioning\n• Naming\n• Brand strategy",
-        bullets2: "• Brand development\n• Brand identity\n• Implementation\n• Wayfinding",
-        bullets3: "• Iconography\n• Illustration\n• 3D\n• Print"
+        services: [
+          ["Brand architecture", "Brand positioning", "Naming", "Brand strategy"],
+          ["Brand development", "Brand identity", "Implementation", "Wayfinding"],
+          ["Iconography", "Illustration", "3D", "Print"]
+        ]
       },
       {
         id: 2,
         title: "Digital Branding",
         description: "We design immersive digital experiences that blend UX, UI, and tech into one seamless journey.",
-        bullets1: "• User Experience\n• User Interface\n• Prototyping\n• Web design",
-        bullets2: "• App design\n• E-commerce\n• Front-end\n• Back-end",
-        bullets3: ""
+        services: [
+          ["User Experience", "User Interface", "Prototyping", "Web design"],
+          ["App design", "E-commerce", "Front-end", "Back-end"]
+        ]
       },
       {
         id: 3,
         title: "Creative Design",
         description: "Bold, memorable visuals that move people — from packaging to 3D storytelling.",
-        bullets1: "• Graphic Design\n• Illustration\n• 3D Design",
-        bullets2: "• Packaging\n• Editorial\n• Iconography\n• Collateral",
-        bullets3: ""
+        services: [
+          ["Graphic Design", "Illustration", "3D Design"],
+          ["Packaging", "Editorial", "Iconography", "Collateral"]
+        ]
       },
       {
         id: 4,
         title: "Motion & Video",
         description: "Stories in motion — from cinematic ads to branded animations that stay unforgettable.",
-        bullets1: "• Motion graphics\n• 2D/3D Animation\n• Explainers",
-        bullets2: "• Advertising\n• storytelling",
-        bullets3: ""
+        services: [
+          ["Motion graphics", "2D/3D Animation", "Explainers"],
+          ["Advertising", "storytelling"]
+        ]
       }
     ]
   },

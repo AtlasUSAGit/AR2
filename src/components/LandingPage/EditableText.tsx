@@ -7,6 +7,7 @@ interface EditableTextProps {
   field: string;
   arrayField?: string;
   index?: number;
+  nestedIndices?: number[];
   as?: React.ElementType;
   className?: string;
   children?: React.ReactNode;
@@ -17,6 +18,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   field, 
   arrayField,
   index,
+  nestedIndices,
   as: Component = 'span', 
   className = '', 
   children 
@@ -32,7 +34,13 @@ const EditableText: React.FC<EditableTextProps> = ({
   if (arrayField && index !== undefined) {
     const arr = (data[section as keyof typeof data] as any)[arrayField];
     if (arr && arr[index]) {
-      currentValue = arr[index][field];
+      let val = arr[index][field];
+      if (nestedIndices && nestedIndices.length > 0 && val) {
+        for (const idx of nestedIndices) {
+          val = val[idx];
+        }
+      }
+      currentValue = val;
     }
   } else {
     currentValue = (data[section as keyof typeof data] as any)?.[field];
@@ -40,7 +48,7 @@ const EditableText: React.FC<EditableTextProps> = ({
 
   const displayValue = currentValue !== undefined ? currentValue : children;
   
-  const styleKey = arrayField && index !== undefined ? `${section}_${arrayField}_${index}_${field}` : `${section}_${field}`;
+  const styleKey = arrayField && index !== undefined ? `${section}_${arrayField}_${index}_${field}${nestedIndices ? '_' + nestedIndices.join('_') : ''}` : `${section}_${field}`;
   const customStyle = data.styles?.[styleKey] || {};
 
   const saveChanges = () => {
@@ -48,7 +56,7 @@ const EditableText: React.FC<EditableTextProps> = ({
     const newValue = inputRef.current.value;
     if (newValue !== currentValue) {
       if (arrayField && index !== undefined) {
-        updateArrayData(section as keyof typeof data, arrayField, index, field, newValue);
+        updateArrayData(section as keyof typeof data, arrayField, index, field, newValue, nestedIndices);
       } else {
         updateData(section as keyof typeof data, field, newValue);
       }

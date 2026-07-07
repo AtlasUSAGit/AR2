@@ -10,7 +10,7 @@ interface LandingPageContextType {
   loadVersion: (id: string) => void;
   versions: LandingPageVersion[];
   deleteVersion: (id: string) => void;
-  updateArrayData: (section: keyof LandingPageVersion['content'], arrayField: string, index: number, field: string, value: any) => void;
+  updateArrayData: (section: keyof LandingPageVersion['content'], arrayField: string, index: number, field: string, value: any, nestedIndices?: number[]) => void;
   updateStringArrayData: (section: keyof LandingPageVersion['content'], arrayField: string, index: number, value: string) => void;
   updateStyleData: (key: string, style: React.CSSProperties) => void;
 }
@@ -107,11 +107,24 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
-  const updateArrayData = (section: keyof LandingPageVersion['content'], arrayField: string, index: number, field: string, value: any) => {
+  const updateArrayData = (section: keyof LandingPageVersion['content'], arrayField: string, index: number, field: string, value: any, nestedIndices?: number[]) => {
     setData(prev => {
       const sectionData = prev[section] as any;
       const arrayData = [...sectionData[arrayField]];
-      arrayData[index] = { ...arrayData[index], [field]: value };
+      
+      if (nestedIndices && nestedIndices.length > 0) {
+        // Deep clone the object at index to avoid mutating state
+        const item = JSON.parse(JSON.stringify(arrayData[index]));
+        let current = item[field];
+        // Navigate to the deeply nested array, e.g. nestedIndices = [0, 1]
+        for (let i = 0; i < nestedIndices.length - 1; i++) {
+          current = current[nestedIndices[i]];
+        }
+        current[nestedIndices[nestedIndices.length - 1]] = value;
+        arrayData[index] = item;
+      } else {
+        arrayData[index] = { ...arrayData[index], [field]: value };
+      }
       
       return {
         ...prev,
