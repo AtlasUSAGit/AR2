@@ -1,0 +1,47 @@
+import fs from 'fs';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import {defineConfig} from 'vite';
+import { viteSingleFile } from 'vite-plugin-singlefile';
+
+export default defineConfig(() => {
+  return {
+    plugins: [
+      react(), 
+      tailwindcss(), 
+      viteSingleFile(),
+      {
+        name: 'serve-compiled-app',
+        configureServer(server) {
+          server.middlewares.use('/download-app', (req, res) => {
+            const filePath = path.resolve(__dirname, 'UKB_FedComm_App.html');
+            if (fs.existsSync(filePath)) {
+              res.setHeader('Content-disposition', 'attachment; filename=UKB_FedComm_App.html');
+              res.setHeader('Content-type', 'text/html');
+              const fileStream = fs.createReadStream(filePath);
+              fileStream.pipe(res);
+            } else {
+              res.statusCode = 404;
+              res.end('File not found. Please wait for the build to finish or run the build script.');
+            }
+          });
+        }
+      }
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '.'),
+      },
+    },
+    server: {
+      host: '0.0.0.0',
+      port: 3000,
+      // HMR is disabled in AI Studio via DISABLE_HMR env var.
+      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      hmr: process.env.DISABLE_HMR !== 'true',
+      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
+      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+    },
+  };
+});

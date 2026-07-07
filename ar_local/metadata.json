@@ -1,0 +1,6 @@
+{
+  "name": "UKBFC Command Portal",
+  "description": "Interactive IT Managed Services portal, featuring a live Network Monitor, ROI Calculator, custom Mind Map Builder, and interactive 8(a) Federal Contracting Flowchart.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

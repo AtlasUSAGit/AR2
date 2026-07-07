@@ -1,0 +1,502 @@
+Only in ./src: .DS_Store
+diff -ur --exclude=node_modules --exclude=.git ./src/App.tsx ./ar_local/src/App.tsx
+--- ./src/App.tsx	2026-07-06 22:32:54
++++ ./ar_local/src/App.tsx	2026-07-07 05:22:38
+@@ -17,7 +17,6 @@
+ import ChangeLogs from './components/ChangeLogs';
+ import AuditMap from './components/AuditMap';
+ import { useAppContext } from './AppContext';
+-import { getUrl } from 'aws-amplify/storage';
+ import { getStoredVideo, saveStoredVideo, clearStoredVideo } from './components/videoDb';
+ import {
+   Shield,
+@@ -146,16 +145,9 @@
+   const [videoUrl, setVideoUrl] = useState<string>('');
+ 
+   useEffect(() => {
+-    // Dynamically request the stream URL from your secure S3 pathway
++    // Set to default video link since Amplify is removed
+     const fetchVideo = async () => {
+-      try {
+-        const linkResult = await getUrl({
+-          path: 'intros/intro-animation.mp4'
+-        });
+-        setVideoUrl(linkResult.url.toString());
+-      } catch (err) {
+-        console.error("Error fetching S3 video stream link:", err);
+-      }
++      setVideoUrl('https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4');
+     };
+     fetchVideo();
+   }, []);
+diff -ur --exclude=node_modules --exclude=.git ./src/AppContext.tsx ./ar_local/src/AppContext.tsx
+--- ./src/AppContext.tsx	2026-07-06 12:03:36
++++ ./ar_local/src/AppContext.tsx	2026-07-07 05:22:38
+@@ -2,10 +2,9 @@
+ import React, { createContext, useContext, useState, useEffect } from 'react';
+ import { User, Department, DocCard, Checklist, StaticPage, Role, RolePermission, UploadedFile, WebsiteChangeLog } from './types';
+ import { defaultUsers, defaultDepartments, defaultPages, defaultCards, defaultChecklists, userPasswordHashes } from './data';
+-import { generateClient } from 'aws-amplify/data';
+-import type { Schema } from '../amplify/data/resource';
++import { generateClient } from './localClient';
+ 
+-const client = generateClient<Schema>();
++const client = generateClient();
+ 
+ interface AppState {
+   currentUser: User | null;
+Only in ./src: assets
+diff -ur --exclude=node_modules --exclude=.git ./src/components/KanbanBoard.tsx ./ar_local/src/components/KanbanBoard.tsx
+--- ./src/components/KanbanBoard.tsx	2026-07-06 19:24:44
++++ ./ar_local/src/components/KanbanBoard.tsx	2026-07-07 05:22:38
+@@ -123,7 +123,7 @@
+   ];
+ 
+   return (
+-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 h-[calc(100vh-250px)] min-h-[500px]">
++    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 h-auto md:h-[calc(100vh-250px)] min-h-[500px]">
+       <input 
+         type="file" 
+         className="hidden" 
+@@ -133,7 +133,7 @@
+       {columns.map((col) => (
+         <div
+           key={col.id}
+-          className="flex flex-col bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-lg"
++          className="flex flex-col bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-lg min-h-[500px] md:min-h-0"
+           onDragOver={handleDragOver}
+           onDrop={(e) => handleDrop(e, col.id)}
+         >
+diff -ur --exclude=node_modules --exclude=.git ./src/components/LandingPage/About.tsx ./ar_local/src/components/LandingPage/About.tsx
+--- ./src/components/LandingPage/About.tsx	2026-07-06 23:15:35
++++ ./ar_local/src/components/LandingPage/About.tsx	2026-07-07 05:22:38
+@@ -41,7 +41,7 @@
+   return (
+     <div ref={containerRef} className="min-h-screen p-4 lg:p-10 text-white">
+       <h2 className="text-3xl lg:text-4xl max-w-[950px] mt-10">
+-        <span className="inline-block text-xl font-medium -translate-y-5 mr-20 lg:mr-[400px] overflow-hidden about-title">
++        <span className="inline-block text-xl font-medium -translate-y-5 mr-20 lg:mr-[400px] overflow-hidden about-title font-fahkwang">
+           <EditableText section="about" field="title" as="span" className="block" />
+         </span>
+ 
+diff -ur --exclude=node_modules --exclude=.git ./src/components/LandingPage/LandingPageContext.tsx ./ar_local/src/components/LandingPage/LandingPageContext.tsx
+--- ./src/components/LandingPage/LandingPageContext.tsx	2026-07-06 22:36:08
++++ ./ar_local/src/components/LandingPage/LandingPageContext.tsx	2026-07-07 05:22:38
+@@ -1,10 +1,64 @@
+ import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+ import { LandingPageVersion, defaultLandingPageData } from './landingPageSchema';
+-import { generateClient } from 'aws-amplify/data';
+-import type { Schema } from '../../../amplify/data/resource';
++import { generateClient } from '../../localClient';
+ 
+-const client = generateClient<Schema>();
++const client = generateClient();
+ 
++// Robust deep merge to prevent old DB/localStorage schemas from causing render crashes
++function mergeLandingPageData(savedContent: any): LandingPageVersion['content'] {
++  if (!savedContent) return defaultLandingPageData;
++  return {
++    hero: { ...defaultLandingPageData.hero, ...(savedContent.hero || {}) },
++    about: { ...defaultLandingPageData.about, ...(savedContent.about || {}) },
++    achievements: { 
++      ...defaultLandingPageData.achievements, 
++      ...(savedContent.achievements || {}),
++      companies: savedContent.achievements?.companies || defaultLandingPageData.achievements.companies
++    },
++    work: { 
++      ...defaultLandingPageData.work, 
++      ...(savedContent.work || {}),
++      services: (savedContent.work?.services || defaultLandingPageData.work.services).map((service: any, sIdx: number) => {
++        const defaultService = defaultLandingPageData.work.services[sIdx] || defaultLandingPageData.work.services[0];
++        return {
++          ...defaultService,
++          ...service,
++          services: service.services || defaultService.services
++        };
++      })
++    },
++    testimonials: { 
++      ...defaultLandingPageData.testimonials, 
++      ...(savedContent.testimonials || {}),
++      items: (savedContent.testimonials?.items || defaultLandingPageData.testimonials.items).map((item: any, iIdx: number) => {
++        const defaultItem = defaultLandingPageData.testimonials.items[iIdx] || defaultLandingPageData.testimonials.items[0];
++        return {
++          ...defaultItem,
++          ...item
++        };
++      })
++    },
++    nav: { 
++      ...defaultLandingPageData.nav, 
++      ...(savedContent.nav || {}),
++      items: (savedContent.nav?.items || defaultLandingPageData.nav.items).map((item: any, iIdx: number) => {
++        const defaultItem = defaultLandingPageData.nav.items[iIdx] || defaultLandingPageData.nav.items[0];
++        return {
++          ...defaultItem,
++          ...item
++        };
++      })
++    },
++    footer: { ...defaultLandingPageData.footer, ...(savedContent.footer || {}) },
++    freeformTexts: { 
++      ...defaultLandingPageData.freeformTexts, 
++      ...(savedContent.freeformTexts || {}),
++      items: savedContent.freeformTexts?.items || defaultLandingPageData.freeformTexts.items
++    },
++    styles: { ...defaultLandingPageData.styles, ...(savedContent.styles || {}) }
++  };
++}
++
+ interface LandingPageContextType {
+   data: LandingPageVersion['content'];
+   isEditMode: boolean;
+@@ -30,8 +84,9 @@
+   const syncToDb = async (newVersions: LandingPageVersion[]) => {
+     try {
+       const { data: elements } = await client.models.AppElement.list({
+-        filter: { type: { eq: 'LandingPageVersions' } }
++        filter: { type: { eq: 'LandingPageVersions_v3' } }
+       });
++
+       if (elements && elements.length > 0) {
+         await client.models.AppElement.update({
+           id: elements[0].id,
+@@ -39,7 +94,7 @@
+         });
+       } else {
+         await client.models.AppElement.create({
+-          type: 'LandingPageVersions',
++          type: 'LandingPageVersions_v3',
+           content: JSON.stringify(newVersions),
+           isChecked: false,
+           position: 0
+@@ -55,7 +110,7 @@
+     const fetchVersions = async () => {
+       try {
+         const { data: elements } = await client.models.AppElement.list({
+-          filter: { type: { eq: 'LandingPageVersions' } }
++          filter: { type: { eq: 'LandingPageVersions_v3' } }
+         });
+         
+         let dbVersions: LandingPageVersion[] = [];
+@@ -64,7 +119,7 @@
+         }
+ 
+         // HOTFIX MIGRATION: Recover local storage data that wasn't properly synced
+-        const storedVersionsStr = localStorage.getItem('landingPageVersions');
++        const storedVersionsStr = localStorage.getItem('landingPageVersions_v3');
+         if (storedVersionsStr) {
+           const storedVersions = JSON.parse(storedVersionsStr) as LandingPageVersion[];
+           
+@@ -73,7 +128,7 @@
+           if (storedVersions.length > dbVersions.length || (dbVersions.length === 1 && dbVersions[0].name === 'Initial Version' && storedVersions.length >= 1 && storedVersions[0].name !== 'Initial Version')) {
+             setVersions(storedVersions);
+             const activeVersion = storedVersions.find(v => v.isActive);
+-            if (activeVersion) setData(activeVersion.content);
++            if (activeVersion) setData(mergeLandingPageData(activeVersion.content));
+             
+             // Push the rescued data up to the DB
+             syncToDb(storedVersions);
+@@ -85,7 +140,7 @@
+           setVersions(dbVersions);
+           const activeVersion = dbVersions.find(v => v.isActive);
+           if (activeVersion) {
+-            setData(activeVersion.content);
++            setData(mergeLandingPageData(activeVersion.content));
+           }
+         } else {
+           // Create initial version
+@@ -98,20 +153,21 @@
+           };
+           setVersions([initialVersion]);
+           syncToDb([initialVersion]);
+-          localStorage.setItem('landingPageVersions', JSON.stringify([initialVersion]));
++          localStorage.setItem('landingPageVersions_v3', JSON.stringify([initialVersion]));
+         }
+       } catch (err) {
+         console.error('Error fetching landing page versions', err);
+         // Fallback to local storage
+-        const storedVersions = localStorage.getItem('landingPageVersions');
++        const storedVersions = localStorage.getItem('landingPageVersions_v3');
+         if (storedVersions) {
+           const parsedVersions = JSON.parse(storedVersions) as LandingPageVersion[];
+           setVersions(parsedVersions);
+           const activeVersion = parsedVersions.find(v => v.isActive);
+-          if (activeVersion) setData(activeVersion.content);
++          if (activeVersion) setData(mergeLandingPageData(activeVersion.content));
+         }
+       }
+     };
++
+     fetchVersions();
+   }, []);
+ 
+@@ -123,23 +179,22 @@
+       isActive: true,
+       content: data
+     };
+-
+     const newVersions = versions.map(v => ({ ...v, isActive: false })).concat(newVersion);
+     setVersions(newVersions);
+-    localStorage.setItem('landingPageVersions', JSON.stringify(newVersions));
++    localStorage.setItem('landingPageVersions_v3', JSON.stringify(newVersions));
+     syncToDb(newVersions);
+   };
+ 
+   const loadVersion = (id: string) => {
+     const versionToLoad = versions.find(v => v.id === id);
+     if (versionToLoad) {
+-      setData(versionToLoad.content);
++      setData(mergeLandingPageData(versionToLoad.content));
+       const newVersions = versions.map(v => ({
+         ...v,
+         isActive: v.id === id
+       }));
+       setVersions(newVersions);
+-      localStorage.setItem('landingPageVersions', JSON.stringify(newVersions));
++      localStorage.setItem('landingPageVersions_v3', JSON.stringify(newVersions));
+       syncToDb(newVersions);
+     }
+   };
+@@ -161,11 +216,11 @@
+       // If active was deleted, make the last one active
+       if (!newVersions.find(v => v.isActive)) {
+         newVersions[newVersions.length - 1].isActive = true;
+-        setData(newVersions[newVersions.length - 1].content);
++        setData(mergeLandingPageData(newVersions[newVersions.length - 1].content));
+       }
+     }
+     setVersions(newVersions);
+-    localStorage.setItem('landingPageVersions', JSON.stringify(newVersions));
++    localStorage.setItem('landingPageVersions_v3', JSON.stringify(newVersions));
+     syncToDb(newVersions);
+   };
+ 
+diff -ur --exclude=node_modules --exclude=.git ./src/components/LandingPage/Work.tsx ./ar_local/src/components/LandingPage/Work.tsx
+--- ./src/components/LandingPage/Work.tsx	2026-07-06 23:36:57
++++ ./ar_local/src/components/LandingPage/Work.tsx	2026-07-07 05:22:38
+@@ -61,7 +61,7 @@
+         </h4>
+       </div>
+ 
+-      <div className="flex-[0.7] md:flex-[0.8] flex flex-col justify-start items-start gap-7 md:gap-5 mt-6 md:mt-0 min-w-0 w-full">
++      <div className="flex-[0.7] md:flex-[0.8] flex flex-col justify-start items-start gap-7 md:gap-5 mt-6 md:mt-32 min-w-0 w-full">
+         <p className="text-2xl sm:text-3xl font-light leading-snug w-full min-w-0 break-words">
+           <EditableText section="work" arrayField="services" index={index} field="description" className="w-full" />
+         </p>
+diff -ur --exclude=node_modules --exclude=.git ./src/components/LandingPage/landingPageSchema.ts ./ar_local/src/components/LandingPage/landingPageSchema.ts
+--- ./src/components/LandingPage/landingPageSchema.ts	2026-07-06 21:33:52
++++ ./ar_local/src/components/LandingPage/landingPageSchema.ts	2026-07-07 05:22:38
+@@ -101,15 +101,15 @@
+     ]
+   },
+   about: {
+-    title: "Who We Are",
+-    bioText: "Designers, engineers and coders. Driven by exceptional design and craftsmanship. We’re digital natives, dedicated heart and soul to strategic branding."
++    title: "THREE STEPS TO SUCCESS WITH CORPORATION",
++    bioText: "1. CoUKB delivers message to Corporation. \n2. Paperwork and presentation of paperwork to Corp. \n3. Ratification of Agreement."
+   },
+   achievements: {
+-    title: "Selected Clients",
+-    description1: "Here are some brands you'll probably recognize that we've had the pleasure to work with. Cool, right? Now that we've got your attention, we often say the bigger the brand, the less room there is for creative excitement as other priorities tend to overshadow design. But fear not—we're a team of enthusiasts who always deliver, no matter the challenge!",
+-    description2: "No clients were ever harmed in the making of all this… wait. Yep, not even one, we've double-checked this. Design is not tequila. It can't make everyone happy",
++    title: "Message for CoUKB to Deliver",
++    description1: "1. You do not need their money.\n\n2. Hiring you would be unlike hiring any other employee they have ever hired, because every other employee they have ever hired will spend the money they are given on their bills, expenses, family, life, THEMSELVES. Whereas you would spend every dollar you are given directly on UKB and its economic development. \n\n3. Building off of that, essentially giving you a monthly retainer is really giving you a monthly discretionary budget, and you are better at budgets than anyone, which is why you're entrusted with oversight over massive federal budgets. ",
++    description2: "Provide CoUKB with talking points during presentation of Corporation application in admin mode to CoUKB. ",
+     number: 3,
+-    labelAwards: "No. awards",
++    labelAwards: "Truths",
+     companies: [
+       "/company/ibm.svg",
+       "/company/delta.svg",
+@@ -122,73 +122,67 @@
+     ]
+   },
+   work: {
+-    title: "What We Do",
++    title: "Paperwork to Present",
+     services: [
+       {
+         id: 1,
+-        title: "Branding",
+-        description: "We craft brand identities that spark recognition and loyalty — from strategy to storytelling.",
++        title: "Cover Page",
++        description: "PURPOSE: \nHighlight Goals \nof Engagement",
+         services: [
+-          ["Brand architecture", "Brand positioning", "Naming", "Brand strategy"],
+-          ["Brand development", "Brand identity", "Implementation", "Wayfinding"],
+-          ["Iconography", "Illustration", "3D", "Print"]
++          ["GET 8(A) APPLICATIONS THAT \nHAVE ALREADY BEEN SUBMITTED PROCESSED", "PROVIDE ROADMAP FOR MORE 8(A) ENTITIES\nTO GET THEIR APPLICATIONS SUBMITTED AND APPROVED", "CREATE OTHER ROUTES FOR ECONOMIC EXPANSION\n(GRANTS / PRIVATE SECTOR)"]
+         ]
+       },
+       {
+         id: 2,
+-        title: "Digital Branding",
+-        description: "We design immersive digital experiences that blend UX, UI, and tech into one seamless journey.",
++        title: "Deck",
++        description: "MAIN UPDATES",
+         services: [
+-          ["User Experience", "User Interface", "Prototyping", "Web design"],
+-          ["App design", "E-commerce", "Front-end", "Back-end"]
++          ["\nNEW TIMELINE: SHOWS THAT THEY ALREADY HAVE COMPLETED STEPS\nWE ARE COMING IN TO HELP PUSH THEM OVER THE FINISH LINE", "HOW WE ARE COMPENSATED: MADE AMBIGUOUS IN THE DECK. \nLEAVING MONTHLY RETAINER FOR THE CONTRACT."]
+         ]
+       },
+       {
+         id: 3,
+-        title: "Creative Design",
+-        description: "Bold, memorable visuals that move people — from packaging to 3D storytelling.",
++        title: "Website",
++        description: "UKBCB.ATLASUSA.AI \n\nSEE THE MIND MAP SANDBOX PAGE FOR PRESENTATION OUTLINE FOR WEBSITE",
+         services: [
+-          ["Graphic Design", "Illustration", "3D Design"],
+-          ["Packaging", "Editorial", "Iconography", "Collateral"]
+         ]
+       },
+       {
+         id: 4,
+-        title: "Motion & Video",
+-        description: "Stories in motion — from cinematic ads to branded animations that stay unforgettable.",
++        title: "Consulting Agreement",
++        description: "MAIN UPDATES:",
+         services: [
+-          ["Motion graphics", "2D/3D Animation", "Explainers"],
+-          ["Advertising", "storytelling"]
++          ["UPDATED COMPENSATION TO $12.5K DOWN AND $12.5K MONTHLY RETAINER", "UPDATED PENALTY FOR EARLY TERMINATION TO 12 MONTHS PAY"]
+         ]
+       }
+     ]
+   },
+   testimonials: {
+-    title: "Testimonials",
++    title: "NEXT STEPS",
+     description: "Paper doesn't crash, and websites don't crease and tear, but receiving such positive testimonials after long processes always tugs at our heartstrings.",
+     items: [
+       {
+         company: "/company/ibm.svg",
+-        quote: "I needed a creative agency at the top of design thinking and leading-edge in technical capabilities. Bürocratik was a perfect match, they are a very rare kind of agency, one that treats clients with respect while bringing their best thinking and work to meet business needs. Outstanding creative digital work!",
+-        name: "Sophia Martinez",
+-        role: "Global Brand Director, IBM"
++        quote: " PRESENTATION OF ADMIN VERSION OF APP FOR CORPORATION TO CoUKB",
++        name: "1",
++        role: ""
+       },
+       {
+         company: "/company/delta.svg",
+-        quote: "We needed a partner who understood both innovation and execution, and that’s exactly what we found. The team translated complex challenges into clear solutions, blending creativity with precision. They didn’t just deliver design — they built experiences that continue to resonate deeply with our customers worldwide.",
+-        name: "James Carter",
+-        role: "VP of Customer Experience, Delta"
++        quote: "CONTINUOUSLY UPDATE APP TO IMPROVE USER EXPERIENCE",
++        name: "2",
++        role: ""
+       },
+       {
+         company: "/company/unileaver.svg",
+-        quote: "They’re not just a creative agency — they’re genuine collaborators. Every project felt like a partnership where vision and detail came together seamlessly. Their ability to balance strategic thinking with bold creativity set a new benchmark for us, raising expectations across our global brand teams.",
+-        name: "Mandlina Covachiu",
+-        role: "Global Brand Manager, Unilever"
++        quote: "PRACTICE PRESENTING BOTH VERSIONS OF APP (ADMIN AND GROUP VERSIONS)",
++        name: "3",
++        role: ""
+       }
+     ]
+   },
+   nav: {
+-    appName: "UKB FedComm Ops",
++    appName: "DAILY BRIEFING DIRECTORY",
+     menuTitle: "System Navigation",
+     btnText: "Command Center",
+     items: [
+@@ -206,5 +200,14 @@
+   freeformTexts: {
+     items: []
+   },
+-  styles: {}
++  styles: {
++    about_title: {
++      fontFamily: "'Fahkwang', sans-serif"
++    },
++    work_services_2_description: {
++      href: "http://UKBCB.ATLASUSA.AI",
++      color: "#A493F7",
++      textDecoration: "underline"
++    }
++  }
+ };
+diff -ur --exclude=node_modules --exclude=.git ./src/components/Logo.tsx ./ar_local/src/components/Logo.tsx
+--- ./src/components/Logo.tsx	2026-07-06 12:03:36
++++ ./ar_local/src/components/Logo.tsx	2026-07-07 05:22:38
+@@ -4,7 +4,7 @@
+  */
+ 
+ import React from 'react';
+-import companyLogo from '../assets/ATLAS_LOGO.png';
++const companyLogo = "/logo.svg";
+ 
+ interface LogoProps {
+   className?: string;
+diff -ur --exclude=node_modules --exclude=.git ./src/components/MindMapBuilder.tsx ./ar_local/src/components/MindMapBuilder.tsx
+--- ./src/components/MindMapBuilder.tsx	2026-07-06 23:33:41
++++ ./ar_local/src/components/MindMapBuilder.tsx	2026-07-07 05:22:38
+@@ -575,7 +575,7 @@
+   const COLOR_PALETTE = ['#A493F7', '#10B981', '#3B82F6', '#EF4444', '#F59E0B', '#EC4899'];
+ 
+   return (
+-    <div id="mind-map-section" className="bg-[#0B0B0F] border border-zinc-800/80 rounded-2xl p-6 relative overflow-hidden backdrop-blur-xl flex flex-col h-[65vh] md:h-[800px]">
++    <div id="mind-map-section" className="bg-[#0B0B0F] border border-zinc-800/80 rounded-2xl p-6 relative overflow-hidden backdrop-blur-xl flex flex-col h-[90vh] md:h-[800px]">
+       
+       {/* Header Info */}
+       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 relative z-10 border-b border-zinc-800/50 pb-4">
+Only in ./ar_local/src: localClient.ts
+diff -ur --exclude=node_modules --exclude=.git ./src/main.tsx ./ar_local/src/main.tsx
+--- ./src/main.tsx	2026-07-06 12:03:36
++++ ./ar_local/src/main.tsx	2026-07-07 05:22:38
+@@ -1,15 +1,42 @@
+ import React from 'react';
+ import ReactDOM from 'react-dom/client';
++
++const originalStringify = JSON.stringify;
++JSON.stringify = function(obj, replacer, space) {
++  try {
++    return originalStringify.call(this, obj, replacer, space);
++  } catch (err: any) {
++    if (err && err.message && err.message.includes("cyclic")) {
++      const cache = new Set();
++      const safeReplacer = (key: string, value: any) => {
++        if (typeof value === 'object' && value !== null) {
++          if (cache.has(value)) {
++            return '[Circular]';
++          }
++          cache.add(value);
++        }
++        if (typeof replacer === 'function') {
++          return replacer.call(this, key, value);
++        }
++        if (Array.isArray(replacer) && replacer.length > 0) {
++          return replacer.includes(key) ? value : undefined;
++        }
++        return value;
++      };
++      try {
++        return originalStringify.call(this, obj, safeReplacer, space);
++      } catch (fallbackErr) {
++        console.error("Fallback stringify also failed:", fallbackErr);
++        return '{"error":"[Circular]"}';
++      }
++    }
++    throw err;
++  }
++};
++
+ import App from './App.tsx';
+ import './index.css';
+-import { Amplify } from 'aws-amplify';
+-// Import the brand-new outputs file generated by Gen 2
+-import outputs from '../amplify_outputs.json';
+-
+ import { AppProvider } from './AppContext.tsx';
+-
+-// Configure Amplify immediately before rendering anything else
+-Amplify.configure(outputs);
+ 
+ ReactDOM.createRoot(document.getElementById('root')!).render(
+   <React.StrictMode>

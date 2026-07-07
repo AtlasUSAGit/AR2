@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { LandingPageVersion, defaultLandingPageData } from './landingPageSchema';
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '../../../amplify/data/resource';
+import { generateClient } from '../../localClient';
 
-const client = generateClient<Schema>();
+const client = generateClient();
 
 // Robust deep merge to prevent old DB/localStorage schemas from causing render crashes
 function mergeLandingPageData(savedContent: any): LandingPageVersion['content'] {
