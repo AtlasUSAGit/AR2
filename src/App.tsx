@@ -51,7 +51,9 @@ import {
   Sun,
   Moon,
   Upload,
-  Trash2
+  Trash2,
+  Menu,
+  X
 } from 'lucide-react';
 
 const PAGE_SECTIONS: Record<string, string[]> = {
@@ -283,6 +285,7 @@ export default function App() {
   };
 
   const [activeTab, setActiveTab] = useState<'home' | 'mindmap' | 'kanban' | 'hub' | 'users' | 'logs' | 'audit-map' | 'minutes' | 'resources'>('home');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [scanLogs, setScanLogs] = useState<string[]>([]);
@@ -645,13 +648,22 @@ export default function App() {
               className="px-4 py-2 bg-zinc-900 border border-zinc-700 text-white font-sans text-xs font-bold rounded-xl hover:border-purple-500 hover:shadow-[0_0_15px_rgba(164,147,247,0.5)] active:scale-95 transition-all duration-300 cursor-pointer flex items-center gap-1.5"
             >
               <CheckCircle size={14} className="text-purple-400" />
-              <span>Toggle Edit Mode</span>
+              <span className="hidden sm:inline">Toggle Edit Mode</span>
+              <span className="sm:hidden">Edit</span>
+            </button>
+            
+            {/* Mobile Hamburger Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
         {/* SUB-HEADER NAVIGATION FOR STATIC PAGES AND ADMIN */}
-        <div className="border-t border-zinc-800/80 bg-zinc-950/50">
+        <div className="hidden md:block border-t border-zinc-800/80 bg-zinc-950/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs font-mono">
               {canReadTab('minutes') && (
@@ -695,6 +707,62 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* MOBILE DROPDOWN MENU */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-zinc-800 bg-zinc-950 absolute top-full left-0 w-full shadow-2xl flex flex-col p-4 gap-4 z-50 h-screen overflow-y-auto pb-32">
+            {canReadTab('home') && (
+              <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono uppercase tracking-wider ${activeTab === 'home' ? 'text-[#A493F7]' : 'text-zinc-400'}`}>
+                <Compass size={16} /> Daily Briefing
+              </button>
+            )}
+            {canReadTab('mindmap') && (
+              <button onClick={() => { setActiveTab('mindmap'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono uppercase tracking-wider ${activeTab === 'mindmap' ? 'text-[#A493F7]' : 'text-zinc-400'}`}>
+                <Workflow size={16} /> Mind Map Sandbox
+              </button>
+            )}
+            {canReadTab('kanban') && (
+              <button onClick={() => { setActiveTab('kanban'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono uppercase tracking-wider ${activeTab === 'kanban' ? 'text-[#A493F7]' : 'text-zinc-400'}`}>
+                <Layers size={16} /> Kanban
+              </button>
+            )}
+            {canReadTab('hub') && (
+              <button onClick={() => { setActiveTab('hub'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono uppercase tracking-wider ${activeTab === 'hub' ? 'text-[#A493F7]' : 'text-zinc-400'}`}>
+                <FileText size={16} /> Document Hub
+              </button>
+            )}
+            <div className="h-px bg-zinc-800 my-1"></div>
+            {canReadTab('minutes') && (
+              <button onClick={() => { setActiveTab('minutes'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono ${activeTab === 'minutes' ? 'text-[#A493F7]' : 'text-zinc-400'}`}>
+                Minutes
+              </button>
+            )}
+            {canReadTab('resources') && (
+              <button onClick={() => { setActiveTab('resources'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono ${activeTab === 'resources' ? 'text-[#A493F7]' : 'text-zinc-400'}`}>
+                Resources
+              </button>
+            )}
+            {canReadTab('users') && (
+              <button onClick={() => { setActiveTab('users'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono ${activeTab === 'users' ? 'text-emerald-400' : 'text-emerald-400/50'}`}>
+                <Users size={16} /> Users
+              </button>
+            )}
+            {canReadTab('logs') && (
+              <button onClick={() => { setActiveTab('logs'); setIsMobileMenuOpen(false); }} className={`flex items-center gap-2 text-sm font-mono ${activeTab === 'logs' ? 'text-indigo-400' : 'text-indigo-400/50'}`}>
+                <Shield size={16} /> Audit Log
+              </button>
+            )}
+            {currentUser.role === 'SysAdmin' && (
+              <button onClick={() => { setMaintenanceMode(!maintenanceMode); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-sm font-mono text-red-400/50 hover:text-red-400">
+                <Power size={16} /> Toggle Maintenance
+              </button>
+            )}
+            <div className="h-px bg-zinc-800 my-1"></div>
+            <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="flex items-center gap-2 text-sm font-mono text-zinc-500 hover:text-white">
+              Logout ({currentUser.username})
+            </button>
+          </div>
+        )}
       </header>
 
       {/* ==================== ACTIVE VIEW WORKSPACES ==================== */}

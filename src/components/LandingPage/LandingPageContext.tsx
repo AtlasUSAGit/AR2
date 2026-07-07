@@ -58,10 +58,32 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
           filter: { type: { eq: 'LandingPageVersions' } }
         });
         
+        let dbVersions: LandingPageVersion[] = [];
         if (elements && elements.length > 0) {
-          const parsedVersions = JSON.parse(elements[0].content as string) as LandingPageVersion[];
-          setVersions(parsedVersions);
-          const activeVersion = parsedVersions.find(v => v.isActive);
+          dbVersions = JSON.parse(elements[0].content as string) as LandingPageVersion[];
+        }
+
+        // HOTFIX MIGRATION: Recover local storage data that wasn't properly synced
+        const storedVersionsStr = localStorage.getItem('landingPageVersions');
+        if (storedVersionsStr) {
+          const storedVersions = JSON.parse(storedVersionsStr) as LandingPageVersion[];
+          
+          // If local storage has more versions, or if the DB only has the blank "Initial Version",
+          // the user's data is in local storage and needs to be rescued!
+          if (storedVersions.length > dbVersions.length || (dbVersions.length === 1 && dbVersions[0].name === 'Initial Version' && storedVersions.length >= 1 && storedVersions[0].name !== 'Initial Version')) {
+            setVersions(storedVersions);
+            const activeVersion = storedVersions.find(v => v.isActive);
+            if (activeVersion) setData(activeVersion.content);
+            
+            // Push the rescued data up to the DB
+            syncToDb(storedVersions);
+            return; // Migration complete, exit early
+          }
+        }
+        
+        if (dbVersions.length > 0) {
+          setVersions(dbVersions);
+          const activeVersion = dbVersions.find(v => v.isActive);
           if (activeVersion) {
             setData(activeVersion.content);
           }
@@ -76,6 +98,7 @@ export const LandingPageProvider = ({ children }: { children: ReactNode }) => {
           };
           setVersions([initialVersion]);
           syncToDb([initialVersion]);
+          localStorage.setItem('landingPageVersions', JSON.stringify([initialVersion]));
         }
       } catch (err) {
         console.error('Error fetching landing page versions', err);
