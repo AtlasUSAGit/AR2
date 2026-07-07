@@ -91,13 +91,13 @@ const TextNode = ({ data, selected }: any) => {
         {data.isEditing ? (
           <textarea
             autoFocus
-            className="w-full h-full bg-transparent resize-none outline-none font-mono text-sm"
+            className="w-full h-full bg-transparent resize-none outline-none font-mono text-sm whitespace-pre-wrap break-words"
             defaultValue={data.content}
             onBlur={(e) => data.onContentChange(data.id, e.target.value)}
           />
         ) : (
           <div
-            className="markdown-body text-sm prose prose-invert"
+            className="markdown-body text-sm prose prose-invert whitespace-pre-wrap break-words"
             onDoubleClick={() => data.onEdit(data.id)}
           >
             <Markdown>{data.content || '*Double click to edit text*'}</Markdown>
@@ -129,12 +129,12 @@ const NoteNode = ({ data, selected }: any) => {
           {data.isEditing ? (
             <textarea
               autoFocus
-              className="w-full h-full bg-transparent resize-none outline-none font-sans text-sm"
+              className="w-full h-full bg-transparent resize-none outline-none font-sans text-sm whitespace-pre-wrap break-words"
               defaultValue={data.content}
               onBlur={(e) => data.onContentChange(data.id, e.target.value)}
             />
           ) : (
-            <div className="h-full whitespace-pre-wrap cursor-text" onDoubleClick={() => data.onEdit(data.id)}>
+            <div className="h-full whitespace-pre-wrap break-words cursor-text" onDoubleClick={() => data.onEdit(data.id)}>
               {data.content || 'Double click to link/edit note content...'}
             </div>
           )}
@@ -675,7 +675,7 @@ function MindMapBuilder({ currentUser }: { currentUser?: User | null }) {
               return '#A493F7';
             }}
             maskColor="rgba(0,0,0,0.7)"
-            className="bg-black/80 border border-zinc-800"
+            className="hidden md:block bg-black/80 border border-zinc-800"
           />
 
           <Panel position="top-center" className="flex flex-col gap-2 bg-zinc-900/90 p-2 rounded-xl border border-zinc-800 backdrop-blur shadow-xl">

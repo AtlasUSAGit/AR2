@@ -92,7 +92,7 @@ const LandingPageViewContent = () => {
               arrayField="items" 
               index={index} 
               field="content" 
-              className="text-xl inline-block bg-black/50 p-2 border border-zinc-800"
+              className="text-xl inline-block bg-black/50 p-2 border border-zinc-800 max-w-[90vw] break-words whitespace-pre-wrap"
             />
           </div>
         ))}

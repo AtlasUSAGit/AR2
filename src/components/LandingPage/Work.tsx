@@ -61,23 +61,24 @@ const Card: React.FC<{ service: ServiceData; index: number }> = ({ service, inde
         </h4>
       </div>
 
-      <div className="flex-[0.7] md:flex-[0.8] flex flex-col justify-start items-start gap-7 md:gap-5 mt-6 md:mt-0">
-        <p className="text-2xl sm:text-3xl font-light leading-snug">
-          <EditableText section="work" arrayField="services" index={index} field="description" />
+      <div className="flex-[0.7] md:flex-[0.8] flex flex-col justify-start items-start gap-7 md:gap-5 mt-6 md:mt-0 min-w-0 w-full">
+        <p className="text-2xl sm:text-3xl font-light leading-snug w-full min-w-0 break-words">
+          <EditableText section="work" arrayField="services" index={index} field="description" className="w-full" />
         </p>
 
         <div className="flex justify-start flex-wrap gap-8 mt-8 md:mt-5 text-zinc-400 font-mono text-sm">
           {service.services.map((group, i) => (
             <ul key={i} className="space-y-2 mt-10">
               {group.map((item, j) => (
-                <li key={j} className="flex items-center">
+                <li key={j} className="flex items-start w-full min-w-0 break-words">
                   <EditableText 
                     section="work" 
                     arrayField="services" 
                     index={index} 
                     field="services" 
                     nestedIndices={[i, j]}
-                    renderBefore={<span className="w-1.5 h-1.5 bg-purple-500 rounded-full inline-block shrink-0 mr-2"></span>}
+                    className="flex-1 min-w-0"
+                    renderBefore={<span className="w-1.5 h-1.5 bg-purple-500 rounded-full inline-block shrink-0 mr-2 mt-1.5"></span>}
                   />
                 </li>
               ))}
