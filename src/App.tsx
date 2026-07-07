@@ -275,33 +275,14 @@ export default function App() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoggingIn(true);
-    
-    // Yield execution to allow React to update the login button state
-    await new Promise(resolve => setTimeout(resolve, 10));
-    
     const success = await login(username, password);
     if (success) {
       setLoginError('');
       // Skip the intro loading screen directly to the app
     } else {
       setLoginError('Invalid credentials');
-      setIsLoggingIn(false);
     }
   };
-
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [isAppReady, setIsAppReady] = useState(false);
-
-  useEffect(() => {
-    if (currentUser) {
-      // Delay mounting heavy components by 50ms so the shell renders instantly
-      const timer = setTimeout(() => setIsAppReady(true), 50);
-      return () => clearTimeout(timer);
-    } else {
-      setIsAppReady(false);
-    }
-  }, [currentUser]);
 
   const [activeTab, setActiveTab] = useState<'home' | 'mindmap' | 'kanban' | 'hub' | 'users' | 'logs' | 'audit-map' | 'minutes' | 'resources'>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -443,17 +424,9 @@ export default function App() {
             <button
               id="login-submit-button"
               type="submit"
-              disabled={isLoggingIn}
-              className="w-full py-3 bg-white text-black font-semibold text-sm rounded-lg hover:bg-zinc-200 transition-all cursor-pointer mt-1 disabled:opacity-70 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-white text-black font-semibold text-sm rounded-lg hover:bg-zinc-200 transition-all cursor-pointer mt-1"
             >
-              {isLoggingIn ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                  Authenticating...
-                </>
-              ) : (
-                'Login'
-              )}
+              Login
             </button>
           </form>
         </div>
@@ -479,7 +452,7 @@ export default function App() {
     <div className="min-h-screen bg-[#050507] text-white selection:bg-[#A493F7] selection:text-black font-sans relative">
 
       {/* High-end ambient micro-interactions, canvas network, custom cursor and glow tracking */}
-      {isAppReady && <AmbientEffects />}      {/* Cinematic Fullscreen Post-Login Video Introduction Overlay */}
+      <AmbientEffects />      {/* Cinematic Fullscreen Post-Login Video Introduction Overlay */}
       <AnimatePresence>
         {showVideoIntro && (
           <motion.div
@@ -795,19 +768,12 @@ export default function App() {
       {/* ==================== ACTIVE VIEW WORKSPACES ==================== */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 space-y-12">
 
-        {!isAppReady ? (
-          <div className="flex flex-col items-center justify-center h-[50vh] animate-pulse">
-            <div className="w-8 h-8 border-2 border-[#A493F7] border-t-transparent rounded-full animate-spin mb-4" />
-            <p className="text-[#A493F7] font-mono text-sm tracking-widest uppercase">Initializing Workspace...</p>
+        {/* TAB 1: COMMAND CENTER (LANDING PAGE VIEW) */}
+        {activeTab === 'home' && canReadTab('home') && (
+          <div className="animate-fadeIn -mx-4 sm:-mx-6 lg:-mx-8 -mt-10">
+            <LandingPageView />
           </div>
-        ) : (
-          <>
-            {/* TAB 1: COMMAND CENTER (LANDING PAGE VIEW) */}
-            {activeTab === 'home' && canReadTab('home') && (
-              <div className="animate-fadeIn -mx-4 sm:-mx-6 lg:-mx-8 -mt-10">
-                <LandingPageView />
-              </div>
-            )}
+        )}
 
         {/* TAB 2: INTERACTIVE MIND MAP BUILDER */}
         {activeTab === 'mindmap' && canReadTab('mindmap') && (
@@ -902,8 +868,7 @@ export default function App() {
         {activeTab === 'users' && canReadTab('users') && <UserManagement />}
         {activeTab === 'logs' && canReadTab('logs') && <ChangeLogs />}
         {activeTab === 'audit-map' && canReadTab('logs') && <AuditMap />}
-          </>
-        )}
+
       </main>
 
       {/* ==================== CYBER DIAGNOSTIC SCAN MODAL ==================== */}
