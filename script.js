@@ -323,10 +323,10 @@ window.addKanbanCard = function(colId, inputId) {
   newCard.draggable = true;
   newCard.ondragstart = window.drag;
   
-  newCard.innerHTML = \`
-    <div class="kanban-card-title">\${text}</div>
-    <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-\${cardCounter.toString().padStart(2, '0')}</span></div>
-  \`;
+  newCard.innerHTML = `
+    <div class="kanban-card-title">${text}</div>
+    <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-${cardCounter.toString().padStart(2, '0')}</span></div>
+  `;
   
   const col = document.getElementById(colId);
   const addWrap = col.querySelector('.add-card-wrap');
@@ -472,27 +472,27 @@ function updateMindmap() {
       .on('end', dragended));
 
   nodeEnter.append('xhtml:div')
-    .attr('class', d => \`mindmap-node-card \${d.phase || ''}\`)
+    .attr('class', d => `mindmap-node-card ${d.phase || ''}`)
     .html(d => {
       if (d.type === 'hyperlink') {
-        return \`
-          <input type="text" class="node-title" value="\${d.title}" placeholder="Title" />
+        return `
+          <input type="text" class="node-title" value="${d.title}" placeholder="Title" />
           <div class="node-url-wrap">
-            <input type="text" class="node-url" value="\${d.url || ''}" placeholder="URL" />
+            <input type="text" class="node-url" value="${d.url || ''}" placeholder="URL" />
             <button class="node-link-btn">Go</button>
           </div>
-        \`;
+        `;
       } else {
-        return \`
-          <input type="text" class="node-title" value="\${d.title}" placeholder="Title" style="margin-bottom: auto;" />
-          <div style="font-size: 0.65rem; color:#9ca3af; text-align:center;">[\${d.id}]</div>
-        \`;
+        return `
+          <input type="text" class="node-title" value="${d.title}" placeholder="Title" style="margin-bottom: auto;" />
+          <div style="font-size: 0.65rem; color:#9ca3af; text-align:center;">[${d.id}]</div>
+        `;
       }
     });
 
   const allNodes = nodeEnter.merge(node);
   
-  allNodes.select('div').attr('class', d => \`mindmap-node-card \${d.phase || ''}\`);
+  allNodes.select('div').attr('class', d => `mindmap-node-card ${d.phase || ''}`);
   
   // Hover Interactions for Lines
   allNodes.select('div')
