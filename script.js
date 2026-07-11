@@ -1,48 +1,193 @@
-// Navigation Logic
-function showPage(pageId) {
-  // Hide all pages
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/data';
+import outputs from './amplify_outputs.json';
+
+// Configure AWS Amplify
+Amplify.configure(outputs);
+const client = generateClient();
+
+// ==========================================
+// NAVIGATION & UI LOGIC
+// ==========================================
+window.showPage = function(pageId) {
   document.querySelectorAll('.page-container').forEach(page => {
     page.classList.remove('active');
   });
-  // Show target page
+  
   const target = document.getElementById('page-' + pageId);
   if (target) {
     target.classList.add('active');
+    
+    // Refresh ScrollTrigger if switching to home page
+    if (pageId === 'home') {
+      setTimeout(() => ScrollTrigger.refresh(), 100);
+    }
   }
 
-  // Update nav links
   document.querySelectorAll('.nav-link').forEach(link => {
     link.classList.remove('active');
   });
   
-  // Find the button that called this and set it active
-  const btn = Array.from(document.querySelectorAll('.nav-link')).find(b => b.textContent.toLowerCase().includes(pageId) || (pageId === 'hub' && b.textContent.includes('Hub')));
+  const btn = Array.from(document.querySelectorAll('.nav-link')).find(b => 
+    b.textContent.toLowerCase().includes(pageId) || 
+    (pageId === 'hub' && b.textContent.includes('Hub'))
+  );
   if (btn) btn.classList.add('active');
+};
+
+// ==========================================
+// AWS AMPLIFY - EDIT MODE & CLOUD SYNC
+// ==========================================
+let isEditMode = false;
+const HOMEPAGE_ID = 'home-page-content-v1'; // Unique identifier for our AppElement
+
+async function loadHomePageContent() {
+  try {
+    const { data: appElement } = await client.models.AppElement.get({ id: HOMEPAGE_ID });
+    if (appElement && appElement.content) {
+      // Overwrite the #page-home content with what was saved
+      document.getElementById('page-home').innerHTML = appElement.content;
+      initGsapAnimations(); // Re-init animations on newly loaded HTML
+    }
+  } catch (error) {
+    console.warn("Failed to load home page content from AWS, using defaults.", error);
+  }
 }
 
-// Kanban Drag and Drop Logic
-let draggedItem = null;
+window.toggleEditMode = async function() {
+  isEditMode = !isEditMode;
+  const editBtn = document.getElementById('btn-edit');
+  const editables = document.querySelectorAll('#page-home .editable');
 
-function drag(event) {
+  if (isEditMode) {
+    // Enable editing
+    editBtn.textContent = 'Save Home Page';
+    editBtn.style.background = 'var(--accent)';
+    editBtn.style.color = '#000';
+    editables.forEach(el => el.setAttribute('contenteditable', 'true'));
+  } else {
+    // Disable editing & SAVE to AWS
+    editBtn.textContent = 'Saving...';
+    editBtn.style.opacity = '0.5';
+    editables.forEach(el => el.setAttribute('contenteditable', 'false'));
+    
+    // Clean up GSAP injected inline styles before saving
+    // GSAP adds transform and opacity, we don't want to save those inline.
+    const clone = document.getElementById('page-home').cloneNode(true);
+    clone.querySelectorAll('.gsap-fade-up').forEach(el => el.removeAttribute('style'));
+
+    try {
+      const contentToSave = clone.innerHTML;
+      
+      // Attempt to get existing record
+      const { data: existing } = await client.models.AppElement.get({ id: HOMEPAGE_ID });
+      
+      if (existing) {
+        await client.models.AppElement.update({
+          id: HOMEPAGE_ID,
+          content: contentToSave
+        });
+      } else {
+        await client.models.AppElement.create({
+          id: HOMEPAGE_ID,
+          type: 'HomePageContent',
+          content: contentToSave,
+          position: 1
+        });
+      }
+      
+      // Success Notification
+      const status = document.getElementById('save-status');
+      status.style.display = 'inline';
+      setTimeout(() => status.style.display = 'none', 3000);
+      
+    } catch (err) {
+      console.error("Error saving to AWS Amplify:", err);
+      alert("Failed to save. Check console for details.");
+    } finally {
+      editBtn.textContent = 'Edit Home Page';
+      editBtn.style.background = 'transparent';
+      editBtn.style.color = '#fff';
+      editBtn.style.opacity = '1';
+    }
+  }
+};
+
+// ==========================================
+// GSAP SCROLL ANIMATIONS
+// ==========================================
+function initGsapAnimations() {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  
+  gsap.registerPlugin(ScrollTrigger);
+  
+  // Clear any old ScrollTriggers
+  ScrollTrigger.getAll().forEach(t => t.kill());
+
+  const elements = document.querySelectorAll('.gsap-fade-up');
+  elements.forEach((el, i) => {
+    gsap.fromTo(el, 
+      { opacity: 0, y: 50 }, 
+      {
+        opacity: 1, 
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%", // When the top of the element hits 85% of viewport
+          toggleActions: "play none none reverse"
+        }
+      }
+    );
+  });
+}
+
+// ==========================================
+// KANBAN LOGIC
+// ==========================================
+let draggedItem = null;
+let cardCounter = 5;
+
+window.drag = function(event) {
   draggedItem = event.target;
   event.dataTransfer.effectAllowed = 'move';
-}
+};
 
-document.querySelectorAll('.kanban-col').forEach(col => {
-  col.addEventListener('dragover', e => {
-    e.preventDefault(); // Necessary to allow dropping
-  });
+window.allowDrop = function(event) {
+  event.preventDefault(); // Necessary to allow dropping
+};
+
+window.drop = function(event) {
+  event.preventDefault();
+  // Ensure we append to the column, not onto another card
+  const column = event.target.closest('.kanban-col');
+  if (column && draggedItem) {
+    column.appendChild(draggedItem);
+    draggedItem = null;
+  }
+};
+
+window.addKanbanCard = function() {
+  const input = document.getElementById('kanban-new-task');
+  const text = input.value.trim();
+  if (!text) return;
   
-  col.addEventListener('drop', e => {
-    e.preventDefault();
-    if (draggedItem) {
-      col.appendChild(draggedItem);
-      draggedItem = null;
-    }
-  });
-});
+  const newCard = document.createElement('div');
+  newCard.className = 'kanban-card';
+  newCard.id = 'task' + (cardCounter++);
+  newCard.draggable = true;
+  newCard.ondragstart = window.drag;
+  newCard.textContent = text;
+  
+  document.getElementById('col-todo').appendChild(newCard);
+  input.value = '';
+};
 
-// Mind Map Logic (D3 Force-Directed Graph)
+
+// ==========================================
+// MIND MAP LOGIC (D3 Force-Directed Graph)
+// ==========================================
 let mindmapNodes = [
   { id: 'Root', group: 1 }
 ];
@@ -52,16 +197,20 @@ let simulation, svg, linkGroup, nodeGroup, labelsGroup;
 
 function initMindmap() {
   const container = document.getElementById('graph-container');
-  const width = container.clientWidth;
-  const height = container.clientHeight;
+  if(!container) return;
+
+  const width = container.clientWidth || 800;
+  const height = container.clientHeight || 600;
 
   svg = d3.select('#graph-svg')
-    .attr('width', width)
-    .attr('height', height);
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', [0, 0, width, height]);
     
-  svg.selectAll('*').remove(); // Clear on init
+  svg.selectAll('*').remove();
 
-  // Add a zoom behavior
+  const g = svg.append('g');
+
   const zoom = d3.zoom()
       .scaleExtent([0.1, 4])
       .on("zoom", (event) => {
@@ -69,29 +218,31 @@ function initMindmap() {
       });
   svg.call(zoom);
 
-  const g = svg.append('g');
-
   linkGroup = g.append('g').attr('class', 'links');
   nodeGroup = g.append('g').attr('class', 'nodes');
   labelsGroup = g.append('g').attr('class', 'labels');
 
   simulation = d3.forceSimulation()
-    .force('link', d3.forceLink().id(d => d.id).distance(100))
-    .force('charge', d3.forceManyBody().strength(-300))
+    .force('link', d3.forceLink().id(d => d.id).distance(120))
+    .force('charge', d3.forceManyBody().strength(-400))
     .force('center', d3.forceCenter(width / 2, height / 2));
 
   updateMindmap();
 }
 
 function updateMindmap() {
-  // Update links
+  // Safe mapping for links (D3 mutates the objects on ticks, so we ensure string keys)
   const link = linkGroup.selectAll('line')
-    .data(mindmapLinks, d => d.source.id + '-' + d.target.id);
+    .data(mindmapLinks, d => {
+      const s = typeof d.source === 'object' ? d.source.id : d.source;
+      const t = typeof d.target === 'object' ? d.target.id : d.target;
+      return s + '-' + t;
+    });
     
   link.exit().remove();
   
   const linkEnter = link.enter().append('line')
-    .attr('stroke', 'rgba(255,255,255,0.2)')
+    .attr('stroke', 'rgba(255,255,255,0.3)')
     .attr('stroke-width', 2);
     
   // Update nodes
@@ -102,7 +253,7 @@ function updateMindmap() {
   
   const nodeEnter = node.enter().append('circle')
     .attr('r', 20)
-    .attr('fill', '#A493F7')
+    .attr('fill', d => d.group === 1 ? '#ef4444' : '#A493F7')
     .attr('stroke', '#fff')
     .attr('stroke-width', 2)
     .call(d3.drag()
@@ -121,7 +272,8 @@ function updateMindmap() {
     .attr('font-size', 12)
     .attr('fill', '#fff')
     .attr('dx', 25)
-    .attr('dy', 4);
+    .attr('dy', 4)
+    .style('pointer-events', 'none');
 
   simulation.nodes(mindmapNodes).on('tick', ticked);
   simulation.force('link').links(mindmapLinks);
@@ -161,8 +313,7 @@ function dragended(event, d) {
   d.fy = null;
 }
 
-// UI Actions for Mind Map
-function addNode() {
+window.addNode = function() {
   const nameInput = document.getElementById('node-name');
   const parentInput = document.getElementById('node-parent');
   
@@ -177,7 +328,7 @@ function addNode() {
   if (parentId && mindmapNodes.find(n => n.id === parentId)) {
     mindmapLinks.push({ source: parentId, target: id });
   } else if (!parentId && mindmapNodes.length > 1) {
-    // Default attach to Root if no parent specified and it's not the first node
+    // Default attach to Root
     mindmapLinks.push({ source: 'Root', target: id });
   }
   
@@ -185,15 +336,25 @@ function addNode() {
   parentInput.value = '';
   
   updateMindmap();
-}
+};
 
-function clearMindmap() {
+window.clearMindmap = function() {
   mindmapNodes = [{ id: 'Root', group: 1 }];
   mindmapLinks = [];
   updateMindmap();
-}
+};
 
-// Init everything once DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+document.addEventListener('DOMContentLoaded', async () => {
+  // Load GSAP animations for hardcoded sections first
+  initGsapAnimations();
+  
+  // Try to overwrite with saved cloud content
+  await loadHomePageContent();
+
+  // Initialize the D3 mind map
   initMindmap();
 });
