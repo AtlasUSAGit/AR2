@@ -33,6 +33,19 @@ window.showPage = function(pageId) {
     (pageId === 'hub' && b.textContent.includes('Hub'))
   );
   if (btn) btn.classList.add('active');
+  
+  // Close mobile menu if it's open
+  const menuContainer = document.getElementById('nav-links-container');
+  if (menuContainer && menuContainer.classList.contains('open')) {
+    menuContainer.classList.remove('open');
+  }
+};
+
+window.toggleMobileMenu = function() {
+  const container = document.getElementById('nav-links-container');
+  if (container) {
+    container.classList.toggle('open');
+  }
 };
 
 // ==========================================
