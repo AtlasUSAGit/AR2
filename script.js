@@ -349,13 +349,8 @@ function updateKanbanCounts() {
 // ==========================================
 // MIND MAP LOGIC (D3 Force-Directed Graph)
 // ==========================================
-let mindmapNodes = [
-  { id: 'Root', title: 'Root Command', phase: 'active', type: 'text', url: '' },
-  { id: 'Sys1', title: 'AWS Core', phase: 'planning', type: 'hyperlink', url: 'https://aws.amazon.com' }
-];
-let mindmapLinks = [
-  { source: 'Root', target: 'Sys1' }
-];
+let mindmapNodes = [];
+let mindmapLinks = [];
 
 let simulation, svg, linkGroup, nodeGroup, drawingLine;
 const NODE_WIDTH = 140;
@@ -364,9 +359,42 @@ const NODE_HEIGHT = 100;
 let isDrawing = false;
 let drawSourceNode = null;
 
-function initMindmap() {
+async function loadCanvasData() {
+  try {
+    const res = await fetch('./mindmap.json');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.nodes) {
+        mindmapNodes = data.nodes.map(n => ({
+          id: String(n.id),
+          title: n.text ? n.text.replace(/\*\*/g, '') : 'Node',
+          phase: 'active',
+          type: 'text',
+          url: '',
+          x: n.x || 0,
+          y: n.y || 0
+        }));
+      }
+      if (data.edges) {
+        mindmapLinks = data.edges.map(e => ({
+          source: String(e.fromNode),
+          target: String(e.toNode)
+        }));
+      }
+    } else {
+      mindmapNodes = [{ id: 'Root', title: 'Root Command', phase: 'active', type: 'text', url: '', x: 0, y: 0 }];
+    }
+  } catch(e) {
+    console.error("Could not load mindmap.json", e);
+    if(mindmapNodes.length === 0) mindmapNodes = [{ id: 'Root', title: 'Root Command', phase: 'active', type: 'text', url: '', x: 0, y: 0 }];
+  }
+}
+
+async function initMindmap() {
   const container = document.getElementById('graph-container');
   if(!container) return;
+
+  await loadCanvasData();
 
   const width = container.clientWidth || 800;
   const height = container.clientHeight || 600;
@@ -374,7 +402,7 @@ function initMindmap() {
   svg = d3.select('#graph-svg')
     .attr('width', '100%')
     .attr('height', '100%')
-    .attr('viewBox', [0, 0, width, height]);
+    .attr('viewBox', [-1000, -1000, width * 2, height * 2]);
     
   svg.selectAll('*').remove();
 
@@ -386,6 +414,8 @@ function initMindmap() {
           g.attr("transform", event.transform);
       });
   svg.call(zoom);
+  // Auto zoom out slightly so we can see the imported canvas map
+  svg.call(zoom.transform, d3.zoomIdentity.translate(width/2, height/2).scale(0.5));
 
   linkGroup = g.append('g').attr('class', 'links');
   
@@ -396,10 +426,12 @@ function initMindmap() {
     
   nodeGroup = g.append('g').attr('class', 'nodes');
 
+  // Gentle simulation to prevent massive flashing/bouncing when importing large JSON
   simulation = d3.forceSimulation()
-    .force('link', d3.forceLink().id(d => d.id).distance(220))
-    .force('charge', d3.forceManyBody().strength(-800))
-    .force('center', d3.forceCenter(width / 2, height / 2));
+    .force('link', d3.forceLink().id(d => d.id).distance(220).strength(0.5))
+    .force('charge', d3.forceManyBody().strength(-150))
+    .force('collide', d3.forceCollide().radius(80).iterations(2))
+    .force('center', d3.forceCenter(0, 0).strength(0.01));
 
   // Global mousemove for drawing mode
   svg.on('mousemove', (event) => {
@@ -553,13 +585,14 @@ function updateMindmap() {
   simulation.alpha(1).restart();
 
   function ticked() {
-    linkEnter.merge(link)
+    // Select globally from linkGroup and nodeGroup to prevent stale closure bugs (flashing nodes)
+    linkGroup.selectAll('.graph-link')
       .attr('x1', d => d.source.x)
       .attr('y1', d => d.source.y)
       .attr('x2', d => d.target.x)
       .attr('y2', d => d.target.y);
 
-    allNodes
+    nodeGroup.selectAll('foreignObject')
       .attr('x', d => d.x - NODE_WIDTH/2)
       .attr('y', d => d.y - NODE_HEIGHT/2);
       

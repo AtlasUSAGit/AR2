@@ -14,12 +14,15 @@
 html { scroll-behavior: smooth; font-size: 16px; }
 
 /* CYBER BACKGROUNDS */
-body { 
-  font-family: var(--font-main); 
-  background-color: var(--bg-primary); 
-  color: #fff; 
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: #fff;
+  font-family: var(--font-main);
   min-height: 100vh;
   position: relative;
+  overflow-x: hidden;
 }
 
 /* Background Cyber Grid */
@@ -332,7 +335,6 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   position: relative;
   background: var(--bg-primary);
-  overflow: hidden;
   padding: 10vh 0;
 }
 
@@ -393,6 +395,28 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
   object-fit: cover;
   mix-blend-mode: screen;
+}
+
+.editable-bubble {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fahkwang', sans-serif;
+  font-size: clamp(1rem, 2vw, 2rem);
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(57,255,20,0.8);
+  background: radial-gradient(circle, rgba(57,255,20,0.1) 0%, rgba(0,0,0,0) 70%);
+  padding: 20px;
+  word-wrap: break-word;
+  outline: none;
+}
+.editable-bubble:empty:before {
+  content: "DATA NODE";
+  opacity: 0.5;
 }
 
 /* Arrange layer 1 (outermost/largest) */
