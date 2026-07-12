@@ -48,7 +48,7 @@
     <div class="nav-inner">
       <div class="nav-logo">
         <span>ATLAS USA</span>
-        <button id="mobile-menu-btn" onclick="window.toggleMobileMenu()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; display:none;">&#9776;</button>
+        <button id="mobile-menu-btn" class="mobile-only-btn" onclick="window.toggleMobileMenu()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&#9776;</button>
       </div>
       <div class="nav-links" id="nav-links-container">
         <button class="nav-link active" onclick="window.showPage('home')">Home</button>
@@ -57,8 +57,6 @@
         <button class="nav-link" onclick="window.showPage('hub')">Document Hub</button>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <button class="btn-primary" id="btn-add-section" onclick="window.addHomeSection()" style="display:none; box-shadow: 0 0 10px rgba(57,255,20,0.5); border-color:#39FF14; color:#39FF14;">+ Add Section</button>
-        <button class="btn-outline" id="btn-edit" onclick="window.toggleEditMode()">Edit</button>
         <span id="save-status" style="font-size:0.8rem; color: #10b981; display:none;">Saved!</span>
       </div>
     </div>
@@ -202,6 +200,11 @@
         </main>
       </div>
     </section>
+
+    <div style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 50px;">
+      <button class="btn-primary" id="btn-add-section" onclick="window.addHomeSection()" style="display:none; margin: 0 auto 20px auto; box-shadow: 0 0 10px rgba(57,255,20,0.5); border-color:#39FF14; color:#39FF14;">+ Add Section</button>
+      <button class="btn-outline" id="btn-edit" onclick="window.toggleEditMode()" style="padding: 15px 40px; font-size: 1.1rem;">Edit Home Page</button>
+    </div>
   </div>
 
   <!-- MIND MAP PAGE -->
@@ -297,29 +300,52 @@
 
   <!-- DOCUMENT HUB PAGE -->
   <div id="page-hub" class="page-container">
-    <h1 class="text-gradient">Document Enclave</h1>
-    <p style="color: #9ca3af; margin-bottom: 40px;">Central repository for all project documentation.</p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
+      <div>
+        <h1 style="font-family: 'Times New Roman', serif; color: #fff; margin: 0;">DOCUMENT ENCLAVE</h1>
+        <p style="color: #9ca3af; margin: 5px 0 0 0;">Verify compliance and track required project documentation.</p>
+      </div>
+      <div>
+        <input type="file" id="hub-file-upload" style="display:none;" onchange="window.handleFileUpload(event)">
+        <button class="btn-primary" style="font-family: 'Times New Roman', serif; border-color: #fff; color: #fff; box-shadow: none;" onclick="document.getElementById('hub-file-upload').click()">
+          + Upload File
+        </button>
+      </div>
+    </div>
     
-    <div class="doc-grid">
-      <div class="doc-card tilt-element">
-        <div class="doc-icon">📄</div>
-        <div class="doc-title">White Paper</div>
-        <div class="doc-desc">Subject matter inside contract. High clearance required.</div>
+    <div class="hub-tabs">
+      <button class="hub-tab active" onclick="window.switchHubTab('repo')">Document Repository</button>
+      <button class="hub-tab" onclick="window.switchHubTab('board')">Dynamic Operations Board</button>
+    </div>
+
+    <!-- REPOSITORY TAB -->
+    <div id="hub-tab-repo" class="hub-tab-content active">
+      <div class="completion-banner">
+        <div class="circular-chart-container">
+          <svg viewBox="0 0 36 36" class="circular-chart">
+            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <path class="circle" id="hub-completion-circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            <text x="18" y="20.35" class="percentage" id="hub-completion-text">0%</text>
+          </svg>
+        </div>
+        <div class="completion-details">
+          <h2 style="font-family: 'Times New Roman', serif; margin: 0; color: #fff;">Readiness Status</h2>
+          <p style="color: #9ca3af; margin-top: 5px;" id="hub-completion-desc">0 out of X documents verified</p>
+        </div>
       </div>
-      <div class="doc-card tilt-element">
-        <div class="doc-icon">📑</div>
-        <div class="doc-title">Articles of Incorporation</div>
-        <div class="doc-desc">Legal corporate foundation and shareholder breakdown.</div>
+
+      <div class="doc-grid" id="hub-doc-grid">
+        <div style="color: #9ca3af; font-family: 'Times New Roman', serif;">Loading repository files...</div>
       </div>
-      <div class="doc-card tilt-element">
-        <div class="doc-icon">📊</div>
-        <div class="doc-title">Capabilities Statement</div>
-        <div class="doc-desc">Core competency summary for federal procurement.</div>
+    </div>
+
+    <!-- OPERATIONS BOARD TAB -->
+    <div id="hub-tab-board" class="hub-tab-content" style="display:none;">
+      <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+        <button class="btn-primary" onclick="window.addHubChecklist()" style="font-family: 'Times New Roman', serif; border-color: #fff; color: #fff;">+ New Checklist</button>
       </div>
-      <div class="doc-card tilt-element">
-        <div class="doc-icon">🔐</div>
-        <div class="doc-title">Security Posture</div>
-        <div class="doc-desc">SOC2 compliance reports and penetration test results.</div>
+      <div class="checklist-grid" id="hub-checklist-grid">
+        <div style="color: #9ca3af; font-family: 'Times New Roman', serif;">Loading operations board...</div>
       </div>
     </div>
   </div>

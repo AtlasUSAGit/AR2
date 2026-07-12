@@ -43,6 +43,20 @@ const schema = a.schema({
     allow.publicApiKey(),
     allow.authenticated()
   ]),
+  HubDocumentStatus: a.model({
+    docId: a.string(),
+    status: a.string()
+  }).authorization(allow => [
+    allow.publicApiKey(),
+    allow.authenticated()
+  ]),
+  HubChecklist: a.model({
+    title: a.string(),
+    items: a.string()
+  }).authorization(allow => [
+    allow.publicApiKey(),
+    allow.authenticated()
+  ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

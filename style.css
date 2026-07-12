@@ -257,16 +257,15 @@ h1, h2, h3, h4, h5, h6 {
 .add-card-wrap button { background: var(--accent); color: #000; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
 /* DOCUMENT HUB */
-.doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; perspective: 1000px; }
-.doc-card {
-  background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 24px;
-  transition: transform 0.1s ease, border-color 0.3s, box-shadow 0.3s; transform-style: preserve-3d;
-  display: flex; flex-direction: column;
+.doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px; }
+.doc-card { 
+  background: #000; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 24px; 
+  cursor: pointer; transition: all 0.3s; 
 }
-.doc-card:hover { border-color: var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px rgba(57,255,20,0.2); }
-.doc-icon { font-size: 2.5rem; margin-bottom: 16px; transform: translateZ(20px); display: inline-block; }
-.doc-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 10px; transform: translateZ(25px); color: #fff; }
-.doc-desc { color: #9ca3af; font-size: 0.9rem; line-height: 1.5; transform: translateZ(15px); }
+.doc-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); border-color: #fff; }
+.doc-icon { font-size: 2rem; margin-bottom: 15px; }
+.doc-title { font-weight: bold; font-family: 'Times New Roman', serif; margin-bottom: 8px; font-size: 1.1rem; }
+.doc-desc { font-size: 0.85rem; color: #9ca3af; font-family: 'Times New Roman', serif; }
 
 /* MIND MAP D3 CUSTOM STYLES */
 .mindmap-controls {
@@ -334,6 +333,40 @@ h1, h2, h3, h4, h5, h6 {
   .nav-links { display: none; flex-direction: column; width: 100%; margin-top: 10px; background: rgba(0,0,0,0.9); padding: 10px; border-radius: 8px; border: 1px solid rgba(57, 255, 20, 0.2); }
   .nav-links.open { display: flex; }
   .nav-link { text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+}
+
+/* MOBILE RESPONSIVE TWEAKS */
+.mobile-only-btn { display: none !important; }
+
+@media (max-width: 768px) {
+  /* Navbar */
+  .mobile-only-btn { display: block !important; }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(2, 2, 4, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--accent);
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+  .nav-links.open { display: flex; }
+  .nav-link { padding: 15px; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .nav-link:last-child { border-bottom: none; }
+  
+  /* Playbook Layered Grid Animation */
+  .grid {
+    transform: rotateX(60deg) rotateZ(-45deg) scale(0.6);
+  }
+  
+  /* Make 3D grid layout more responsive */
+  .grid > div {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* PLAYBOOK LAYERED SCROLL ANIMATION */
@@ -485,3 +518,42 @@ h1, h2, h3, h4, h5, h6 {
 .content-wrap section {
   height: 300vh;
 }
+
+/* Remove gradient from Kanban & Mind Map */
+#page-mindmap h1, #page-kanban h1 {
+  background: none;
+  -webkit-text-fill-color: #fff;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+/* HUB TABS */
+.hub-tabs { display: flex; gap: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.hub-tab { background: none; border: none; color: #9ca3af; font-family: 'Times New Roman', serif; font-size: 1.1rem; padding: 10px 0; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.3s; }
+.hub-tab:hover { color: #fff; }
+.hub-tab.active { color: #fff; border-bottom-color: #fff; font-weight: bold; }
+
+/* HUB COMPLETION BANNER */
+.completion-banner { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+.circular-chart-container { width: 80px; height: 80px; }
+.circular-chart { display: block; margin: 0 auto; max-width: 100%; max-height: 250px; }
+.circle-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 3.8; }
+.circle { fill: none; stroke-width: 2.8; stroke-linecap: round; transition: stroke-dasharray 1s ease-out; stroke: #10b981; }
+.percentage { fill: #fff; font-family: sans-serif; font-size: 0.5em; text-anchor: middle; font-weight: bold; }
+
+/* HUB STATUS DROPDOWN */
+.doc-status { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; margin-top: 15px; outline: none; }
+.doc-status option { background: #000; color: #fff; }
+
+/* HUB CHECKLISTS */
+.checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+.checklist-card { background: #000; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 20px; }
+.checklist-title { background: transparent; border: none; color: #fff; font-family: 'Times New Roman', serif; font-size: 1.2rem; font-weight: bold; outline: none; width: 100%; margin-bottom: 15px; border-bottom: 1px solid transparent; transition: border 0.3s; }
+.checklist-title:focus { border-bottom: 1px solid rgba(255,255,255,0.5); }
+.checklist-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.checklist-item input[type="checkbox"] { cursor: pointer; }
+.checklist-item input[type="text"] { background: transparent; border: none; color: #d1d5db; outline: none; flex: 1; border-bottom: 1px solid transparent; }
+.checklist-item input[type="text"]:focus { border-bottom: 1px solid rgba(255,255,255,0.3); }
+.checklist-item.checked input[type="text"] { text-decoration: line-through; color: #6b7280; }
+.btn-text { background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 0.85rem; padding: 0; }
+.btn-text:hover { color: #fff; }

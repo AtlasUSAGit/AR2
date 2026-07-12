@@ -1,12 +1,14 @@
 import { defineStorage } from '@aws-amplify/backend';
 
 export const storage = defineStorage({
-    name: 'ukbfcCoreMedia',
+    name: 'AUSABucket',
     access: (allow) => ({
-        // Allows anyone (guests and users) to play intro assets
         'intros/*': [
             allow.guest.to(['read']),
             allow.authenticated.to(['read', 'write', 'delete'])
+        ],
+        'documents/*': [
+            allow.guest.to(['read', 'write', 'delete'])
         ]
     })
 });

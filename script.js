@@ -1,5 +1,6 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
+import { uploadData, list, getUrl, remove } from 'aws-amplify/storage';
 import outputs from './amplify_outputs.json';
 import canvasData from './mindmap.json';
 
@@ -116,6 +117,31 @@ function setupHomeEditableSync() {
         }
       } catch(e) { console.error('Save failed', e); }
     });
+    
+    // Shift+Enter behavior
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.shiftKey) {
+        e.preventDefault();
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        
+        const span = document.createElement('span');
+        span.style.fontSize = '0.7em';
+        span.style.opacity = '0.8';
+        span.innerHTML = '<br>&#8203;'; // zero width space to force cursor inside
+        
+        range.deleteContents();
+        range.insertNode(span);
+        
+        // Move cursor inside the span
+        range.setStart(span, 1);
+        range.setEnd(span, 1);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else if (e.key === 'Enter') {
+        // Blur and save on normal enter if it's a single-line title (optional, leaving default behavior for multiline paragraphs)
+      }
+    });
   });
 }
 
@@ -148,21 +174,24 @@ window.toggleEditMode = async function() {
     clone.querySelectorAll('.gsap-random').forEach(el => el.removeAttribute('style'));
 
     try {
-      const contentToSave = clone.innerHTML;
-      const { data: existing } = await client.models.AppElement.get({ id: HOMEPAGE_ID });
-      
-      if (existing) {
-        await client.models.AppElement.update({
-          id: HOMEPAGE_ID,
-          content: contentToSave
-        });
-      } else {
-        await client.models.AppElement.create({
-          id: HOMEPAGE_ID,
-          type: 'HomePageContent',
-          content: contentToSave,
-          position: 1
-        });
+      // Save all editable elements individually
+      const editableElements = document.querySelectorAll('#page-home .editable');
+      for (let i = 0; i < editableElements.length; i++) {
+        const el = editableElements[i];
+        if (!el.id) el.id = 'editable-item-' + i;
+        
+        const { data: existing } = await client.models.homeElement.get({ id: el.id });
+        if (existing) {
+          await client.models.homeElement.update({
+            id: el.id,
+            content: el.innerHTML
+          });
+        } else {
+          await client.models.homeElement.create({
+            id: el.id,
+            content: el.innerHTML
+          });
+        }
       }
       
       const status = document.getElementById('save-status');
@@ -918,6 +947,266 @@ async function initApp() {
   updateKanbanCounts();
   await loadKanbanQuestionsAWS();
   await loadKanbanCardsAWS();
+  await loadHubFiles();
+  await loadHubChecklists();
+}
+
+// ==========================================
+// DOCUMENT HUB (AWS STORAGE LOGIC)
+// ==========================================
+
+const PRELOADED_DOCUMENTS = [
+  { id: 'doc-1', name: 'White Paper', subtitle: 'Subject matter inside contract' },
+  { id: 'doc-2', name: 'Articles of Incorporation', subtitle: 'Legal Corporate Foundation' },
+  { id: 'doc-3', name: 'SBE Certification', subtitle: 'Socioeconomic Status Validation' },
+  { id: 'doc-4', name: 'Capabilities Statement', subtitle: 'Core Competency Summary' },
+  { id: 'doc-5', name: 'Capabilities Brief', subtitle: 'Interactive Presentation Material' },
+  { id: 'doc-6', name: 'Unsolicited Proposal Volume 1', subtitle: 'Technical & Management Volume' },
+  { id: 'doc-7', name: 'Unsolicited Proposal Volume 2', subtitle: 'Cost & Pricing Volume' },
+];
+
+window.switchHubTab = function(tabId) {
+  document.querySelectorAll('.hub-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.hub-tab-content').forEach(c => c.style.display = 'none');
+  event.target.classList.add('active');
+  document.getElementById(`hub-tab-${tabId}`).style.display = 'block';
+};
+
+window.handleFileUpload = async function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const btn = event.target.nextElementSibling;
+    if (btn) btn.textContent = 'Uploading...';
+    
+    await uploadData({
+      path: `documents/${file.name}`,
+      data: file
+    });
+    
+    if (btn) btn.textContent = '+ Upload File';
+    await loadHubFiles();
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    alert('Upload failed: ' + error.message);
+  }
+};
+
+window.downloadHubFile = async function(filePath, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  try {
+    const urlResult = await getUrl({ path: filePath });
+    if (urlResult && urlResult.url) {
+      window.open(urlResult.url.toString(), '_blank');
+    }
+  } catch (error) {
+    console.error('Error getting download url:', error);
+    alert('Download failed: ' + error.message);
+  }
+};
+
+window.deleteHubFile = async function(filePath, e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  if (!confirm('Are you sure you want to delete this file?')) return;
+  try {
+    await remove({ path: filePath });
+    await loadHubFiles();
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    alert('Delete failed: ' + error.message);
+  }
+};
+
+window.updateDocStatus = async function(docId, status) {
+  try {
+    const { data: existing } = await client.models.HubDocumentStatus.list({ filter: { docId: { eq: docId } } });
+    if (existing && existing.length > 0) {
+      await client.models.HubDocumentStatus.update({ id: existing[0].id, docId, status });
+    } else {
+      await client.models.HubDocumentStatus.create({ docId, status });
+    }
+    await loadHubFiles(); // Recalculate chart
+  } catch(e) { console.error('Failed to update status', e); }
+};
+
+async function loadHubFiles() {
+  const grid = document.getElementById('hub-doc-grid');
+  if (!grid) return;
+  
+  try {
+    const [storageResult, { data: statusesData }] = await Promise.all([
+      list({ path: 'documents/' }),
+      client.models.HubDocumentStatus.list()
+    ]);
+    
+    const statuses = {};
+    statusesData.forEach(s => statuses[s.docId] = s.status);
+    
+    // Combine preloaded docs and uploaded files
+    const uploadedFiles = storageResult.items || [];
+    
+    grid.innerHTML = '';
+    let readyCount = 0;
+    
+    // Render preloaded docs
+    PRELOADED_DOCUMENTS.forEach(doc => {
+      const status = statuses[doc.id] || 'Missing';
+      if (status === 'Verified/Ready') readyCount++;
+      
+      const fileMatch = uploadedFiles.find(f => f.path.includes(doc.name)); // Rough match
+      
+      const card = document.createElement('div');
+      card.className = 'doc-card tilt-element';
+      
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div class="doc-icon">📄</div>
+          ${fileMatch ? `<button onclick="window.deleteHubFile('${fileMatch.path}', event)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>` : ''}
+        </div>
+        <div class="doc-title">${doc.name}</div>
+        <div class="doc-desc">${doc.subtitle}</div>
+        <select class="doc-status" onchange="window.updateDocStatus('${doc.id}', this.value)" style="border-color: ${status === 'Verified/Ready' ? '#10b981' : (status === 'Missing' ? '#ef4444' : '#f59e0b')}">
+          <option value="Missing" ${status === 'Missing' ? 'selected' : ''}>Missing</option>
+          <option value="In Progress" ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+          <option value="Verified/Ready" ${status === 'Verified/Ready' ? 'selected' : ''}>Verified/Ready</option>
+        </select>
+        ${fileMatch ? `<div style="margin-top: 15px;"><button class="btn-text" style="color:#A493F7;" onclick="window.downloadHubFile('${fileMatch.path}', event)">Download File</button></div>` : ''}
+      `;
+      grid.appendChild(card);
+    });
+    
+    // Render any uploaded files that aren't preloaded
+    uploadedFiles.forEach(item => {
+      if (PRELOADED_DOCUMENTS.some(d => item.path.includes(d.name))) return; // skip if matched above
+      
+      const fileName = item.path.replace('documents/', '');
+      const docId = 'uploaded-' + fileName;
+      const status = statuses[docId] || 'In Progress';
+      if (status === 'Verified/Ready') readyCount++;
+      
+      const card = document.createElement('div');
+      card.className = 'doc-card tilt-element';
+      
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div class="doc-icon">📎</div>
+          <button onclick="window.deleteHubFile('${item.path}', event)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
+        </div>
+        <div class="doc-title">${fileName}</div>
+        <div class="doc-desc">User Uploaded File</div>
+        <select class="doc-status" onchange="window.updateDocStatus('${docId}', this.value)" style="border-color: ${status === 'Verified/Ready' ? '#10b981' : (status === 'Missing' ? '#ef4444' : '#f59e0b')}">
+          <option value="Missing" ${status === 'Missing' ? 'selected' : ''}>Missing</option>
+          <option value="In Progress" ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+          <option value="Verified/Ready" ${status === 'Verified/Ready' ? 'selected' : ''}>Verified/Ready</option>
+        </select>
+        <div style="margin-top: 15px;"><button class="btn-text" style="color:#A493F7;" onclick="window.downloadHubFile('${item.path}', event)">Download File</button></div>
+      `;
+      grid.appendChild(card);
+    });
+
+    // Update Circle Chart
+    const totalDocs = PRELOADED_DOCUMENTS.length + uploadedFiles.filter(item => !PRELOADED_DOCUMENTS.some(d => item.path.includes(d.name))).length;
+    const percentage = Math.round((readyCount / (totalDocs || 1)) * 100);
+    
+    document.getElementById('hub-completion-circle').setAttribute('stroke-dasharray', `${percentage}, 100`);
+    document.getElementById('hub-completion-text').textContent = `${percentage}%`;
+    document.getElementById('hub-completion-desc').textContent = `${readyCount} out of ${totalDocs} documents verified`;
+
+  } catch (error) {
+    console.error('Error listing hub files:', error);
+    grid.innerHTML = '<div style="color: #ef4444; font-family: \'Times New Roman\', serif;">Failed to load documents.</div>';
+  }
+}
+
+// ==========================================
+// OPERATIONS BOARD LOGIC
+// ==========================================
+window.addHubChecklist = async function() {
+  try {
+    await client.models.HubChecklist.create({
+      title: 'New Operations Checklist',
+      items: JSON.stringify([])
+    });
+    await loadHubChecklists();
+  } catch(e) { console.error('Error adding checklist', e); }
+};
+
+window.deleteHubChecklist = async function(id) {
+  if (!confirm('Delete this checklist entirely?')) return;
+  try {
+    await client.models.HubChecklist.delete({ id });
+    await loadHubChecklists();
+  } catch(e) { console.error('Error deleting checklist', e); }
+};
+
+window.updateHubChecklist = async function(id, title, items) {
+  try {
+    await client.models.HubChecklist.update({
+      id, title, items: JSON.stringify(items)
+    });
+  } catch(e) { console.error('Error updating checklist', e); }
+};
+
+async function loadHubChecklists() {
+  const grid = document.getElementById('hub-checklist-grid');
+  if (!grid) return;
+  try {
+    const { data: checklists } = await client.models.HubChecklist.list();
+    grid.innerHTML = '';
+    
+    if (checklists.length === 0) {
+      grid.innerHTML = '<div style="color: #9ca3af; font-family: \'Times New Roman\', serif;">No checklists available. Create one to get started.</div>';
+      return;
+    }
+    
+    checklists.forEach(list => {
+      let items = [];
+      try { items = JSON.parse(list.items); } catch(e) {}
+      
+      const card = document.createElement('div');
+      card.className = 'checklist-card';
+      
+      let itemsHtml = items.map((item, i) => `
+        <div class="checklist-item ${item.checked ? 'checked' : ''}">
+          <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="
+            const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
+            newItems[${i}].checked = this.checked;
+            window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(loadHubChecklists);
+          ">
+          <input type="text" value="${item.text}" onblur="
+            const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
+            newItems[${i}].text = this.value;
+            window.updateHubChecklist('${list.id}', '${list.title}', newItems);
+          ">
+          <button class="btn-text" style="color: #ef4444;" onclick="
+            const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
+            newItems.splice(${i}, 1);
+            window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(loadHubChecklists);
+          ">&times;</button>
+        </div>
+      `).join('');
+      
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <input type="text" class="checklist-title" value="${list.title}" onblur="window.updateHubChecklist('${list.id}', this.value, JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}')))">
+          <button onclick="window.deleteHubChecklist('${list.id}')" style="background:none; border:none; color:#ef4444; font-size:1.2rem; cursor:pointer;">&times;</button>
+        </div>
+        <div style="margin-bottom: 15px;">${itemsHtml}</div>
+        <button class="btn-text" style="color: #A493F7;" onclick="
+          const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
+          newItems.push({ text: 'New Task', checked: false });
+          window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(loadHubChecklists);
+        ">+ Add Item</button>
+      `;
+      
+      grid.appendChild(card);
+    });
+    
+  } catch(e) {
+    console.error('Error loading checklists', e);
+    grid.innerHTML = '<div style="color: #ef4444; font-family: \'Times New Roman\', serif;">Failed to load operations board.</div>';
+  }
 }
 
 if (document.readyState === 'loading') {
