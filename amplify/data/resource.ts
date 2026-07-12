@@ -60,7 +60,7 @@ const schema = a.schema({
   }).authorization(allow => [
     allow.publicApiKey(),
     allow.authenticated()
-  }),
+  ]),
   AppUser: a.model({
     username: a.string().required(),
     passwordHash: a.string().required(),
