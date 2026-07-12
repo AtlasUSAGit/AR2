@@ -70,7 +70,7 @@
     <!-- Hero Section -->
     <section id="home-hero" class="scroll-section gsap-random">
       <div class="hero-content" style="max-width: 900px; margin: 0 auto; text-align: center;">
-        <h1 class="hero-title editable text-gradient">ATLAS USA</h1>
+        <h1 class="hero-title editable" style="color: #fff;">ATLAS USA</h1>
         <p class="hero-tagline editable">Secure Cloud-Native Command Center</p>
         <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
           <button class="btn-primary" onclick="window.showPage('mindmap')">Initialize Mind Map</button>
@@ -90,23 +90,38 @@
         <div class="glow-grid">
           <div class="glow-card gsap-random">
             <div class="glow-card-content">
-              <div class="glow-card-icon">⚡</div>
+              <div class="glow-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              </div>
               <h3 class="glow-card-title editable">Real-Time Sync</h3>
               <p class="glow-card-text editable">Connected to AWS Amplify, all changes stream globally across your organization instantly.</p>
             </div>
           </div>
           <div class="glow-card gsap-random">
             <div class="glow-card-content">
-              <div class="glow-card-icon">🧠</div>
+              <div class="glow-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+              </div>
               <h3 class="glow-card-title editable">D3 Physics Engine</h3>
               <p class="glow-card-text editable">Force-directed mind mapping with embedded HTML nodes and data flow visualization.</p>
             </div>
           </div>
           <div class="glow-card gsap-random">
             <div class="glow-card-content">
-              <div class="glow-card-icon">🛡️</div>
+              <div class="glow-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              </div>
               <h3 class="glow-card-title editable">Secure Enclave</h3>
               <p class="glow-card-text editable">Military-grade document storage and organization via the integrated Document Hub.</p>
+            </div>
+          </div>
+          <div class="glow-card gsap-random">
+            <div class="glow-card-content">
+              <div class="glow-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              </div>
+              <h3 class="glow-card-title editable">Automated Deployment</h3>
+              <p class="glow-card-text editable">Continuous integration pipeline powering instant container scaling and redundancy.</p>
             </div>
           </div>
         </div>
@@ -122,30 +137,30 @@
         </p>
         
         <div class="stuck-grid">
-          <div class="grid-item gsap-random">oklch()</div>
-          <div class="grid-item gsap-random">scroll()</div>
-          <div class="grid-item gsap-random">text-box-trim</div>
-          <div class="grid-item gsap-random">pow()</div>
-          <div class="grid-item gsap-random">@property</div>
-          <div class="grid-item gsap-random">top-layer</div>
-          <div class="grid-item gsap-random">@view-transition</div>
-          <div class="grid-item gsap-random">var()</div>
-          <div class="grid-item gsap-random">clamp()</div>
-          <div class="grid-item gsap-random">view()</div>
-          <div class="grid-item special gsap-random"><b>CSS</b></div>
-          <div class="grid-item gsap-random">@layer</div>
-          <div class="grid-item gsap-random">@swash</div>
-          <div class="grid-item gsap-random">subgrid</div>
-          <div class="grid-item gsap-random">in oklab</div>
-          <div class="grid-item gsap-random">:popover-open</div>
-          <div class="grid-item gsap-random">abs()</div>
-          <div class="grid-item gsap-random">sin()</div>
-          <div class="grid-item gsap-random">:has()</div>
-          <div class="grid-item gsap-random">::marker</div>
-          <div class="grid-item gsap-random">1cap</div>
-          <div class="grid-item gsap-random">scrollbar-color</div>
-          <div class="grid-item gsap-random">scroll-timeline</div>
-          <div class="grid-item gsap-random">view-timeline</div>
+          <div class="grid-item editable gsap-random">oklch()</div>
+          <div class="grid-item editable gsap-random">scroll()</div>
+          <div class="grid-item editable gsap-random">text-box-trim</div>
+          <div class="grid-item editable gsap-random">pow()</div>
+          <div class="grid-item editable gsap-random">@property</div>
+          <div class="grid-item editable gsap-random">top-layer</div>
+          <div class="grid-item editable gsap-random">@view-transition</div>
+          <div class="grid-item editable gsap-random">var()</div>
+          <div class="grid-item editable gsap-random">clamp()</div>
+          <div class="grid-item editable gsap-random">view()</div>
+          <div class="grid-item editable special gsap-random"><b>CSS</b></div>
+          <div class="grid-item editable gsap-random">@layer</div>
+          <div class="grid-item editable gsap-random">@swash</div>
+          <div class="grid-item editable gsap-random">subgrid</div>
+          <div class="grid-item editable gsap-random">in oklab</div>
+          <div class="grid-item editable gsap-random">:popover-open</div>
+          <div class="grid-item editable gsap-random">abs()</div>
+          <div class="grid-item editable gsap-random">sin()</div>
+          <div class="grid-item editable gsap-random">:has()</div>
+          <div class="grid-item editable gsap-random">::marker</div>
+          <div class="grid-item editable gsap-random">1cap</div>
+          <div class="grid-item editable gsap-random">scrollbar-color</div>
+          <div class="grid-item editable gsap-random">scroll-timeline</div>
+          <div class="grid-item editable gsap-random">view-timeline</div>
         </div>
       </div>
     </section>
@@ -177,8 +192,6 @@
                   <div><div class="editable-bubble editable" contenteditable="true">PROXY</div></div>
                 </div>
                 <div class="layer layer-3">
-                  <div><div class="editable-bubble editable" contenteditable="true">AUTH</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">SYNC</div></div>
                 </div>
                 <div class="scaler">
                   <div class="editable-bubble editable" contenteditable="true" style="border-radius: 50%; font-size: 3rem;">CORE</div>
@@ -186,9 +199,7 @@
               </div>
             </div>
           </section>
-        </main>
-      </div>
-    </section>
+
 
   </div>
 
@@ -212,6 +223,7 @@
         <option value="submitted">Submitted (Purple)</option>
       </select>
       <button onclick="window.addNode()">Spawn Node</button>
+      <button id="save-cloud-btn" onclick="window.saveMindmapToAWS()" style="background: rgba(57,255,20,0.2); border: 1px solid #39ff14; color: #39ff14;">Save to Cloud</button>
       <button onclick="window.clearMindmap()" style="background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #ef4444;">Clear Map</button>
       
       <span class="draw-mode-status">Draw Mode: Hold Shift</span>
@@ -228,6 +240,14 @@
     <p style="color: #9ca3af; margin-bottom: 30px;">Drag and drop task management. Hover over columns and cards.</p>
     
     <div class="kanban-board">
+      <div class="kanban-col" id="col-questions" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
+        <h3 data-count="0">Questions</h3>
+        <div class="add-card-wrap">
+          <input type="text" id="kanban-new-quest" placeholder="New question...">
+          <button onclick="window.addKanbanCard('col-questions', 'kanban-new-quest')">+</button>
+        </div>
+      </div>
+      
       <div class="kanban-col" id="col-todo" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
         <h3 data-count="2">To Do</h3>
         <div class="kanban-card tilt-element" draggable="true" ondragstart="window.drag(event)" id="task1">

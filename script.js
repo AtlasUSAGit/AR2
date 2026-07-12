@@ -1,6 +1,7 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
 import outputs from './amplify_outputs.json';
+import canvasData from './mindmap.json';
 
 // Configure AWS Amplify
 Amplify.configure(outputs);
@@ -310,32 +311,92 @@ window.drop = function(event) {
   }
 };
 
-window.addKanbanCard = function(colId, inputId) {
+window.addKanbanCard = function(colId, inputId, existingData = null) {
   const input = document.getElementById(inputId);
-  if (!input) return;
+  if (!input && !existingData) return;
   
-  const text = input.value.trim();
+  const text = existingData ? existingData.question : input.value.trim();
   if (!text) return;
   
   const newCard = document.createElement('div');
   newCard.className = 'kanban-card tilt-element';
-  newCard.id = 'task' + (cardCounter++);
+  newCard.id = existingData ? existingData.id : 'task' + (cardCounter++);
   newCard.draggable = true;
   newCard.ondragstart = window.drag;
   
-  newCard.innerHTML = `
-    <div class="kanban-card-title">${text}</div>
-    <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-${cardCounter.toString().padStart(2, '0')}</span></div>
-  `;
+  if (colId === 'col-questions') {
+    const opts = existingData && existingData.answers ? JSON.parse(existingData.answers) : { a: false, b: false, otherCheck: false, otherText: '' };
+    newCard.innerHTML = `
+      <div class="kanban-card-title">${text}</div>
+      <div style="margin-top: 10px; font-size: 0.8rem;" class="kanban-poll-container">
+        <label style="display: block; margin-bottom: 5px;"><input type="checkbox" name="a" ${opts.a ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> Option A</label>
+        <label style="display: block; margin-bottom: 5px;"><input type="checkbox" name="b" ${opts.b ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> Option B</label>
+        <div style="display: flex; gap: 5px; margin-top: 5px;">
+          <input type="checkbox" name="otherCheck" ${opts.otherCheck ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')">
+          <input type="text" name="otherText" placeholder="Other..." value="${opts.otherText || ''}" onblur="window.saveKanbanPoll('${newCard.id}')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 100%; font-size: 0.75rem; padding: 2px;">
+        </div>
+      </div>
+    `;
+    if (!existingData) {
+      window.createKanbanPollAWS(newCard.id, text);
+    }
+  } else {
+    newCard.innerHTML = `
+      <div class="kanban-card-title">${text}</div>
+      <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-${cardCounter.toString().padStart(2, '0')}</span></div>
+    `;
+  }
   
   const col = document.getElementById(colId);
   const addWrap = col.querySelector('.add-card-wrap');
   col.insertBefore(newCard, addWrap);
   
-  input.value = '';
+  if (input) input.value = '';
   updateKanbanCounts();
-  init3DTilt(); // Initialize tilt on new card
+  init3DTilt();
 };
+
+window.createKanbanPollAWS = async function(id, question) {
+  try {
+    await client.models.KanbanQuestion.create({
+      id: id,
+      question: question,
+      answers: JSON.stringify({ a: false, b: false, otherCheck: false, otherText: '' })
+    });
+  } catch(e) { console.error('Failed to save poll to AWS', e); }
+};
+
+window.saveKanbanPoll = async function(cardId) {
+  const card = document.getElementById(cardId);
+  if(!card) return;
+  const state = {
+    a: card.querySelector('input[name="a"]').checked,
+    b: card.querySelector('input[name="b"]').checked,
+    otherCheck: card.querySelector('input[name="otherCheck"]').checked,
+    otherText: card.querySelector('input[name="otherText"]').value
+  };
+  try {
+    await client.models.KanbanQuestion.update({
+      id: cardId,
+      answers: JSON.stringify(state)
+    });
+  } catch(e) { console.error('Failed to update poll in AWS', e); }
+};
+
+async function loadKanbanQuestionsAWS() {
+  try {
+    const { data: questions } = await client.models.KanbanQuestion.list();
+    if (questions) {
+      questions.forEach(q => {
+        if(!document.getElementById(q.id)) {
+          window.addKanbanCard('col-questions', null, q);
+        }
+      });
+    }
+  } catch (e) {
+    console.error("Failed to load Kanban questions", e);
+  }
+}
 
 function updateKanbanCounts() {
   document.querySelectorAll('.kanban-col').forEach(col => {
@@ -361,40 +422,113 @@ let drawSourceNode = null;
 
 async function loadCanvasData() {
   try {
-    const res = await fetch('./mindmap.json');
-    if (res.ok) {
-      const data = await res.json();
-      if (data.nodes) {
-        mindmapNodes = data.nodes.map(n => ({
-          id: String(n.id),
-          title: n.text ? n.text.replace(/\*\*/g, '') : 'Node',
-          phase: 'active',
-          type: 'text',
-          url: '',
-          x: n.x || 0,
-          y: n.y || 0
-        }));
-      }
-      if (data.edges) {
-        mindmapLinks = data.edges.map(e => ({
+    const data = canvasData;
+    const ids = new Set();
+
+    if (data.nodes) {
+      mindmapNodes = data.nodes
+        .filter(n => {
+          if (ids.has(String(n.id))) return false;
+          ids.add(String(n.id));
+          return true;
+        })
+        .map(n => {
+          let nodeColor = null;
+          if (n.color) {
+            if (n.color.startsWith('#')) nodeColor = n.color;
+            else if (n.color === "1") nodeColor = "#ff0a0a"; // red
+            else if (n.color === "2") nodeColor = "#ff8c00"; // orange
+            else if (n.color === "3") nodeColor = "#ffe000"; // yellow
+            else if (n.color === "4") nodeColor = "#39ff14"; // green
+            else if (n.color === "5") nodeColor = "#00ffff"; // cyan
+            else if (n.color === "6") nodeColor = "#b026ff"; // purple
+          }
+          return {
+            id: String(n.id),
+            title: n.text ? n.text.replace(/\*\*/g, '') : 'Node',
+            phase: 'active',
+            type: 'text',
+            url: '',
+            x: Number(n.x) || 0,
+            y: Number(n.y) || 0,
+            fx: Number(n.x) || 0,
+            fy: Number(n.y) || 0,
+            color: nodeColor
+          };
+        });
+    }
+    if (data.edges) {
+      mindmapLinks = data.edges
+        .filter(e => ids.has(String(e.fromNode)) && ids.has(String(e.toNode)))
+        .map(e => ({
           source: String(e.fromNode),
           target: String(e.toNode)
         }));
-      }
-    } else {
+    }
+
+    if (mindmapNodes.length === 0) {
       mindmapNodes = [{ id: 'Root', title: 'Root Command', phase: 'active', type: 'text', url: '', x: 0, y: 0 }];
     }
   } catch(e) {
-    console.error("Could not load mindmap.json", e);
+    console.error("Could not load mindmap JSON mapping", e);
     if(mindmapNodes.length === 0) mindmapNodes = [{ id: 'Root', title: 'Root Command', phase: 'active', type: 'text', url: '', x: 0, y: 0 }];
   }
 }
+
+async function loadMindmapFromAWS() {
+  try {
+    const { data: mindmaps } = await client.models.Mindmap.list();
+    if (mindmaps && mindmaps.length > 0) {
+      const saved = mindmaps[0];
+      mindmapNodes = JSON.parse(saved.nodes);
+      mindmapLinks = JSON.parse(saved.edges);
+      return;
+    }
+  } catch(e) {
+    console.error("Could not load mindmap from AWS, falling back to JSON", e);
+  }
+  await loadCanvasData();
+}
+
+window.saveMindmapToAWS = async function() {
+  try {
+    const btn = document.getElementById('save-cloud-btn');
+    if (btn) btn.textContent = 'Saving...';
+    
+    const safeEdges = mindmapLinks.map(l => ({
+      source: typeof l.source === 'object' ? l.source.id : l.source,
+      target: typeof l.target === 'object' ? l.target.id : l.target
+    }));
+    
+    const { data: mindmaps } = await client.models.Mindmap.list();
+    if (mindmaps && mindmaps.length > 0) {
+      await client.models.Mindmap.update({
+        id: mindmaps[0].id,
+        nodes: JSON.stringify(mindmapNodes),
+        edges: JSON.stringify(safeEdges)
+      });
+    } else {
+      await client.models.Mindmap.create({
+        name: "Global Mindmap",
+        nodes: JSON.stringify(mindmapNodes),
+        edges: JSON.stringify(safeEdges)
+      });
+    }
+    
+    if (btn) btn.textContent = 'Saved!';
+    setTimeout(() => { if (btn) btn.textContent = 'Save to Cloud'; }, 2000);
+  } catch (e) {
+    console.error("Failed to save mindmap to AWS", e);
+    const btn = document.getElementById('save-cloud-btn');
+    if (btn) btn.textContent = 'Error';
+  }
+};
 
 async function initMindmap() {
   const container = document.getElementById('graph-container');
   if(!container) return;
 
-  await loadCanvasData();
+  await loadMindmapFromAWS();
 
   const width = container.clientWidth || 800;
   const height = container.clientHeight || 600;
@@ -524,7 +658,11 @@ function updateMindmap() {
 
   const allNodes = nodeEnter.merge(node);
   
-  allNodes.select('div').attr('class', d => `mindmap-node-card ${d.phase || ''}`);
+  // Apply colors dynamically
+  allNodes.select('div')
+    .attr('class', d => `mindmap-node-card ${d.phase || ''}`)
+    .style('border-top', d => d.color ? `4px solid ${d.color}` : null)
+    .style('box-shadow', d => d.color ? `0 0 15px ${d.color}40, inset 0 0 10px ${d.color}20` : null);
   
   // Hover Interactions for Lines
   allNodes.select('div')
@@ -618,8 +756,7 @@ function dragged(event, d) {
 
 function dragended(event, d) {
   if (!event.active) simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
+  // Do NOT release fx and fy, to keep nodes perfectly stationary where dropped
 }
 
 window.addNode = function() {
@@ -641,10 +778,52 @@ window.addNode = function() {
 };
 
 window.clearMindmap = function() {
-  mindmapNodes = [{ id: 'Root', title: 'Root Command', phase: 'active', type: 'text', url: '' }];
+  mindmapNodes = [{ id: 'Root', title: 'Root Command', phase: 'active', type: 'text', url: '', x: 0, y: 0, fx: 0, fy: 0 }];
   mindmapLinks = [];
   updateMindmap();
+  simulation.alpha(1).restart();
 };
+
+// ==========================================
+// CONTENT EDITABLE ENHANCEMENTS
+// ==========================================
+document.addEventListener('keydown', (e) => {
+  if (e.target.isContentEditable && e.key === 'Enter' && e.shiftKey) {
+    e.preventDefault();
+    // Insert line break and a smaller font span
+    const html = '<br><span style="font-size: 0.6em; font-weight: normal; opacity: 0.85;">&#8203;</span>';
+    document.execCommand('insertHTML', false, html);
+  }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.isContentEditable) {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+    const range = selection.getRangeAt(0);
+    const node = range.startContainer;
+    
+    // Auto-format "- " or "* " to a bullet point
+    if (node.nodeType === 3) {
+      const offset = range.startOffset;
+      const text = node.textContent;
+      
+      if (offset >= 2) {
+        const lastTwo = text.substring(offset - 2, offset);
+        if (lastTwo === '- ' || lastTwo === '* ') {
+          node.textContent = text.substring(0, offset - 2) + '• ' + text.substring(offset);
+          
+          // Restore caret
+          const newRange = document.createRange();
+          newRange.setStart(node, offset - 2 + 2);
+          newRange.setEnd(node, offset - 2 + 2);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    }
+  }
+});
 
 
 // ==========================================
@@ -656,4 +835,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   initMindmap();
   init3DTilt();
   updateKanbanCounts();
+  await loadKanbanQuestionsAWS();
 });

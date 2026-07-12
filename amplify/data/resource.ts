@@ -11,6 +11,22 @@ const schema = a.schema({
     allow.publicApiKey(),
     allow.authenticated()
   ]),
+  Mindmap: a.model({
+    name: a.string(),
+    nodes: a.string(),
+    edges: a.string()
+  }).authorization(allow => [
+    allow.publicApiKey(),
+    allow.authenticated()
+  ]),
+  KanbanQuestion: a.model({
+    question: a.string(),
+    options: a.string(),
+    answers: a.string()
+  }).authorization(allow => [
+    allow.publicApiKey(),
+    allow.authenticated()
+  ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
