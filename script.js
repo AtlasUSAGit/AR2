@@ -6,6 +6,9 @@ import canvasData from './mindmap.json';
 // Configure AWS Amplify
 Amplify.configure(outputs);
 const client = generateClient();
+console.log("AMPLIFY OUTPUTS:", outputs);
+console.log("CLIENT:", client);
+console.log("CLIENT.MODELS:", client.models);
 
 // ==========================================
 // NAVIGATION & UI LOGIC
@@ -302,15 +305,15 @@ window.drop = async function(ev) {
     // Broadcast drop to AWS
     try {
       if (draggedItem.id) {
-        const { data: existing } = await client.models.KanbanCard.get({ id: draggedItem.id });
+        const { data: existing } = await client.models.kanbanCard.get({ id: draggedItem.id });
         if (existing) {
-          await client.models.KanbanCard.update({
+          await client.models.kanbanCard.update({
             id: draggedItem.id,
             colId: ev.target.id
           });
         } else {
           // If it's a hardcoded HTML card being dragged for the first time
-          await client.models.KanbanCard.create({
+          await client.models.kanbanCard.create({
             id: draggedItem.id,
             colId: ev.target.id,
             title: draggedItem.querySelector('.kanban-card-title')?.innerText || "Task",
@@ -378,7 +381,7 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
 
 window.createKanbanPollAWS = async function(id, question) {
   try {
-    await client.models.KanbanQuestion.create({
+    await client.models.kanbanQuestion.create({
       id: id,
       question: question,
       answers: JSON.stringify({ a: false, b: false, otherCheck: false, otherText: '' })
@@ -388,7 +391,7 @@ window.createKanbanPollAWS = async function(id, question) {
 
 window.createKanbanCardAWS = async function(id, colId, text) {
   try {
-    await client.models.KanbanCard.create({
+    await client.models.kanbanCard.create({
       id: id,
       colId: colId,
       title: text,
@@ -408,7 +411,7 @@ window.saveKanbanPoll = async function(cardId) {
     otherText: card.querySelector('input[name="otherText"]').value
   };
   try {
-    await client.models.KanbanQuestion.update({
+    await client.models.kanbanQuestion.update({
       id: cardId,
       answers: JSON.stringify(state)
     });
@@ -417,7 +420,7 @@ window.saveKanbanPoll = async function(cardId) {
 
 async function loadKanbanQuestionsAWS() {
   try {
-    const { data: questions } = await client.models.KanbanQuestion.list();
+    const { data: questions } = await client.models.kanbanQuestion.list();
     if (questions) {
       questions.forEach(q => {
         if(!document.getElementById(q.id)) {
@@ -430,7 +433,7 @@ async function loadKanbanQuestionsAWS() {
 
 async function loadKanbanCardsAWS() {
   try {
-    const { data: cards } = await client.models.KanbanCard.list();
+    const { data: cards } = await client.models.kanbanCard.list();
     if (cards) {
       cards.forEach(c => {
         if(!document.getElementById(c.id)) {
@@ -520,7 +523,7 @@ async function loadCanvasData() {
 
 async function loadMindmapFromAWS() {
   try {
-    const { data: mindmaps } = await client.models.Mindmap.list();
+    const { data: mindmaps } = await client.models.mindmap.list();
     if (mindmaps && mindmaps.length > 0) {
       const saved = mindmaps[0];
       mindmapNodes = JSON.parse(saved.nodes);
@@ -543,15 +546,15 @@ window.saveMindmapToAWS = async function() {
       target: typeof l.target === 'object' ? l.target.id : l.target
     }));
     
-    const { data: mindmaps } = await client.models.Mindmap.list();
+    const { data: mindmaps } = await client.models.mindmap.list();
     if (mindmaps && mindmaps.length > 0) {
-      await client.models.Mindmap.update({
+      await client.models.mindmap.update({
         id: mindmaps[0].id,
         nodes: JSON.stringify(mindmapNodes),
         edges: JSON.stringify(safeEdges)
       });
     } else {
-      await client.models.Mindmap.create({
+      await client.models.mindmap.create({
         name: "Global Mindmap",
         nodes: JSON.stringify(mindmapNodes),
         edges: JSON.stringify(safeEdges)
@@ -883,17 +886,17 @@ async function initLiveSync() {
     
     el.addEventListener('blur', async () => {
       try {
-        const { data: existing } = await client.models.HomeElement.get({ id: el.id });
+        const { data: existing } = await client.models.homeElement.get({ id: el.id });
         if (existing) {
-          await client.models.HomeElement.update({ id: el.id, content: el.innerHTML });
+          await client.models.homeElement.update({ id: el.id, content: el.innerHTML });
         } else {
-          await client.models.HomeElement.create({ id: el.id, content: el.innerHTML });
+          await client.models.homeElement.create({ id: el.id, content: el.innerHTML });
         }
       } catch(e) { console.error('Save failed', e); }
     });
   });
 
-  client.models.HomeElement.observeQuery().subscribe({
+  client.models.homeElement.observeQuery().subscribe({
     next: ({ items }) => {
       items.forEach(item => {
         const el = document.getElementById(item.id);
@@ -905,7 +908,7 @@ async function initLiveSync() {
   });
 
   // 2. Mindmap Live Sync
-  client.models.Mindmap.observeQuery().subscribe({
+  client.models.mindmap.observeQuery().subscribe({
     next: ({ items }) => {
       if (items.length > 0) {
         const saved = items[0];
@@ -920,7 +923,7 @@ async function initLiveSync() {
   });
 
   // 3. Kanban Questions Live Sync
-  client.models.KanbanQuestion.observeQuery().subscribe({
+  client.models.kanbanQuestion.observeQuery().subscribe({
     next: ({ items }) => {
       items.forEach(q => {
         let card = document.getElementById(q.id);
@@ -945,7 +948,7 @@ async function initLiveSync() {
   });
   
   // 4. Kanban Card Layout Sync
-  client.models.KanbanCard.observeQuery().subscribe({
+  client.models.kanbanCard.observeQuery().subscribe({
     next: ({ items }) => {
       items.forEach(cardData => {
         let card = document.getElementById(cardData.id);
