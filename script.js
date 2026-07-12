@@ -61,6 +61,11 @@ function completeLogin() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app-wrapper').style.display = 'block';
   
+  // Reinitialize animations now that the wrapper has dimensions
+  if (typeof initGsapAnimations === 'function') {
+    initGsapAnimations();
+  }
+
   // Show admin panel if admin
   if (window.currentUser && window.currentUser.role === 'admin') {
     document.getElementById('admin-panel').style.display = 'block';
