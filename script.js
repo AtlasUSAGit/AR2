@@ -1,12 +1,112 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, list, getUrl, remove } from 'aws-amplify/storage';
+import { uploadData, remove, list } from 'aws-amplify/storage';
+import * as d3 from 'd3';
 import outputs from './amplify_outputs.json';
 import canvasData from './mindmap.json';
 
-// Configure AWS Amplify
-Amplify.configure(outputs);
 const client = generateClient();
+window.currentUser = null;
+
+// ==========================================
+// Authentication System
+// ==========================================
+async function hashPassword(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.prototype.map.call(new Uint8Array(buf), x=>(('00'+x.toString(16)).slice(-2))).join('');
+}
+
+window.handleLogin = async function() {
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value.trim();
+  const err = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  if (!u || !p) { err.style.display = 'block'; err.textContent = 'Please enter username and password'; return; }
+  
+  btn.textContent = 'Authenticating...';
+  err.style.display = 'none';
+
+  try {
+    const { data: users } = await client.models.AppUser.list({ filter: { username: { eq: u } } });
+    const hashed = await hashPassword(p);
+
+    if (users.length === 0) {
+      if (u === 'Admin' && p === '12345') {
+        // Bootstrap Admin
+        const admin = await client.models.AppUser.create({ username: 'Admin', passwordHash: hashed, role: 'admin' });
+        window.currentUser = admin.data;
+        completeLogin();
+        return;
+      }
+      err.style.display = 'block'; err.textContent = 'Invalid credentials';
+      btn.textContent = 'Initialize Session';
+      return;
+    }
+
+    if (users[0].passwordHash === hashed) {
+      window.currentUser = users[0];
+      completeLogin();
+    } else {
+      err.style.display = 'block'; err.textContent = 'Invalid credentials';
+      btn.textContent = 'Initialize Session';
+    }
+  } catch(e) {
+    console.error('Login error', e);
+    err.style.display = 'block'; err.textContent = 'Connection error. Please try again.';
+    btn.textContent = 'Initialize Session';
+  }
+};
+
+function completeLogin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-wrapper').style.display = 'block';
+  
+  // Show admin panel if admin
+  if (window.currentUser && window.currentUser.role === 'admin') {
+    document.getElementById('admin-panel').style.display = 'block';
+  }
+}
+
+window.adminAddUser = async function() {
+  const u = document.getElementById('admin-new-username').value.trim();
+  const p = document.getElementById('admin-new-password').value.trim();
+  const msg = document.getElementById('admin-add-msg');
+  if (!u || !p) return;
+  try {
+    const { data: existing } = await client.models.AppUser.list({ filter: { username: { eq: u } } });
+    if (existing.length > 0) {
+      msg.textContent = 'User already exists'; msg.style.color = '#ef4444'; return;
+    }
+    const hashed = await hashPassword(p);
+    await client.models.AppUser.create({ username: u, passwordHash: hashed, role: 'user' });
+    msg.textContent = 'User created successfully!'; msg.style.color = '#10b981';
+    document.getElementById('admin-new-username').value = '';
+    document.getElementById('admin-new-password').value = '';
+  } catch(e) { console.error('Add user error', e); msg.textContent = 'Error adding user'; msg.style.color = '#ef4444'; }
+};
+
+window.adminResetPassword = async function() {
+  const u = document.getElementById('admin-reset-username').value.trim();
+  const p = document.getElementById('admin-reset-password').value.trim();
+  const msg = document.getElementById('admin-reset-msg');
+  if (!u || !p) return;
+  try {
+    const { data: existing } = await client.models.AppUser.list({ filter: { username: { eq: u } } });
+    if (existing.length === 0) {
+      msg.textContent = 'User not found'; msg.style.color = '#ef4444'; return;
+    }
+    const hashed = await hashPassword(p);
+    await client.models.AppUser.update({ id: existing[0].id, passwordHash: hashed });
+    msg.textContent = 'Password reset successfully!'; msg.style.color = '#10b981';
+    document.getElementById('admin-reset-username').value = '';
+    document.getElementById('admin-reset-password').value = '';
+  } catch(e) { console.error('Reset pwd error', e); msg.textContent = 'Error resetting password'; msg.style.color = '#ef4444'; }
+};
+
+// ==========================================
+// Configure AWS Amplify
+// ==========================================
+Amplify.configure(outputs);
 console.log("AMPLIFY OUTPUTS:", outputs);
 console.log("CLIENT:", client);
 console.log("CLIENT.MODELS:", client.models);
@@ -396,7 +496,10 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
   if (colId === 'col-questions') {
     const opts = existingData && existingData.answers ? JSON.parse(existingData.answers) : { a: false, aText: 'Option A', b: false, bText: 'Option B', otherCheck: false, otherText: '' };
     newCard.innerHTML = `
-      <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, true)">${text}</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, true)">${text}</div>
+        <button onclick="window.deleteKanbanCard('${newCard.id}', true)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
+      </div>
       <div style="margin-top: 10px; font-size: 0.8rem;" class="kanban-poll-container">
         <label style="display: flex; margin-bottom: 5px; gap: 5px; align-items: center;">
           <input type="checkbox" name="a" ${opts.a ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> 
@@ -417,7 +520,10 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
     }
   } else {
     newCard.innerHTML = `
-      <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, false)">${text}</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, false)">${text}</div>
+        <button onclick="window.deleteKanbanCard('${newCard.id}', false)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
+      </div>
       <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-${cardCounter.toString().padStart(2, '0')}</span></div>
     `;
     if (!existingData) {
@@ -483,6 +589,20 @@ window.saveKanbanTitle = async function(cardId, newTitle, isQuestion) {
       await client.models.kanbanCard.update({ id: cardId, title: newTitle });
     }
   } catch(e) { console.error('Failed to update title in AWS', e); }
+};
+
+window.deleteKanbanCard = async function(cardId, isQuestion) {
+  if (!confirm('Delete this card?')) return;
+  const card = document.getElementById(cardId);
+  if (card) card.remove();
+  updateKanbanCounts();
+  try {
+    if (isQuestion) {
+      await client.models.kanbanQuestion.delete({ id: cardId });
+    } else {
+      await client.models.kanbanCard.delete({ id: cardId });
+    }
+  } catch(e) { console.error('Failed to delete card', e); }
 };
 
 async function loadKanbanQuestionsAWS() {
@@ -1035,7 +1155,7 @@ window.deleteHubFile = async function(filePath, e) {
   }
 };
 
-window.updateDocStatus = async function(docId, status, customTitle, customSubtitle) {
+window.updateDocStatus = async function(docId, status, customTitle, customSubtitle, filePath, isDeleted = undefined) {
   try {
     const { data: existing } = await client.models.HubDocumentStatus.list({ filter: { docId: { eq: docId } } });
     if (existing && existing.length > 0) {
@@ -1044,17 +1164,21 @@ window.updateDocStatus = async function(docId, status, customTitle, customSubtit
         docId, 
         status: status || existing[0].status,
         customTitle: customTitle || existing[0].customTitle,
-        customSubtitle: customSubtitle || existing[0].customSubtitle
+        customSubtitle: customSubtitle || existing[0].customSubtitle,
+        filePath: filePath || existing[0].filePath,
+        isDeleted: isDeleted !== undefined ? isDeleted : existing[0].isDeleted
       });
     } else {
       await client.models.HubDocumentStatus.create({ 
         docId, 
         status: status || 'Missing', 
         customTitle, 
-        customSubtitle 
+        customSubtitle,
+        filePath,
+        isDeleted: isDeleted || false
       });
     }
-    if(status) await loadHubFiles(); // Recalculate chart if status changed
+    if(status || isDeleted !== undefined) await loadHubFiles(); // Recalculate chart
   } catch(e) { console.error('Failed to update status', e); }
 };
 
@@ -1065,13 +1189,14 @@ window.handleCardFileUpload = async function(docId, event) {
     const btn = event.target.nextElementSibling;
     if (btn) btn.textContent = 'Uploading...';
     
+    const newPath = `documents/${docId}_${file.name}`;
     await uploadData({
-      path: `documents/${file.name}`,
+      path: newPath,
       data: file
     });
     
-    // Automatically set status to Verified/Ready
-    await window.updateDocStatus(docId, 'Verified/Ready');
+    // Automatically set status to Verified/Ready and save filePath
+    await window.updateDocStatus(docId, 'Verified/Ready', null, null, newPath);
   } catch (error) {
     console.error('Error uploading file:', error);
     alert('Upload failed: ' + error.message);
@@ -1097,17 +1222,39 @@ async function loadHubFiles() {
     grid.innerHTML = '';
     let readyCount = 0;
     
+    const EMBLEMS = [
+      `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #ef4444;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #a855f7;"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #f59e0b;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #10b981;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`
+    ];
+
     const renderCard = (docId, defaultName, defaultSubtitle, status, fileMatch, isPreloaded) => {
-      const customTitle = statusesData.find(s => s.docId === docId)?.customTitle || defaultName;
-      const customSubtitle = statusesData.find(s => s.docId === docId)?.customSubtitle || defaultSubtitle;
+      const docData = statusesData.find(s => s.docId === docId);
+      if (docData && docData.isDeleted) return; // Hide deleted cards
+      
+      const customTitle = docData?.customTitle || defaultName;
+      const customSubtitle = docData?.customSubtitle || defaultSubtitle;
+      
+      // Use explicit filePath if saved, otherwise use rough filename match
+      const explicitPath = docData?.filePath;
+      if (explicitPath && uploadedFiles.find(f => f.path === explicitPath)) {
+        fileMatch = { path: explicitPath };
+      }
+      
+      // Determine emblem deterministically by docId length/chars
+      const emblemIndex = docId.split('').reduce((a, b) => a + b.charCodeAt(0), 0) % EMBLEMS.length;
+      const emblem = EMBLEMS[emblemIndex];
       
       const card = document.createElement('div');
       card.className = 'doc-card tilt-element';
       
       card.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <div class="doc-icon">${isPreloaded ? '📄' : '📎'}</div>
-          ${fileMatch ? `<button onclick="window.deleteHubFile('${fileMatch.path}', event)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>` : ''}
+          <div class="doc-icon">${emblem}</div>
+          <button onclick="${isPreloaded ? `window.updateDocStatus('${docId}', null, null, null, null, true)` : `window.deleteHubFile('${fileMatch ? fileMatch.path : ''}', event)`}" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;" title="Delete Card">&times;</button>
         </div>
         <div class="doc-title" contenteditable="true" onblur="window.updateDocStatus('${docId}', null, this.innerText, null)">${customTitle}</div>
         <div class="doc-desc" contenteditable="true" onblur="window.updateDocStatus('${docId}', null, null, this.innerText)">${customSubtitle}</div>
@@ -1135,9 +1282,10 @@ async function loadHubFiles() {
       renderCard(doc.id, doc.name, doc.subtitle, status, fileMatch, true);
     });
     
-    // Render any uploaded files that aren't preloaded
+    // Render any uploaded files that aren't preloaded OR mapped to a specific card's explicit filePath
     uploadedFiles.forEach(item => {
-      if (PRELOADED_DOCUMENTS.some(d => item.path.includes(d.name))) return; // skip if matched above
+      if (PRELOADED_DOCUMENTS.some(d => item.path.includes(d.name))) return; // skip if rough matched
+      if (statusesData.some(d => d.filePath === item.path)) return; // skip if explicitly attached to a card
       
       const fileName = item.path.replace('documents/', '');
       const docId = 'uploaded-' + fileName;

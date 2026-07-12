@@ -47,7 +47,9 @@ const schema = a.schema({
     docId: a.string(),
     status: a.string(),
     customTitle: a.string(),
-    customSubtitle: a.string()
+    customSubtitle: a.string(),
+    isDeleted: a.boolean(),
+    filePath: a.string()
   }).authorization(allow => [
     allow.publicApiKey(),
     allow.authenticated()

@@ -34,323 +34,387 @@
         <option value="1">Small</option>
         <option value="3" selected>Normal</option>
         <option value="5">Large</option>
-        <option value="7">Huge</option>
-      </select>
+  <!-- Login Screen -->
+  <div id="login-screen" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #000; width: 100vw; position: fixed; top: 0; left: 0; z-index: 9999;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h1 style="color: #fff; font-size: 2.5rem; letter-spacing: 2px; margin-bottom: 0.5rem;">ATLAS USA</h1>
+      <p style="color: var(--accent); letter-spacing: 1px; font-size: 0.9rem;">SECURE COMMAND CENTER</p>
     </div>
-    <div class="toolbar-group">
-      <span class="toolbar-label">Color</span>
-      <input type="color" class="toolbar-color" onchange="window.formatText('foreColor', this.value)" value="#ffffff">
+    <div style="background: rgba(20,20,20,0.8); padding: 2.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 320px;">
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; color: #9ca3af; font-size: 0.8rem; margin-bottom: 0.5rem; text-transform: uppercase;">Username</label>
+        <input type="text" id="login-username" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 4px; box-sizing: border-box;" autocomplete="off">
+      </div>
+      <div style="margin-bottom: 2rem;">
+        <label style="display: block; color: #9ca3af; font-size: 0.8rem; margin-bottom: 0.5rem; text-transform: uppercase;">Password</label>
+        <input type="password" id="login-password" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 4px; box-sizing: border-box;">
+      </div>
+      <button onclick="window.handleLogin()" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem;" id="login-btn">Initialize Session</button>
+      <div id="login-error" style="color: #ef4444; font-size: 0.8rem; text-align: center; margin-top: 1rem; display: none;">Invalid credentials</div>
     </div>
   </div>
 
-  <!-- NAVBAR -->
-  <nav id="navbar">
-    <div class="nav-inner">
-      <div class="nav-logo">
-        <span>ATLAS USA</span>
-        <button id="mobile-menu-btn" class="mobile-only-btn" onclick="window.toggleMobileMenu()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&#9776;</button>
+  <!-- Main App Wrapper -->
+  <div id="app-wrapper" style="display: none;">
+    <!-- EDIT TOOLBAR -->
+    <div id="edit-toolbar">
+      <div class="toolbar-group">
+        <span class="toolbar-label">Font</span>
+        <select class="toolbar-select" onchange="window.formatText('fontName', this.value)">
+          <option value="Inter">Inter</option>
+          <option value="Fahkwang">Fahkwang</option>
+          <option value="Courier New">Monospace</option>
+          <option value="Georgia">Georgia</option>
+        </select>
       </div>
-      <div class="nav-links" id="nav-links-container">
-        <button class="nav-link active" onclick="window.showPage('home')">Home</button>
-        <button class="nav-link" onclick="window.showPage('mindmap')">Mind Map</button>
-        <button class="nav-link" onclick="window.showPage('kanban')">Kanban</button>
-        <button class="nav-link" onclick="window.showPage('hub')">Document Hub</button>
+      <div class="toolbar-group">
+        <span class="toolbar-label">Size</span>
+        <select class="toolbar-select" onchange="window.formatText('fontSize', this.value)">
+          <option value="1">Small</option>
+          <option value="3" selected>Normal</option>
+          <option value="5">Large</option>
+          <option value="7">Huge</option>
+        </select>
       </div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <span id="save-status" style="font-size:0.8rem; color: #10b981; display:none;">Saved!</span>
+      <div class="toolbar-group">
+        <span class="toolbar-label">Color</span>
+        <input type="color" class="toolbar-color" onchange="window.formatText('foreColor', this.value)" value="#ffffff">
       </div>
     </div>
-  </nav>
 
-  <!-- HOME PAGE -->
-  <div id="page-home" class="page-container active">
-    
-    <!-- Hero Section -->
-    <section id="home-hero" class="scroll-section gsap-random">
-      <div class="hero-content" style="max-width: 900px; margin: 0 auto; text-align: center;">
-        <h1 class="hero-title editable" style="color: #fff;">ATLAS USA</h1>
-        <p class="hero-tagline editable">Secure Cloud-Native Command Center</p>
-        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-          <button class="btn-primary" onclick="window.showPage('mindmap')">Initialize Mind Map</button>
-          <button class="btn-outline" onclick="window.showPage('kanban')">View Kanban</button>
+    <!-- NAVBAR -->
+    <nav id="navbar">
+      <div class="nav-inner">
+        <div class="nav-logo">
+          <span>ATLAS USA</span>
+          <button id="mobile-menu-btn" class="mobile-only-btn" onclick="window.toggleMobileMenu()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&#9776;</button>
+        </div>
+        <div class="nav-links" id="nav-links-container">
+          <button class="nav-link active" onclick="window.showPage('home')">Home</button>
+          <button class="nav-link" onclick="window.showPage('mindmap')">Mind Map</button>
+          <button class="nav-link" onclick="window.showPage('kanban')">Kanban</button>
+          <button class="nav-link" onclick="window.showPage('hub')">Document Hub</button>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <span id="save-status" style="font-size:0.8rem; color: #10b981; display:none;">Saved!</span>
         </div>
       </div>
-    </section>
+    </nav>
 
-    <!-- Info Section (3D Glow Cards) -->
-    <section class="scroll-section gsap-random">
-      <div style="max-width: 1200px; margin: 0 auto;">
-        <h2 class="editable" style="text-align: center; margin-bottom: 20px;">Strategic Capabilities</h2>
-        <p class="editable" style="text-align: center; color: #9ca3af; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">
-          Deploy intelligent modules capable of handling massive organizational throughput.
-        </p>
+    <!-- HOME PAGE -->
+    <div id="page-home" class="page-container active">
+      
+      <!-- Hero Section -->
+      <section id="home-hero" class="scroll-section gsap-random">
+        <div class="hero-content" style="max-width: 900px; margin: 0 auto; text-align: center;">
+          <h1 class="hero-title editable" style="color: #fff;">ATLAS USA</h1>
+          <p class="hero-tagline editable">Secure Cloud-Native Command Center</p>
+          <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+            <button class="btn-primary" onclick="window.showPage('mindmap')">Initialize Mind Map</button>
+            <button class="btn-outline" onclick="window.showPage('kanban')">View Kanban</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info Section (3D Glow Cards) -->
+      <section class="scroll-section gsap-random">
+        <div style="max-width: 1200px; margin: 0 auto;">
+          <h2 class="editable" style="text-align: center; margin-bottom: 20px;">Strategic Capabilities</h2>
+          <p class="editable" style="text-align: center; color: #9ca3af; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">
+            Deploy intelligent modules capable of handling massive organizational throughput.
+          </p>
+          
+          <div class="glow-grid">
+            <div class="glow-card gsap-random">
+              <div class="glow-card-content">
+                <div class="glow-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                </div>
+                <h3 class="glow-card-title editable">Real-Time Sync</h3>
+                <p class="glow-card-text editable">Connected to AWS Amplify, all changes stream globally across your organization instantly.</p>
+              </div>
+            </div>
+            <div class="glow-card gsap-random">
+              <div class="glow-card-content">
+                <div class="glow-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                </div>
+                <h3 class="glow-card-title editable">D3 Physics Engine</h3>
+                <p class="glow-card-text editable">Force-directed mind mapping with embedded HTML nodes and data flow visualization.</p>
+              </div>
+            </div>
+            <div class="glow-card gsap-random">
+              <div class="glow-card-content">
+                <div class="glow-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h3 class="glow-card-title editable">Secure Enclave</h3>
+                <p class="glow-card-text editable">Military-grade document storage and organization via the integrated Document Hub.</p>
+              </div>
+            </div>
+            <div class="glow-card gsap-random">
+              <div class="glow-card-content">
+                <div class="glow-card-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                </div>
+                <h3 class="glow-card-title editable">Automated Deployment</h3>
+                <p class="glow-card-text editable">Continuous integration pipeline powering instant container scaling and redundancy.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stuck Grid Section (CSS Showcase) -->
+      <section class="scroll-section gsap-random">
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+          <h2 class="editable" style="margin-bottom: 20px; color: var(--accent);">Modern Specifications</h2>
+          <p class="editable" style="color: #9ca3af; max-width: 600px; margin: 0 auto 30px;">
+            Built leveraging cutting-edge web features and modern logic structures.
+          </p>
+          
+          <div class="stuck-grid">
+            <div class="grid-item editable gsap-random">oklch()</div>
+            <div class="grid-item editable gsap-random">scroll()</div>
+            <div class="grid-item editable gsap-random">text-box-trim</div>
+            <div class="grid-item editable gsap-random">pow()</div>
+            <div class="grid-item editable gsap-random">@property</div>
+            <div class="grid-item editable gsap-random">top-layer</div>
+            <div class="grid-item editable gsap-random">@view-transition</div>
+            <div class="grid-item editable gsap-random">var()</div>
+            <div class="grid-item editable gsap-random">clamp()</div>
+            <div class="grid-item editable gsap-random">view()</div>
+            <div class="grid-item editable special gsap-random"><b>CSS</b></div>
+            <div class="grid-item editable gsap-random">@layer</div>
+            <div class="grid-item editable gsap-random">@swash</div>
+            <div class="grid-item editable gsap-random">subgrid</div>
+            <div class="grid-item editable gsap-random">in oklab</div>
+            <div class="grid-item editable gsap-random">:popover-open</div>
+            <div class="grid-item editable gsap-random">abs()</div>
+            <div class="grid-item editable gsap-random">sin()</div>
+            <div class="grid-item editable gsap-random">:has()</div>
+            <div class="grid-item editable gsap-random">::marker</div>
+            <div class="grid-item editable gsap-random">1cap</div>
+            <div class="grid-item editable gsap-random">scrollbar-color</div>
+            <div class="grid-item editable gsap-random">scroll-timeline</div>
+            <div class="grid-item editable gsap-random">view-timeline</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Playbook Layered Grid Animation -->
+      <section class="scroll-section" style="border: none; padding: 0;">
+        <div class="content-wrap">
+          <header style="text-align: center; margin-bottom: 2rem;">
+            <h1 class="fluid text-gradient" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1;">SYSTEM<br />DATASTREAMS</h1>
+          </header>
+          <main>
+            <section>
+              <div class="content">
+                <div class="grid">
+                  <div class="layer layer-1">
+                    <div><div class="editable-bubble editable" contenteditable="true">SYSTEM CORE</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">DATA STREAM 1</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">DATA STREAM 2</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">ANALYTICS</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">ROUTING</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">METRICS</div></div>
+                  </div>
+                  <div class="layer layer-2">
+                    <div><div class="editable-bubble editable" contenteditable="true">FIREWALL</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">NODE A</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">NODE B</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">ENCRYPTION</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">CACHE</div></div>
+                    <div><div class="editable-bubble editable" contenteditable="true">PROXY</div></div>
+                  </div>
+                  <div class="layer layer-3">
+                  </div>
+                  <div class="scaler">
+                    <div class="editable-bubble editable" contenteditable="true" style="border-radius: 50%; font-size: 3rem;">CORE</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+      </section>
+
+      <div style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 50px;">
+        <button class="btn-primary" id="btn-add-section" onclick="window.addHomeSection()" style="display:none; margin: 0 auto 20px auto; box-shadow: 0 0 10px rgba(57,255,20,0.5); border-color:#39FF14; color:#39FF14;">+ Add Section</button>
+        <button class="btn-outline" id="btn-edit" onclick="window.toggleEditMode()" style="padding: 15px 40px; font-size: 1.1rem;">Edit Home Page</button>
+      </div>
+      <!-- Admin Management Panel -->
+      <section id="admin-panel" class="scroll-section" style="display: none; border-top: 1px solid rgba(255,255,255,0.1); padding: 40px 20px;">
+        <div style="max-width: 900px; margin: 0 auto;">
+          <h2 style="color: #ef4444; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            System Admin Controls
+          </h2>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            
+            <!-- Add User Box -->
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 8px;">
+              <h3 style="margin-bottom: 20px; font-size: 1.1rem; color: #fff;">Provision New Operator</h3>
+              <div style="margin-bottom: 15px;">
+                <input type="text" id="admin-new-username" placeholder="Username" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 4px; box-sizing: border-box;">
+              </div>
+              <div style="margin-bottom: 20px;">
+                <input type="password" id="admin-new-password" placeholder="Password" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 4px; box-sizing: border-box;">
+              </div>
+              <button onclick="window.adminAddUser()" class="btn-primary" style="width: 100%;">Create Operator</button>
+              <div id="admin-add-msg" style="margin-top: 10px; font-size: 0.85rem;"></div>
+            </div>
+
+            <!-- Change Password Box -->
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 8px;">
+              <h3 style="margin-bottom: 20px; font-size: 1.1rem; color: #fff;">Reset Operator Password</h3>
+              <div style="margin-bottom: 15px;">
+                <input type="text" id="admin-reset-username" placeholder="Target Username" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 4px; box-sizing: border-box;">
+              </div>
+              <div style="margin-bottom: 20px;">
+                <input type="password" id="admin-reset-password" placeholder="New Password" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 4px; box-sizing: border-box;">
+              </div>
+              <button onclick="window.adminResetPassword()" class="btn-outline" style="width: 100%; border-color: #ef4444; color: #ef4444;">Force Reset</button>
+              <div id="admin-reset-msg" style="margin-top: 10px; font-size: 0.85rem;"></div>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- MIND MAP PAGE -->
+    <div id="page-mindmap" class="page-container">
+      <h1 class="text-gradient">Mind Map Sandbox</h1>
+      <p style="color: #9ca3af; margin-bottom: 20px;">
+        Create custom nodes. 
+        <strong style="color: #facc15;">Hold SHIFT and Drag</strong> between nodes to draw connections.
+      </p>
+      
+      <div class="mindmap-controls">
+        <input type="text" id="node-name" placeholder="Node Title">
+        <select id="node-type">
+          <option value="text">Text Card</option>
+          <option value="hyperlink">Hyperlink Card</option>
+        </select>
+        <select id="node-phase">
+          <option value="active">Active (Green)</option>
+          <option value="planning">Planning (Blue)</option>
+          <option value="submitted">Submitted (Purple)</option>
+        </select>
+        <button onclick="window.addNode()">Spawn Node</button>
+        <button id="save-cloud-btn" onclick="window.saveMindmapToAWS()" style="background: rgba(57,255,20,0.2); border: 1px solid #39ff14; color: #39ff14;">Save to Cloud</button>
+        <button onclick="window.clearMindmap()" style="background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #ef4444;">Clear Map</button>
         
-        <div class="glow-grid">
-          <div class="glow-card gsap-random">
-            <div class="glow-card-content">
-              <div class="glow-card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              </div>
-              <h3 class="glow-card-title editable">Real-Time Sync</h3>
-              <p class="glow-card-text editable">Connected to AWS Amplify, all changes stream globally across your organization instantly.</p>
-            </div>
-          </div>
-          <div class="glow-card gsap-random">
-            <div class="glow-card-content">
-              <div class="glow-card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-              </div>
-              <h3 class="glow-card-title editable">D3 Physics Engine</h3>
-              <p class="glow-card-text editable">Force-directed mind mapping with embedded HTML nodes and data flow visualization.</p>
-            </div>
-          </div>
-          <div class="glow-card gsap-random">
-            <div class="glow-card-content">
-              <div class="glow-card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-              </div>
-              <h3 class="glow-card-title editable">Secure Enclave</h3>
-              <p class="glow-card-text editable">Military-grade document storage and organization via the integrated Document Hub.</p>
-            </div>
-          </div>
-          <div class="glow-card gsap-random">
-            <div class="glow-card-content">
-              <div class="glow-card-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-              </div>
-              <h3 class="glow-card-title editable">Automated Deployment</h3>
-              <p class="glow-card-text editable">Continuous integration pipeline powering instant container scaling and redundancy.</p>
-            </div>
+        <span class="draw-mode-status">Draw Mode: Hold Shift</span>
+      </div>
+      
+      <div id="graph-container">
+        <svg id="graph-svg"></svg>
+      </div>
+    </div>
+
+    <!-- KANBAN PAGE -->
+    <div id="page-kanban" class="page-container">
+      <h1 class="text-gradient">Kanban Terminal</h1>
+      <p style="color: #9ca3af; margin-bottom: 30px;">Drag and drop task management. Hover over columns and cards.</p>
+      
+      <div class="kanban-board">
+        <div class="kanban-col" id="col-questions" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
+          <h3 data-count="0">Questions</h3>
+          <div class="add-card-wrap">
+            <input type="text" id="kanban-new-quest" placeholder="New question...">
+            <button onclick="window.addKanbanCard('col-questions', 'kanban-new-quest')">+</button>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Stuck Grid Section (CSS Showcase) -->
-    <section class="scroll-section gsap-random">
-      <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-        <h2 class="editable" style="margin-bottom: 20px; color: var(--accent);">Modern Specifications</h2>
-        <p class="editable" style="color: #9ca3af; max-width: 600px; margin: 0 auto 30px;">
-          Built leveraging cutting-edge web features and modern logic structures.
-        </p>
         
-        <div class="stuck-grid">
-          <div class="grid-item editable gsap-random">oklch()</div>
-          <div class="grid-item editable gsap-random">scroll()</div>
-          <div class="grid-item editable gsap-random">text-box-trim</div>
-          <div class="grid-item editable gsap-random">pow()</div>
-          <div class="grid-item editable gsap-random">@property</div>
-          <div class="grid-item editable gsap-random">top-layer</div>
-          <div class="grid-item editable gsap-random">@view-transition</div>
-          <div class="grid-item editable gsap-random">var()</div>
-          <div class="grid-item editable gsap-random">clamp()</div>
-          <div class="grid-item editable gsap-random">view()</div>
-          <div class="grid-item editable special gsap-random"><b>CSS</b></div>
-          <div class="grid-item editable gsap-random">@layer</div>
-          <div class="grid-item editable gsap-random">@swash</div>
-          <div class="grid-item editable gsap-random">subgrid</div>
-          <div class="grid-item editable gsap-random">in oklab</div>
-          <div class="grid-item editable gsap-random">:popover-open</div>
-          <div class="grid-item editable gsap-random">abs()</div>
-          <div class="grid-item editable gsap-random">sin()</div>
-          <div class="grid-item editable gsap-random">:has()</div>
-          <div class="grid-item editable gsap-random">::marker</div>
-          <div class="grid-item editable gsap-random">1cap</div>
-          <div class="grid-item editable gsap-random">scrollbar-color</div>
-          <div class="grid-item editable gsap-random">scroll-timeline</div>
-          <div class="grid-item editable gsap-random">view-timeline</div>
+        <div class="kanban-col" id="col-todo" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
+          <h3 data-count="0">To Do</h3>
+          <div class="add-card-wrap">
+            <input type="text" id="kanban-new-todo" placeholder="New task...">
+            <button onclick="window.addKanbanCard('col-todo', 'kanban-new-todo')">+</button>
+          </div>
+        </div>
+        
+        <div class="kanban-col" id="col-progress" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
+          <h3 data-count="0">In Progress</h3>
+          <div class="add-card-wrap">
+            <input type="text" id="kanban-new-prog" placeholder="New task...">
+            <button onclick="window.addKanbanCard('col-progress', 'kanban-new-prog')">+</button>
+          </div>
+        </div>
+        
+        <div class="kanban-col" id="col-review" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
+          <h3 data-count="0">Review</h3>
+          <div class="add-card-wrap">
+            <input type="text" id="kanban-new-rev" placeholder="New task...">
+            <button onclick="window.addKanbanCard('col-review', 'kanban-new-rev')">+</button>
+          </div>
+        </div>
+        
+        <div class="kanban-col" id="col-done" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
+          <h3 data-count="0">Done</h3>
         </div>
       </div>
-    </section>
-
-    <!-- Playbook Layered Grid Animation -->
-    <section class="scroll-section" style="border: none; padding: 0;">
-      <div class="content-wrap">
-        <header style="text-align: center; margin-bottom: 2rem;">
-          <h1 class="fluid text-gradient" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1;">SYSTEM<br />DATASTREAMS</h1>
-        </header>
-        <main>
-          <section>
-            <div class="content">
-              <div class="grid">
-                <div class="layer layer-1">
-                  <div><div class="editable-bubble editable" contenteditable="true">SYSTEM CORE</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">DATA STREAM 1</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">DATA STREAM 2</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">ANALYTICS</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">ROUTING</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">METRICS</div></div>
-                </div>
-                <div class="layer layer-2">
-                  <div><div class="editable-bubble editable" contenteditable="true">FIREWALL</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">NODE A</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">NODE B</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">ENCRYPTION</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">CACHE</div></div>
-                  <div><div class="editable-bubble editable" contenteditable="true">PROXY</div></div>
-                </div>
-                <div class="layer layer-3">
-                </div>
-                <div class="scaler">
-                  <div class="editable-bubble editable" contenteditable="true" style="border-radius: 50%; font-size: 3rem;">CORE</div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
-    </section>
-
-    <div style="text-align: center; padding: 40px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 50px;">
-      <button class="btn-primary" id="btn-add-section" onclick="window.addHomeSection()" style="display:none; margin: 0 auto 20px auto; box-shadow: 0 0 10px rgba(57,255,20,0.5); border-color:#39FF14; color:#39FF14;">+ Add Section</button>
-      <button class="btn-outline" id="btn-edit" onclick="window.toggleEditMode()" style="padding: 15px 40px; font-size: 1.1rem;">Edit Home Page</button>
     </div>
+
+    <!-- DOCUMENT HUB PAGE -->
+    <div id="page-hub" class="page-container">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
+        <div>
+          <h1 style="font-family: 'Times New Roman', serif; color: #fff; margin: 0;">DOCUMENT ENCLAVE</h1>
+          <p style="color: #9ca3af; margin: 5px 0 0 0;">Verify compliance and track required project documentation.</p>
+        </div>
+        <div>
+          <input type="file" id="hub-file-upload" style="display:none;" onchange="window.handleFileUpload(event)">
+          <button class="btn-primary" style="font-family: 'Times New Roman', serif; border-color: #fff; color: #fff; box-shadow: none;" onclick="document.getElementById('hub-file-upload').click()">
+            + Upload File
+          </button>
+        </div>
+      </div>
+      
+      <div class="hub-tabs">
+        <button class="hub-tab active" onclick="window.switchHubTab('repo')">Document Repository</button>
+        <button class="hub-tab" onclick="window.switchHubTab('board')">Dynamic Operations Board</button>
+      </div>
+
+      <!-- REPOSITORY TAB -->
+      <div id="hub-tab-repo" class="hub-tab-content active">
+        <div class="completion-banner">
+          <div class="circular-chart-container">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+              <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="circle" id="hub-completion-circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <text x="18" y="20.35" class="percentage" id="hub-completion-text">0%</text>
+            </svg>
+          </div>
+          <div class="completion-details">
+            <h2 style="font-family: 'Times New Roman', serif; margin: 0; color: #fff;">Readiness Status</h2>
+            <p style="color: #9ca3af; margin-top: 5px;" id="hub-completion-desc">0 out of X documents verified</p>
+          </div>
+        </div>
+
+        <div class="doc-grid" id="hub-doc-grid">
+          <div style="color: #9ca3af; font-family: 'Times New Roman', serif;">Loading repository files...</div>
+        </div>
+      </div>
+
+      <!-- OPERATIONS BOARD TAB -->
+      <div id="hub-tab-board" class="hub-tab-content" style="display:none;">
+        <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+          <button class="btn-primary" onclick="window.addHubChecklist()" style="font-family: 'Times New Roman', serif; border-color: #fff; color: #fff;">+ New Checklist</button>
+        </div>
+        <div class="checklist-grid" id="hub-checklist-grid">
+          <div style="color: #9ca3af; font-family: 'Times New Roman', serif;">Loading operations board...</div>
+        </div>
+      </div>
+    </div>
+  <!-- End App Wrapper -->
   </div>
 
-  <!-- MIND MAP PAGE -->
-  <div id="page-mindmap" class="page-container">
-    <h1 class="text-gradient">Mind Map Sandbox</h1>
-    <p style="color: #9ca3af; margin-bottom: 20px;">
-      Create custom nodes. 
-      <strong style="color: #facc15;">Hold SHIFT and Drag</strong> between nodes to draw connections.
-    </p>
-    
-    <div class="mindmap-controls">
-      <input type="text" id="node-name" placeholder="Node Title">
-      <select id="node-type">
-        <option value="text">Text Card</option>
-        <option value="hyperlink">Hyperlink Card</option>
-      </select>
-      <select id="node-phase">
-        <option value="active">Active (Green)</option>
-        <option value="planning">Planning (Blue)</option>
-        <option value="submitted">Submitted (Purple)</option>
-      </select>
-      <button onclick="window.addNode()">Spawn Node</button>
-      <button id="save-cloud-btn" onclick="window.saveMindmapToAWS()" style="background: rgba(57,255,20,0.2); border: 1px solid #39ff14; color: #39ff14;">Save to Cloud</button>
-      <button onclick="window.clearMindmap()" style="background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #ef4444;">Clear Map</button>
-      
-      <span class="draw-mode-status">Draw Mode: Hold Shift</span>
-    </div>
-    
-    <div id="graph-container">
-      <svg id="graph-svg"></svg>
-    </div>
-  </div>
-
-  <!-- KANBAN PAGE -->
-  <div id="page-kanban" class="page-container">
-    <h1 class="text-gradient">Kanban Terminal</h1>
-    <p style="color: #9ca3af; margin-bottom: 30px;">Drag and drop task management. Hover over columns and cards.</p>
-    
-    <div class="kanban-board">
-      <div class="kanban-col" id="col-questions" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
-        <h3 data-count="0">Questions</h3>
-        <div class="add-card-wrap">
-          <input type="text" id="kanban-new-quest" placeholder="New question...">
-          <button onclick="window.addKanbanCard('col-questions', 'kanban-new-quest')">+</button>
-        </div>
-      </div>
-      
-      <div class="kanban-col" id="col-todo" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
-        <h3 data-count="2">To Do</h3>
-        <div class="kanban-card tilt-element" draggable="true" ondragstart="window.drag(event)" id="task1">
-          <div class="kanban-card-title">System Assessment</div>
-          <div class="kanban-card-meta"><span>Priority: High</span><span>ATLAS-01</span></div>
-        </div>
-        <div class="kanban-card tilt-element" draggable="true" ondragstart="window.drag(event)" id="task2">
-          <div class="kanban-card-title">Compliance Review</div>
-          <div class="kanban-card-meta"><span>Priority: Med</span><span>ATLAS-02</span></div>
-        </div>
-        <div class="add-card-wrap">
-          <input type="text" id="kanban-new-todo" placeholder="New task...">
-          <button onclick="window.addKanbanCard('col-todo', 'kanban-new-todo')">+</button>
-        </div>
-      </div>
-      
-      <div class="kanban-col" id="col-progress" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
-        <h3 data-count="1">In Progress</h3>
-        <div class="kanban-card tilt-element" draggable="true" ondragstart="window.drag(event)" id="task3">
-          <div class="kanban-card-title">Federal Registration</div>
-          <div class="kanban-card-meta"><span>Priority: High</span><span>ATLAS-03</span></div>
-        </div>
-        <div class="add-card-wrap">
-          <input type="text" id="kanban-new-prog" placeholder="New task...">
-          <button onclick="window.addKanbanCard('col-progress', 'kanban-new-prog')">+</button>
-        </div>
-      </div>
-      
-      <div class="kanban-col" id="col-review" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
-        <h3 data-count="0">Review</h3>
-        <div class="add-card-wrap">
-          <input type="text" id="kanban-new-rev" placeholder="New task...">
-          <button onclick="window.addKanbanCard('col-review', 'kanban-new-rev')">+</button>
-        </div>
-      </div>
-      
-      <div class="kanban-col" id="col-done" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">
-        <h3 data-count="1">Done</h3>
-        <div class="kanban-card tilt-element" draggable="true" ondragstart="window.drag(event)" id="task4">
-          <div class="kanban-card-title">Initial Blueprint</div>
-          <div class="kanban-card-meta"><span>Priority: Low</span><span>ATLAS-04</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- DOCUMENT HUB PAGE -->
-  <div id="page-hub" class="page-container">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;">
-      <div>
-        <h1 style="font-family: 'Times New Roman', serif; color: #fff; margin: 0;">DOCUMENT ENCLAVE</h1>
-        <p style="color: #9ca3af; margin: 5px 0 0 0;">Verify compliance and track required project documentation.</p>
-      </div>
-      <div>
-        <input type="file" id="hub-file-upload" style="display:none;" onchange="window.handleFileUpload(event)">
-        <button class="btn-primary" style="font-family: 'Times New Roman', serif; border-color: #fff; color: #fff; box-shadow: none;" onclick="document.getElementById('hub-file-upload').click()">
-          + Upload File
-        </button>
-      </div>
-    </div>
-    
-    <div class="hub-tabs">
-      <button class="hub-tab active" onclick="window.switchHubTab('repo')">Document Repository</button>
-      <button class="hub-tab" onclick="window.switchHubTab('board')">Dynamic Operations Board</button>
-    </div>
-
-    <!-- REPOSITORY TAB -->
-    <div id="hub-tab-repo" class="hub-tab-content active">
-      <div class="completion-banner">
-        <div class="circular-chart-container">
-          <svg viewBox="0 0 36 36" class="circular-chart">
-            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            <path class="circle" id="hub-completion-circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            <text x="18" y="20.35" class="percentage" id="hub-completion-text">0%</text>
-          </svg>
-        </div>
-        <div class="completion-details">
-          <h2 style="font-family: 'Times New Roman', serif; margin: 0; color: #fff;">Readiness Status</h2>
-          <p style="color: #9ca3af; margin-top: 5px;" id="hub-completion-desc">0 out of X documents verified</p>
-        </div>
-      </div>
-
-      <div class="doc-grid" id="hub-doc-grid">
-        <div style="color: #9ca3af; font-family: 'Times New Roman', serif;">Loading repository files...</div>
-      </div>
-    </div>
-
-    <!-- OPERATIONS BOARD TAB -->
-    <div id="hub-tab-board" class="hub-tab-content" style="display:none;">
-      <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
-        <button class="btn-primary" onclick="window.addHubChecklist()" style="font-family: 'Times New Roman', serif; border-color: #fff; color: #fff;">+ New Checklist</button>
-      </div>
-      <div class="checklist-grid" id="hub-checklist-grid">
-        <div style="color: #9ca3af; font-family: 'Times New Roman', serif;">Loading operations board...</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Load script as an ES Module so we can use AWS Amplify imports via Vite -->
+  <!-- Vite Module -->
   <script type="module" src="/script.js"></script>
 </body>
 </html>
