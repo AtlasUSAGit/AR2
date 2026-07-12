@@ -27,6 +27,22 @@ const schema = a.schema({
     allow.publicApiKey(),
     allow.authenticated()
   ]),
+  KanbanCard: a.model({
+    colId: a.string(),
+    title: a.string(),
+    priority: a.string(),
+    atlasId: a.string()
+  }).authorization(allow => [
+    allow.publicApiKey(),
+    allow.authenticated()
+  ]),
+  HomeElement: a.model({
+    elementId: a.string(),
+    content: a.string()
+  }).authorization(allow => [
+    allow.publicApiKey(),
+    allow.authenticated()
+  ]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

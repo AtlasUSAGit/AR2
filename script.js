@@ -290,25 +290,43 @@ document.addEventListener('dragleave', (event) => {
 });
 
 window.drop = function(event) {
-  event.preventDefault();
-  const column = event.target.closest('.kanban-col');
-  
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-  
-  if (column && draggedItem) {
-    draggedItem.style.opacity = '1';
-    
-    // Find the add-card-wrap and insert before it
-    const addWrap = column.querySelector('.add-card-wrap');
+window.drop = async function(ev) {
+  ev.preventDefault();
+  if (ev.target.classList.contains("kanban-col")) {
+    const addWrap = ev.target.querySelector('.add-card-wrap');
     if (addWrap) {
-      column.insertBefore(draggedItem, addWrap);
+      ev.target.insertBefore(draggedItem, addWrap);
     } else {
-      column.appendChild(draggedItem);
+      ev.target.appendChild(draggedItem);
     }
     
-    updateKanbanCounts();
+    // Broadcast drop to AWS
+    try {
+      if (draggedItem.id) {
+        const { data: existing } = await client.models.KanbanCard.get({ id: draggedItem.id });
+        if (existing) {
+          await client.models.KanbanCard.update({
+            id: draggedItem.id,
+            colId: ev.target.id
+          });
+        } else {
+          // If it's a hardcoded HTML card being dragged for the first time
+          await client.models.KanbanCard.create({
+            id: draggedItem.id,
+            colId: ev.target.id,
+            title: draggedItem.querySelector('.kanban-card-title')?.innerText || "Task",
+            priority: "Normal",
+            atlasId: `ATLAS-00`
+          });
+        }
+      }
+    } catch(e) { console.log('Drop sync error', e); }
+  }
+  if (draggedItem) {
+    draggedItem.style.opacity = "1";
     draggedItem = null;
   }
+  updateKanbanCounts();
 };
 
 window.addKanbanCard = function(colId, inputId, existingData = null) {
@@ -345,6 +363,9 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
       <div class="kanban-card-title">${text}</div>
       <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-${cardCounter.toString().padStart(2, '0')}</span></div>
     `;
+    if (!existingData) {
+      window.createKanbanCardAWS(newCard.id, colId, text);
+    }
   }
   
   const col = document.getElementById(colId);
@@ -364,6 +385,18 @@ window.createKanbanPollAWS = async function(id, question) {
       answers: JSON.stringify({ a: false, b: false, otherCheck: false, otherText: '' })
     });
   } catch(e) { console.error('Failed to save poll to AWS', e); }
+};
+
+window.createKanbanCardAWS = async function(id, colId, text) {
+  try {
+    await client.models.KanbanCard.create({
+      id: id,
+      colId: colId,
+      title: text,
+      priority: "Normal",
+      atlasId: `ATLAS-${cardCounter.toString().padStart(2, '0')}`
+    });
+  } catch(e) { console.error('Failed to save card to AWS', e); }
 };
 
 window.saveKanbanPoll = async function(cardId) {
@@ -393,9 +426,20 @@ async function loadKanbanQuestionsAWS() {
         }
       });
     }
-  } catch (e) {
-    console.error("Failed to load Kanban questions", e);
-  }
+  } catch (e) { console.error("Failed to load Kanban questions", e); }
+}
+
+async function loadKanbanCardsAWS() {
+  try {
+    const { data: cards } = await client.models.KanbanCard.list();
+    if (cards) {
+      cards.forEach(c => {
+        if(!document.getElementById(c.id)) {
+          window.addKanbanCard(c.colId, null, { id: c.id, question: c.title }); // Using existingData format
+        }
+      });
+    }
+  } catch (e) { console.error("Failed to load Kanban cards", e); }
 }
 
 function updateKanbanCounts() {
@@ -741,8 +785,11 @@ function updateMindmap() {
   }
 }
 
+let isDraggingNode = false;
+
 function dragstarted(event, d) {
   if (event.sourceEvent.shiftKey) return; // Prevent standard drag if holding shift
+  isDraggingNode = true;
   if (!event.active) simulation.alphaTarget(0.3).restart();
   d.fx = d.x;
   d.fy = d.y;
@@ -756,7 +803,8 @@ function dragged(event, d) {
 
 function dragended(event, d) {
   if (!event.active) simulation.alphaTarget(0);
-  // Do NOT release fx and fy, to keep nodes perfectly stationary where dropped
+  isDraggingNode = false;
+  window.saveMindmapToAWS();
 }
 
 window.addNode = function() {
@@ -827,13 +875,110 @@ document.addEventListener('input', (e) => {
 
 
 // ==========================================
+// REAL-TIME MULTIPLAYER SYNC
+// ==========================================
+async function initLiveSync() {
+  // 1. Home Screen Editable Text Sync
+  document.querySelectorAll('.editable').forEach((el, index) => {
+    if (!el.id) el.id = 'editable-item-' + index;
+    
+    el.addEventListener('blur', async () => {
+      try {
+        const { data: existing } = await client.models.HomeElement.get({ id: el.id });
+        if (existing) {
+          await client.models.HomeElement.update({ id: el.id, content: el.innerHTML });
+        } else {
+          await client.models.HomeElement.create({ id: el.id, content: el.innerHTML });
+        }
+      } catch(e) { console.error('Save failed', e); }
+    });
+  });
+
+  client.models.HomeElement.observeQuery().subscribe({
+    next: ({ items }) => {
+      items.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (el && document.activeElement !== el && el.innerHTML !== item.content) {
+          el.innerHTML = item.content;
+        }
+      });
+    }
+  });
+
+  // 2. Mindmap Live Sync
+  client.models.Mindmap.observeQuery().subscribe({
+    next: ({ items }) => {
+      if (items.length > 0) {
+        const saved = items[0];
+        if (!isDrawing && !isDraggingNode && typeof saved.nodes === 'string') {
+          mindmapNodes = JSON.parse(saved.nodes);
+          mindmapLinks = JSON.parse(saved.edges);
+          updateMindmap();
+          simulation.alpha(1).restart();
+        }
+      }
+    }
+  });
+
+  // 3. Kanban Questions Live Sync
+  client.models.KanbanQuestion.observeQuery().subscribe({
+    next: ({ items }) => {
+      items.forEach(q => {
+        let card = document.getElementById(q.id);
+        if (!card) {
+          window.addKanbanCard('col-questions', null, q);
+          card = document.getElementById(q.id);
+        }
+        if (card && q.answers && document.activeElement.name !== 'otherText') {
+          const opts = JSON.parse(q.answers);
+          const a = card.querySelector('input[name="a"]');
+          const b = card.querySelector('input[name="b"]');
+          const oc = card.querySelector('input[name="otherCheck"]');
+          const ot = card.querySelector('input[name="otherText"]');
+          
+          if (a) a.checked = opts.a;
+          if (b) b.checked = opts.b;
+          if (oc) oc.checked = opts.otherCheck;
+          if (ot && document.activeElement !== ot) ot.value = opts.otherText;
+        }
+      });
+    }
+  });
+  
+  // 4. Kanban Card Layout Sync
+  client.models.KanbanCard.observeQuery().subscribe({
+    next: ({ items }) => {
+      items.forEach(cardData => {
+        let card = document.getElementById(cardData.id);
+        if (card) {
+          const targetCol = document.getElementById(cardData.colId);
+          if (targetCol && card.parentElement !== targetCol) {
+            const addWrap = targetCol.querySelector('.add-card-wrap');
+            targetCol.insertBefore(card, addWrap);
+            updateKanbanCounts();
+          }
+        }
+      });
+    }
+  });
+}
+
+// ==========================================
 // INITIALIZATION
 // ==========================================
-document.addEventListener('DOMContentLoaded', async () => {
+async function initApp() {
   initGsapAnimations();
   await loadHomePageContent();
   initMindmap();
   init3DTilt();
   updateKanbanCounts();
   await loadKanbanQuestionsAWS();
-});
+  await loadKanbanCardsAWS();
+  initLiveSync();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
