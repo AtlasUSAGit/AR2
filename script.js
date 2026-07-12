@@ -402,23 +402,24 @@ function initGsapAnimations() {
     );
   });
 
-  // Playbook Layered Scroll Animation
-  const contentWrap = document.querySelector('.content-wrap section');
-  if (contentWrap) {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: contentWrap,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1, // Smooth scrubbing
-      }
+  // 3D Core Layered Scroll Animation
+  const coreCards = gsap.utils.toArray('.core-3d-card');
+  if (coreCards.length > 0) {
+    coreCards.forEach((card, i) => {
+      gsap.to(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: "top 85%",
+          end: "top 35%",
+          scrub: 1
+        },
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        rotateX: 0,
+        ease: "power2.out"
+      });
     });
-
-    // Animate layers to converge inward
-    tl.fromTo('.layer-1', { scale: 3, opacity: 0 }, { scale: 1, opacity: 1, duration: 1 }, 0)
-      .fromTo('.layer-2', { scale: 2, opacity: 0 }, { scale: 1, opacity: 1, duration: 1 }, 0)
-      .fromTo('.layer-3', { scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 1 }, 0)
-      .fromTo('.scaler', { scale: 2, opacity: 0 }, { scale: 1, opacity: 1, duration: 1 }, 0);
   }
 }
 
@@ -1091,6 +1092,13 @@ async function initApp() {
   await loadKanbanCardsAWS();
   await loadHubFiles();
   await window.loadHubChecklists();
+  
+  const navbarBrand = document.getElementById('navbar-brand');
+  if (navbarBrand) {
+    navbarBrand.addEventListener('input', (e) => {
+      document.title = e.target.innerText || 'ATLAS USA';
+    });
+  }
 }
 
 // ==========================================

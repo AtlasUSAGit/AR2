@@ -67,7 +67,7 @@
     <nav id="navbar">
       <div class="nav-inner">
         <div class="nav-logo">
-          <span>ATLAS USA</span>
+          <span id="navbar-brand" class="editable">ATLAS USA</span>
           <button id="mobile-menu-btn" class="mobile-only-btn" onclick="window.toggleMobileMenu()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&#9776;</button>
         </div>
         <div class="nav-links" id="nav-links-container">
@@ -86,8 +86,11 @@
     <div id="page-home" class="page-container active">
       
       <!-- Hero Section -->
-      <section id="home-hero" class="scroll-section gsap-random">
-        <div class="hero-content" style="max-width: 900px; margin: 0 auto; text-align: center;">
+      <section id="home-hero" class="scroll-section gsap-random" style="position: relative; overflow: hidden; width: 100vw; left: 50%; transform: translateX(-50%); margin-top: -100px; padding-top: 100px;">
+        <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.4; pointer-events: none;">
+          <source src="https://amplify-dur76gtv51xrp-main-bran-ausabucket1d494f10-tvoocipalk9o.s3.us-east-2.amazonaws.com/intros/ABSTRACT_BACKGROUND.mov" type="video/quicktime">
+        </video>
+        <div class="hero-content" style="max-width: 900px; margin: 0 auto; text-align: center; position: relative; z-index: 1;">
           <h1 class="hero-title editable" style="color: #fff;">ATLAS USA</h1>
           <p class="hero-tagline editable">Secure Cloud-Native Command Center</p>
           <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
@@ -183,41 +186,47 @@
         </div>
       </section>
 
-      <!-- Playbook Layered Grid Animation -->
-      <section class="scroll-section" style="border: none; padding: 0;">
-        <div class="content-wrap">
-          <header style="text-align: center; margin-bottom: 2rem;">
-            <h1 class="fluid text-gradient" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1;">SYSTEM<br />DATASTREAMS</h1>
+      <!-- Playbook Layered Grid Animation (Redesigned 3D Core) -->
+      <section class="scroll-section core-3d-section" style="border: none; padding: 0; position: relative;">
+        <div class="content-wrap" style="max-width: 1200px; margin: 0 auto; padding-top: 5vh; padding-bottom: 5vh;">
+          <header class="core-3d-header" style="text-align: center; margin-bottom: 4rem; position: sticky; top: 15vh; z-index: 10;">
+            <h1 class="fluid text-gradient editable" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1.1; margin: 0;">SYSTEM<br />DATASTREAMS</h1>
           </header>
-          <main>
-            <section>
-              <div class="content">
-                <div class="grid">
-                  <div class="layer layer-1">
-                    <div><div class="editable-bubble editable" contenteditable="true">SYSTEM CORE</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">DATA STREAM 1</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">DATA STREAM 2</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">ANALYTICS</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">ROUTING</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">METRICS</div></div>
-                  </div>
-                  <div class="layer layer-2">
-                    <div><div class="editable-bubble editable" contenteditable="true">FIREWALL</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">NODE A</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">NODE B</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">ENCRYPTION</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">CACHE</div></div>
-                    <div><div class="editable-bubble editable" contenteditable="true">PROXY</div></div>
-                  </div>
-                  <div class="layer layer-3">
-                  </div>
-                  <div class="scaler">
-                    <div class="editable-bubble editable" contenteditable="true" style="border-radius: 50%; font-size: 3rem;">CORE</div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </main>
+          
+          <div class="core-3d-container">
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">SYSTEM CORE</h3>
+              <p class="core-card-desc">Central processing engine for routing all global data streams.</p>
+            </div>
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">DATA STREAM 1</h3>
+              <p class="core-card-desc">High-bandwidth synchronous input from North American nodes.</p>
+            </div>
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">DATA STREAM 2</h3>
+              <p class="core-card-desc">Asynchronous failover processing queue.</p>
+            </div>
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">ANALYTICS</h3>
+              <p class="core-card-desc">Real-time heuristics and predictive modeling.</p>
+            </div>
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">ROUTING</h3>
+              <p class="core-card-desc">Intelligent packet distribution system.</p>
+            </div>
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">METRICS</h3>
+              <p class="core-card-desc">Performance aggregation and health monitoring.</p>
+            </div>
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">FIREWALL</h3>
+              <p class="core-card-desc">Intrusion detection and traffic filtering.</p>
+            </div>
+            <div class="core-3d-card editable">
+              <h3 class="core-card-title">ENCRYPTION</h3>
+              <p class="core-card-desc">Quantum-resistant cryptographic wrapping.</p>
+            </div>
+          </div>
         </div>
       </section>
 
