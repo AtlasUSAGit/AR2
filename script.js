@@ -289,7 +289,6 @@ document.addEventListener('dragleave', (event) => {
   if(column) column.classList.remove('drag-over');
 });
 
-window.drop = function(event) {
 window.drop = async function(ev) {
   ev.preventDefault();
   if (ev.target.classList.contains("kanban-col")) {
