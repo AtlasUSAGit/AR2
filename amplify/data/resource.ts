@@ -45,7 +45,9 @@ const schema = a.schema({
   ]),
   HubDocumentStatus: a.model({
     docId: a.string(),
-    status: a.string()
+    status: a.string(),
+    customTitle: a.string(),
+    customSubtitle: a.string()
   }).authorization(allow => [
     allow.publicApiKey(),
     allow.authenticated()

@@ -304,7 +304,7 @@ h1, h2, h3, h4, h5, h6 {
 .mindmap-node-card.submitted { border-top: 4px solid #a855f7; }
 .mindmap-node-card.submitted:hover { border-color: #a855f7; box-shadow: 0 0 20px rgba(168,85,247,0.4); }
 
-.node-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; width: 100%; background: transparent; color: #fff; border: none; outline: none; font-family: var(--font-main); }
+.node-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; width: 100%; background: transparent; color: #fff; border: none; outline: none; font-family: var(--font-main); resize: none; overflow: hidden; word-wrap: break-word; }
 .node-title:focus { border-bottom: 1px dashed rgba(255,255,255,0.5); }
 .node-url-wrap { display: flex; gap: 4px; margin-top: auto; }
 .node-url { font-size: 0.65rem; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #a1a1aa; padding: 4px 6px; border-radius: 3px; flex: 1; outline: none; }

@@ -89,13 +89,11 @@ const HOMEPAGE_ID = 'home-page-content-v2'; // Unique identifier for our AppElem
 
 async function loadHomeElementsAWS() {
   try {
-    const { data: elements } = await client.models.homeElement.list();
+    const { data: elements } = await client.models.HomeElement.list();
     if (elements) {
-      elements.forEach(item => {
-        const el = document.getElementById(item.id);
-        if (el && el.innerHTML !== item.content) {
-          el.innerHTML = item.content;
-        }
+      elements.forEach(elData => {
+        const domEl = document.getElementById(elData.elementId);
+        if (domEl) domEl.innerHTML = elData.content;
       });
     }
   } catch (error) {
@@ -109,11 +107,11 @@ function setupHomeEditableSync() {
     
     el.addEventListener('blur', async () => {
       try {
-        const { data: existing } = await client.models.homeElement.get({ id: el.id });
-        if (existing) {
-          await client.models.homeElement.update({ id: el.id, content: el.innerHTML });
+        const { data: existing } = await client.models.HomeElement.list({ filter: { elementId: { eq: el.id } } });
+        if (existing && existing.length > 0) {
+          await client.models.HomeElement.update({ id: existing[0].id, elementId: el.id, content: el.innerHTML });
         } else {
-          await client.models.homeElement.create({ id: el.id, content: el.innerHTML });
+          await client.models.HomeElement.create({ elementId: el.id, content: el.innerHTML });
         }
       } catch(e) { console.error('Save failed', e); }
     });
@@ -180,15 +178,16 @@ window.toggleEditMode = async function() {
         const el = editableElements[i];
         if (!el.id) el.id = 'editable-item-' + i;
         
-        const { data: existing } = await client.models.homeElement.get({ id: el.id });
-        if (existing) {
-          await client.models.homeElement.update({
-            id: el.id,
+        const { data: existing } = await client.models.HomeElement.list({ filter: { elementId: { eq: el.id } } });
+        if (existing && existing.length > 0) {
+          await client.models.HomeElement.update({
+            id: existing[0].id,
+            elementId: el.id,
             content: el.innerHTML
           });
         } else {
-          await client.models.homeElement.create({
-            id: el.id,
+          await client.models.HomeElement.create({
+            elementId: el.id,
             content: el.innerHTML
           });
         }
@@ -395,12 +394,18 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
   newCard.ondragstart = window.drag;
   
   if (colId === 'col-questions') {
-    const opts = existingData && existingData.answers ? JSON.parse(existingData.answers) : { a: false, b: false, otherCheck: false, otherText: '' };
+    const opts = existingData && existingData.answers ? JSON.parse(existingData.answers) : { a: false, aText: 'Option A', b: false, bText: 'Option B', otherCheck: false, otherText: '' };
     newCard.innerHTML = `
-      <div class="kanban-card-title">${text}</div>
+      <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, true)">${text}</div>
       <div style="margin-top: 10px; font-size: 0.8rem;" class="kanban-poll-container">
-        <label style="display: block; margin-bottom: 5px;"><input type="checkbox" name="a" ${opts.a ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> Option A</label>
-        <label style="display: block; margin-bottom: 5px;"><input type="checkbox" name="b" ${opts.b ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> Option B</label>
+        <label style="display: flex; margin-bottom: 5px; gap: 5px; align-items: center;">
+          <input type="checkbox" name="a" ${opts.a ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> 
+          <input type="text" name="aText" value="${opts.aText || 'Option A'}" onblur="window.saveKanbanPoll('${newCard.id}')" style="background: transparent; border: none; color: #fff; width: 100%; border-bottom: 1px dashed rgba(255,255,255,0.3);">
+        </label>
+        <label style="display: flex; margin-bottom: 5px; gap: 5px; align-items: center;">
+          <input type="checkbox" name="b" ${opts.b ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> 
+          <input type="text" name="bText" value="${opts.bText || 'Option B'}" onblur="window.saveKanbanPoll('${newCard.id}')" style="background: transparent; border: none; color: #fff; width: 100%; border-bottom: 1px dashed rgba(255,255,255,0.3);">
+        </label>
         <div style="display: flex; gap: 5px; margin-top: 5px;">
           <input type="checkbox" name="otherCheck" ${opts.otherCheck ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')">
           <input type="text" name="otherText" placeholder="Other..." value="${opts.otherText || ''}" onblur="window.saveKanbanPoll('${newCard.id}')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 100%; font-size: 0.75rem; padding: 2px;">
@@ -412,7 +417,7 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
     }
   } else {
     newCard.innerHTML = `
-      <div class="kanban-card-title">${text}</div>
+      <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, false)">${text}</div>
       <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-${cardCounter.toString().padStart(2, '0')}</span></div>
     `;
     if (!existingData) {
@@ -456,7 +461,9 @@ window.saveKanbanPoll = async function(cardId) {
   if(!card) return;
   const state = {
     a: card.querySelector('input[name="a"]').checked,
+    aText: card.querySelector('input[name="aText"]').value,
     b: card.querySelector('input[name="b"]').checked,
+    bText: card.querySelector('input[name="bText"]').value,
     otherCheck: card.querySelector('input[name="otherCheck"]').checked,
     otherText: card.querySelector('input[name="otherText"]').value
   };
@@ -466,6 +473,16 @@ window.saveKanbanPoll = async function(cardId) {
       answers: JSON.stringify(state)
     });
   } catch(e) { console.error('Failed to update poll in AWS', e); }
+};
+
+window.saveKanbanTitle = async function(cardId, newTitle, isQuestion) {
+  try {
+    if (isQuestion) {
+      await client.models.kanbanQuestion.update({ id: cardId, question: newTitle });
+    } else {
+      await client.models.kanbanCard.update({ id: cardId, title: newTitle });
+    }
+  } catch(e) { console.error('Failed to update title in AWS', e); }
 };
 
 async function loadKanbanQuestionsAWS() {
@@ -746,7 +763,7 @@ function updateMindmap() {
     .html(d => {
       if (d.type === 'hyperlink') {
         return `
-          <input type="text" class="node-title" value="${d.title}" placeholder="Title" />
+          <textarea class="node-title" placeholder="Title" rows="3">${d.title}</textarea>
           <div class="node-url-wrap">
             <input type="text" class="node-url" value="${d.url || ''}" placeholder="URL" />
             <button class="node-link-btn">Go</button>
@@ -754,7 +771,7 @@ function updateMindmap() {
         `;
       } else {
         return `
-          <input type="text" class="node-title" value="${d.title}" placeholder="Title" style="margin-bottom: auto;" />
+          <textarea class="node-title" placeholder="Title" style="margin-bottom: auto;" rows="3">${d.title}</textarea>
           <div style="font-size: 0.65rem; color:#9ca3af; text-align:center;">[${d.id}]</div>
         `;
       }
@@ -948,7 +965,7 @@ async function initApp() {
   await loadKanbanQuestionsAWS();
   await loadKanbanCardsAWS();
   await loadHubFiles();
-  await loadHubChecklists();
+  await window.loadHubChecklists();
 }
 
 // ==========================================
@@ -1018,16 +1035,47 @@ window.deleteHubFile = async function(filePath, e) {
   }
 };
 
-window.updateDocStatus = async function(docId, status) {
+window.updateDocStatus = async function(docId, status, customTitle, customSubtitle) {
   try {
     const { data: existing } = await client.models.HubDocumentStatus.list({ filter: { docId: { eq: docId } } });
     if (existing && existing.length > 0) {
-      await client.models.HubDocumentStatus.update({ id: existing[0].id, docId, status });
+      await client.models.HubDocumentStatus.update({ 
+        id: existing[0].id, 
+        docId, 
+        status: status || existing[0].status,
+        customTitle: customTitle || existing[0].customTitle,
+        customSubtitle: customSubtitle || existing[0].customSubtitle
+      });
     } else {
-      await client.models.HubDocumentStatus.create({ docId, status });
+      await client.models.HubDocumentStatus.create({ 
+        docId, 
+        status: status || 'Missing', 
+        customTitle, 
+        customSubtitle 
+      });
     }
-    await loadHubFiles(); // Recalculate chart
+    if(status) await loadHubFiles(); // Recalculate chart if status changed
   } catch(e) { console.error('Failed to update status', e); }
+};
+
+window.handleCardFileUpload = async function(docId, event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  try {
+    const btn = event.target.nextElementSibling;
+    if (btn) btn.textContent = 'Uploading...';
+    
+    await uploadData({
+      path: `documents/${file.name}`,
+      data: file
+    });
+    
+    // Automatically set status to Verified/Ready
+    await window.updateDocStatus(docId, 'Verified/Ready');
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    alert('Upload failed: ' + error.message);
+  }
 };
 
 async function loadHubFiles() {
@@ -1049,31 +1097,42 @@ async function loadHubFiles() {
     grid.innerHTML = '';
     let readyCount = 0;
     
-    // Render preloaded docs
-    PRELOADED_DOCUMENTS.forEach(doc => {
-      const status = statuses[doc.id] || 'Missing';
-      if (status === 'Verified/Ready') readyCount++;
-      
-      const fileMatch = uploadedFiles.find(f => f.path.includes(doc.name)); // Rough match
+    const renderCard = (docId, defaultName, defaultSubtitle, status, fileMatch, isPreloaded) => {
+      const customTitle = statusesData.find(s => s.docId === docId)?.customTitle || defaultName;
+      const customSubtitle = statusesData.find(s => s.docId === docId)?.customSubtitle || defaultSubtitle;
       
       const card = document.createElement('div');
       card.className = 'doc-card tilt-element';
       
       card.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <div class="doc-icon">📄</div>
+          <div class="doc-icon">${isPreloaded ? '📄' : '📎'}</div>
           ${fileMatch ? `<button onclick="window.deleteHubFile('${fileMatch.path}', event)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>` : ''}
         </div>
-        <div class="doc-title">${doc.name}</div>
-        <div class="doc-desc">${doc.subtitle}</div>
-        <select class="doc-status" onchange="window.updateDocStatus('${doc.id}', this.value)" style="border-color: ${status === 'Verified/Ready' ? '#10b981' : (status === 'Missing' ? '#ef4444' : '#f59e0b')}">
+        <div class="doc-title" contenteditable="true" onblur="window.updateDocStatus('${docId}', null, this.innerText, null)">${customTitle}</div>
+        <div class="doc-desc" contenteditable="true" onblur="window.updateDocStatus('${docId}', null, null, this.innerText)">${customSubtitle}</div>
+        <select class="doc-status" onchange="window.updateDocStatus('${docId}', this.value)" style="border-color: ${status === 'Verified/Ready' ? '#10b981' : (status === 'Missing' ? '#ef4444' : '#f59e0b')}">
           <option value="Missing" ${status === 'Missing' ? 'selected' : ''}>Missing</option>
           <option value="In Progress" ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
           <option value="Verified/Ready" ${status === 'Verified/Ready' ? 'selected' : ''}>Verified/Ready</option>
         </select>
-        ${fileMatch ? `<div style="margin-top: 15px;"><button class="btn-text" style="color:#A493F7;" onclick="window.downloadHubFile('${fileMatch.path}', event)">Download File</button></div>` : ''}
+        <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+          ${fileMatch ? `<button class="btn-text" style="color:#A493F7; align-self: flex-start;" onclick="window.downloadHubFile('${fileMatch.path}', event)">Download File</button>` : ''}
+          <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between;">
+            <input type="file" id="upload-${docId}" style="display:none;" onchange="window.handleCardFileUpload('${docId}', event)">
+            <button class="btn-text" style="color:#10b981;" onclick="document.getElementById('upload-${docId}').click()">+ Upload to this card</button>
+          </div>
+        </div>
       `;
       grid.appendChild(card);
+    };
+    
+    // Render preloaded docs
+    PRELOADED_DOCUMENTS.forEach(doc => {
+      const status = statuses[doc.id] || 'Missing';
+      if (status === 'Verified/Ready') readyCount++;
+      const fileMatch = uploadedFiles.find(f => f.path.includes(doc.name));
+      renderCard(doc.id, doc.name, doc.subtitle, status, fileMatch, true);
     });
     
     // Render any uploaded files that aren't preloaded
@@ -1085,24 +1144,7 @@ async function loadHubFiles() {
       const status = statuses[docId] || 'In Progress';
       if (status === 'Verified/Ready') readyCount++;
       
-      const card = document.createElement('div');
-      card.className = 'doc-card tilt-element';
-      
-      card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <div class="doc-icon">📎</div>
-          <button onclick="window.deleteHubFile('${item.path}', event)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
-        </div>
-        <div class="doc-title">${fileName}</div>
-        <div class="doc-desc">User Uploaded File</div>
-        <select class="doc-status" onchange="window.updateDocStatus('${docId}', this.value)" style="border-color: ${status === 'Verified/Ready' ? '#10b981' : (status === 'Missing' ? '#ef4444' : '#f59e0b')}">
-          <option value="Missing" ${status === 'Missing' ? 'selected' : ''}>Missing</option>
-          <option value="In Progress" ${status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-          <option value="Verified/Ready" ${status === 'Verified/Ready' ? 'selected' : ''}>Verified/Ready</option>
-        </select>
-        <div style="margin-top: 15px;"><button class="btn-text" style="color:#A493F7;" onclick="window.downloadHubFile('${item.path}', event)">Download File</button></div>
-      `;
-      grid.appendChild(card);
+      renderCard(docId, fileName, 'User Uploaded File', status, item, false);
     });
 
     // Update Circle Chart
@@ -1128,7 +1170,7 @@ window.addHubChecklist = async function() {
       title: 'New Operations Checklist',
       items: JSON.stringify([])
     });
-    await loadHubChecklists();
+    await window.loadHubChecklists();
   } catch(e) { console.error('Error adding checklist', e); }
 };
 
@@ -1136,7 +1178,7 @@ window.deleteHubChecklist = async function(id) {
   if (!confirm('Delete this checklist entirely?')) return;
   try {
     await client.models.HubChecklist.delete({ id });
-    await loadHubChecklists();
+    await window.loadHubChecklists();
   } catch(e) { console.error('Error deleting checklist', e); }
 };
 
@@ -1148,7 +1190,7 @@ window.updateHubChecklist = async function(id, title, items) {
   } catch(e) { console.error('Error updating checklist', e); }
 };
 
-async function loadHubChecklists() {
+window.loadHubChecklists = async function() {
   const grid = document.getElementById('hub-checklist-grid');
   if (!grid) return;
   try {
@@ -1172,7 +1214,7 @@ async function loadHubChecklists() {
           <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="
             const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
             newItems[${i}].checked = this.checked;
-            window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(loadHubChecklists);
+            window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(window.loadHubChecklists);
           ">
           <input type="text" value="${item.text}" onblur="
             const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
@@ -1182,7 +1224,7 @@ async function loadHubChecklists() {
           <button class="btn-text" style="color: #ef4444;" onclick="
             const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
             newItems.splice(${i}, 1);
-            window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(loadHubChecklists);
+            window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(window.loadHubChecklists);
           ">&times;</button>
         </div>
       `).join('');
@@ -1196,7 +1238,7 @@ async function loadHubChecklists() {
         <button class="btn-text" style="color: #A493F7;" onclick="
           const newItems = JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(items))}'));
           newItems.push({ text: 'New Task', checked: false });
-          window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(loadHubChecklists);
+          window.updateHubChecklist('${list.id}', '${list.title}', newItems).then(window.loadHubChecklists);
         ">+ Add Item</button>
       `;
       
