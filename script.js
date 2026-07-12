@@ -86,16 +86,37 @@ function init3DTilt() {
 let isEditMode = false;
 const HOMEPAGE_ID = 'home-page-content-v2'; // Unique identifier for our AppElement
 
-async function loadHomePageContent() {
+async function loadHomeElementsAWS() {
   try {
-    const { data: appElement } = await client.models.AppElement.get({ id: HOMEPAGE_ID });
-    if (appElement && appElement.content) {
-      document.getElementById('page-home').innerHTML = appElement.content;
-      initGsapAnimations(); 
+    const { data: elements } = await client.models.homeElement.list();
+    if (elements) {
+      elements.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (el && el.innerHTML !== item.content) {
+          el.innerHTML = item.content;
+        }
+      });
     }
   } catch (error) {
-    console.warn("Failed to load home page content from AWS, using defaults.", error);
+    console.warn("Failed to load home elements from AWS", error);
   }
+}
+
+function setupHomeEditableSync() {
+  document.querySelectorAll('.editable').forEach((el, index) => {
+    if (!el.id) el.id = 'editable-item-' + index;
+    
+    el.addEventListener('blur', async () => {
+      try {
+        const { data: existing } = await client.models.homeElement.get({ id: el.id });
+        if (existing) {
+          await client.models.homeElement.update({ id: el.id, content: el.innerHTML });
+        } else {
+          await client.models.homeElement.create({ id: el.id, content: el.innerHTML });
+        }
+      } catch(e) { console.error('Save failed', e); }
+    });
+  });
 }
 
 window.toggleEditMode = async function() {
@@ -436,8 +457,16 @@ async function loadKanbanCardsAWS() {
     const { data: cards } = await client.models.kanbanCard.list();
     if (cards) {
       cards.forEach(c => {
-        if(!document.getElementById(c.id)) {
-          window.addKanbanCard(c.colId, null, { id: c.id, question: c.title }); // Using existingData format
+        let card = document.getElementById(c.id);
+        if(!card) {
+          window.addKanbanCard(c.colId, null, { id: c.id, question: c.title }); 
+        } else {
+          const targetCol = document.getElementById(c.colId);
+          if (targetCol && card.parentElement !== targetCol) {
+            const addWrap = targetCol.querySelector('.add-card-wrap');
+            if (addWrap) targetCol.insertBefore(card, addWrap);
+            else targetCol.appendChild(card);
+          }
         }
       });
     }
@@ -877,106 +906,18 @@ document.addEventListener('input', (e) => {
 
 
 // ==========================================
-// REAL-TIME MULTIPLAYER SYNC
-// ==========================================
-async function initLiveSync() {
-  // 1. Home Screen Editable Text Sync
-  document.querySelectorAll('.editable').forEach((el, index) => {
-    if (!el.id) el.id = 'editable-item-' + index;
-    
-    el.addEventListener('blur', async () => {
-      try {
-        const { data: existing } = await client.models.homeElement.get({ id: el.id });
-        if (existing) {
-          await client.models.homeElement.update({ id: el.id, content: el.innerHTML });
-        } else {
-          await client.models.homeElement.create({ id: el.id, content: el.innerHTML });
-        }
-      } catch(e) { console.error('Save failed', e); }
-    });
-  });
-
-  client.models.homeElement.observeQuery().subscribe({
-    next: ({ items }) => {
-      items.forEach(item => {
-        const el = document.getElementById(item.id);
-        if (el && document.activeElement !== el && el.innerHTML !== item.content) {
-          el.innerHTML = item.content;
-        }
-      });
-    }
-  });
-
-  // 2. Mindmap Live Sync
-  client.models.mindmap.observeQuery().subscribe({
-    next: ({ items }) => {
-      if (items.length > 0) {
-        const saved = items[0];
-        if (!isDrawing && !isDraggingNode && typeof saved.nodes === 'string') {
-          mindmapNodes = JSON.parse(saved.nodes);
-          mindmapLinks = JSON.parse(saved.edges);
-          updateMindmap();
-          simulation.alpha(1).restart();
-        }
-      }
-    }
-  });
-
-  // 3. Kanban Questions Live Sync
-  client.models.kanbanQuestion.observeQuery().subscribe({
-    next: ({ items }) => {
-      items.forEach(q => {
-        let card = document.getElementById(q.id);
-        if (!card) {
-          window.addKanbanCard('col-questions', null, q);
-          card = document.getElementById(q.id);
-        }
-        if (card && q.answers && document.activeElement.name !== 'otherText') {
-          const opts = JSON.parse(q.answers);
-          const a = card.querySelector('input[name="a"]');
-          const b = card.querySelector('input[name="b"]');
-          const oc = card.querySelector('input[name="otherCheck"]');
-          const ot = card.querySelector('input[name="otherText"]');
-          
-          if (a) a.checked = opts.a;
-          if (b) b.checked = opts.b;
-          if (oc) oc.checked = opts.otherCheck;
-          if (ot && document.activeElement !== ot) ot.value = opts.otherText;
-        }
-      });
-    }
-  });
-  
-  // 4. Kanban Card Layout Sync
-  client.models.kanbanCard.observeQuery().subscribe({
-    next: ({ items }) => {
-      items.forEach(cardData => {
-        let card = document.getElementById(cardData.id);
-        if (card) {
-          const targetCol = document.getElementById(cardData.colId);
-          if (targetCol && card.parentElement !== targetCol) {
-            const addWrap = targetCol.querySelector('.add-card-wrap');
-            targetCol.insertBefore(card, addWrap);
-            updateKanbanCounts();
-          }
-        }
-      });
-    }
-  });
-}
-
 // ==========================================
 // INITIALIZATION
 // ==========================================
 async function initApp() {
+  setupHomeEditableSync();
+  await loadHomeElementsAWS();
   initGsapAnimations();
-  await loadHomePageContent();
   initMindmap();
   init3DTilt();
   updateKanbanCounts();
   await loadKanbanQuestionsAWS();
   await loadKanbanCardsAWS();
-  initLiveSync();
 }
 
 if (document.readyState === 'loading') {
