@@ -61,6 +61,12 @@
         <span class="toolbar-label">Color</span>
         <input type="color" class="toolbar-color" onchange="window.formatText('foreColor', this.value)" value="#ffffff">
       </div>
+      <div class="toolbar-group" style="margin-left: auto; display: flex; gap: 10px; align-items: center;">
+        <select id="version-select" class="toolbar-select" onchange="window.loadHomepageVersion(this.value)">
+          <option value="">Load Version...</option>
+        </select>
+        <button class="btn-primary" onclick="window.saveHomepageVersion()" style="padding: 5px 15px; font-size: 0.9rem;">Save Version</button>
+      </div>
     </div>
 
     <!-- NAVBAR -->
@@ -71,7 +77,7 @@
           <button id="mobile-menu-btn" class="mobile-only-btn" onclick="window.toggleMobileMenu()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&#9776;</button>
         </div>
         <div class="nav-links" id="nav-links-container">
-          <button class="nav-link active" onclick="window.showPage('home')">Home</button>
+          <button class="nav-link active" onclick="window.showPage('home')">Briefing</button>
           <button class="nav-link" onclick="window.showPage('mindmap')">Mind Map</button>
           <button class="nav-link" onclick="window.showPage('kanban')">Kanban</button>
           <button class="nav-link" onclick="window.showPage('hub')">Document Hub</button>
@@ -248,11 +254,21 @@
 
     <!-- MIND MAP PAGE -->
     <div id="page-mindmap" class="page-container">
-      <h1 class="text-gradient">Mind Map Sandbox</h1>
-      <p style="color: #9ca3af; margin-bottom: 20px;">
-        Create custom nodes. 
-        <strong style="color: #facc15;">Hold SHIFT and Drag</strong> between nodes to draw connections.
-      </p>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div>
+          <h1 class="text-gradient" style="margin: 0;">Mind Map Sandbox</h1>
+          <p style="color: #9ca3af; margin-top: 5px; margin-bottom: 0;">
+            Create custom nodes. <strong style="color: #facc15;">Hold SHIFT and Drag</strong> between nodes to draw connections.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+          <span style="color: #9ca3af; font-size: 0.9rem;">Project:</span>
+          <select id="mindmap-project-select" onchange="window.switchMindmapProject(this.value)" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 5px; border-radius: 4px; font-family: 'Courier New', monospace;">
+            <option value="default">Default Project</option>
+          </select>
+          <button class="btn-primary" onclick="window.newMindmapProject()" style="padding: 5px 10px; font-size: 0.8rem;">+ New</button>
+        </div>
+      </div>
       
       <div class="mindmap-controls">
         <input type="text" id="node-name" placeholder="Node Title">
@@ -279,8 +295,19 @@
 
     <!-- KANBAN PAGE -->
     <div id="page-kanban" class="page-container">
-      <h1 class="text-gradient">Kanban Terminal</h1>
-      <p style="color: #9ca3af; margin-bottom: 30px;">Drag and drop task management. Hover over columns and cards.</p>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+        <div>
+          <h1 class="text-gradient" style="margin: 0;">Kanban Terminal</h1>
+          <p style="color: #9ca3af; margin-top: 5px; margin-bottom: 0;">Drag and drop task management. Hover over columns and cards.</p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+          <span style="color: #9ca3af; font-size: 0.9rem;">Project:</span>
+          <select id="kanban-project-select" onchange="window.switchKanbanProject(this.value)" style="background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 5px; border-radius: 4px; font-family: 'Courier New', monospace;">
+            <option value="default">Default Project</option>
+          </select>
+          <button class="btn-primary" onclick="window.newKanbanProject()" style="padding: 5px 10px; font-size: 0.8rem;">+ New</button>
+        </div>
+      </div>
       
       <div class="kanban-board">
         <div class="kanban-col" id="col-questions" ondragover="window.allowDrop(event)" ondrop="window.drop(event)">

@@ -282,6 +282,81 @@ async function saveGlowCardsToAWS() {
   }
 }
 
+window.saveHomepageVersion = async function() {
+  const btn = document.querySelector('#edit-toolbar .btn-primary');
+  if(btn) btn.textContent = 'Saving...';
+  
+  const editables = [];
+  document.querySelectorAll('#page-home .editable').forEach((el, index) => {
+    if (!el.id) el.id = 'editable-item-' + index;
+    editables.push({ id: el.id, html: el.innerHTML });
+  });
+  
+  glowCards.forEach(card => {
+    const titleEl = document.getElementById(card.id + '-title');
+    const textEl = document.getElementById(card.id + '-text');
+    if (titleEl) card.title = titleEl.innerHTML;
+    if (textEl) card.text = textEl.innerHTML;
+  });
+
+  const payload = { editables, glowCards };
+
+  try {
+    await client.models.AppElement.create({
+      type: 'homepage-version',
+      content: JSON.stringify(payload)
+    });
+    alert("Homepage version saved successfully!");
+  } catch(e) {
+    console.error("Failed to save homepage version", e);
+    alert("Failed to save version.");
+  }
+  
+  if(btn) btn.textContent = 'Save Version';
+  
+  try {
+    const { data: versions } = await client.models.AppElement.list({ filter: { type: { eq: 'homepage-version' } } });
+    const versionSelect = document.getElementById('version-select');
+    if (versionSelect) {
+      versionSelect.innerHTML = '<option value="">Load Version...</option>' + 
+        versions.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .map(v => `<option value="${v.id}">${new Date(v.createdAt).toLocaleString()}</option>`)
+                .join('');
+    }
+  } catch(e) {}
+};
+
+window.loadHomepageVersion = async function(versionId) {
+  if (!versionId) return;
+  if (!confirm("This will overwrite your current screen with the selected version. You still must click 'Save' to publish it. Continue?")) {
+    document.getElementById('version-select').value = "";
+    return;
+  }
+  try {
+    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: versionId } } });
+    if (existing && existing.length > 0) {
+      const payload = JSON.parse(existing[0].content);
+      
+      if (payload.editables) {
+        payload.editables.forEach(item => {
+          const el = document.getElementById(item.id);
+          if (el) el.innerHTML = item.html;
+        });
+      }
+      
+      if (payload.glowCards) {
+        glowCards = payload.glowCards;
+        renderGlowCards();
+        document.querySelectorAll('#page-home .editable').forEach(el => el.setAttribute('contenteditable', 'true'));
+      }
+      alert("Version loaded into preview. Click 'Save' in the toolbar to publish these changes.");
+    }
+  } catch(e) {
+    console.error("Failed to load version", e);
+  }
+  document.getElementById('version-select').value = "";
+};
+
 function setupHomeEditableSync() {
   document.querySelectorAll('.editable').forEach((el, index) => {
     if (!el.id) el.id = 'editable-item-' + index;
@@ -347,6 +422,18 @@ window.toggleEditMode = async function() {
     renderGlowCards(); // Re-render to show delete buttons
     
     document.querySelectorAll('#page-home .editable').forEach(el => el.setAttribute('contenteditable', 'true'));
+    
+    // Load Homepage Versions into the dropdown
+    try {
+      const { data: versions } = await client.models.AppElement.list({ filter: { type: { eq: 'homepage-version' } } });
+      const versionSelect = document.getElementById('version-select');
+      if (versionSelect) {
+        versionSelect.innerHTML = '<option value="">Load Version...</option>' + 
+          versions.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .map(v => `<option value="${v.id}">${new Date(v.createdAt).toLocaleString()}</option>`)
+                  .join('');
+      }
+    } catch(e) { console.error('Failed to load versions', e); }
   } else {
     // Disable editing & SAVE to AWS
     editBtn.textContent = 'Saving...';
@@ -549,6 +636,118 @@ document.addEventListener('dragleave', (event) => {
   if(column) column.classList.remove('drag-over');
 });
 
+window.activeKanbanProjectId = 'default';
+
+window.saveKanbanProject = async function() {
+  const cards = [];
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    const isQuestion = !!card.querySelector('.kanban-poll-container');
+    const colId = card.closest('.kanban-col').id;
+    let title = card.querySelector('.kanban-card-title')?.innerText || '';
+    
+    if (isQuestion) {
+      const opts = {
+        a: card.querySelector('input[name="a"]').checked,
+        aText: card.querySelector('input[name="aText"]').value,
+        b: card.querySelector('input[name="b"]').checked,
+        bText: card.querySelector('input[name="bText"]').value,
+        otherCheck: card.querySelector('input[name="otherCheck"]').checked,
+        otherText: card.querySelector('input[name="otherText"]').value
+      };
+      cards.push({ id: card.id, colId, isQuestion: true, question: title, answers: JSON.stringify(opts) });
+    } else {
+      cards.push({ id: card.id, colId, isQuestion: false, question: title });
+    }
+  });
+
+  const select = document.getElementById('kanban-project-select');
+  const payload = {
+    name: select ? select.options[select.selectedIndex]?.text : activeKanbanProjectId,
+    cards: cards
+  };
+
+  try {
+    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'kanban-proj-' + activeKanbanProjectId } } });
+    if (existing && existing.length > 0) {
+      await client.models.AppElement.update({
+        id: existing[0].id,
+        content: JSON.stringify(payload)
+      });
+    } else {
+      await client.models.AppElement.create({
+        id: 'kanban-proj-' + activeKanbanProjectId,
+        type: 'kanban-project',
+        content: JSON.stringify(payload)
+      });
+    }
+  } catch(e) { console.error('Failed to save Kanban project', e); }
+};
+
+window.loadKanbanProjects = async function() {
+  try {
+    const { data: projects } = await client.models.AppElement.list({ filter: { type: { eq: 'kanban-project' } } });
+    const select = document.getElementById('kanban-project-select');
+    if (!select) return;
+    
+    let optionsHTML = '<option value="default">Default Project</option>';
+    projects.forEach(p => {
+      if (p.id !== 'kanban-proj-default') {
+        const payload = JSON.parse(p.content || '{}');
+        const projId = p.id.replace('kanban-proj-', '');
+        optionsHTML += `<option value="${projId}">${payload.name || projId}</option>`;
+      }
+    });
+    select.innerHTML = optionsHTML;
+    select.value = activeKanbanProjectId;
+  } catch(e) { console.error('Failed to load kanban projects', e); }
+};
+
+window.newKanbanProject = async function() {
+  const name = prompt("Enter new project name:");
+  if (!name) return;
+  const newId = 'proj-' + Date.now();
+  const payload = { name: name, cards: [] };
+  try {
+    await client.models.AppElement.create({
+      id: 'kanban-proj-' + newId,
+      type: 'kanban-project',
+      content: JSON.stringify(payload)
+    });
+    activeKanbanProjectId = newId;
+    await window.loadKanbanProjects();
+    document.getElementById('kanban-project-select').value = activeKanbanProjectId;
+    window.switchKanbanProject(activeKanbanProjectId);
+  } catch(e) { alert("Failed to create project"); }
+};
+
+window.switchKanbanProject = async function(projId) {
+  activeKanbanProjectId = projId;
+  
+  // Clear board
+  document.querySelectorAll('.kanban-card').forEach(c => {
+    // Only remove dynamically added cards to preserve potential hardcoded HTML if we want, but safer to remove all
+    // Since default project might just use the old hardcoded ones, we clear all and rebuild from AWS
+    c.remove();
+  });
+  
+  try {
+    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'kanban-proj-' + projId } } });
+    if (existing && existing.length > 0) {
+      const payload = JSON.parse(existing[0].content || '{}');
+      if (payload.cards) {
+        payload.cards.forEach(c => {
+          // Temporarily disable save during load
+          window._isLoadingKanban = true;
+          window.addKanbanCard(c.colId, null, { id: c.id, question: c.question, answers: c.answers }, true);
+          window._isLoadingKanban = false;
+        });
+      }
+    }
+  } catch(e) {}
+  
+  updateKanbanCounts();
+};
+
 window.drop = async function(ev) {
   ev.preventDefault();
   if (ev.target.classList.contains("kanban-col")) {
@@ -558,28 +757,7 @@ window.drop = async function(ev) {
     } else {
       ev.target.appendChild(draggedItem);
     }
-    
-    // Broadcast drop to AWS
-    try {
-      if (draggedItem.id) {
-        const { data: existing } = await client.models.kanbanCard.get({ id: draggedItem.id });
-        if (existing) {
-          await client.models.kanbanCard.update({
-            id: draggedItem.id,
-            colId: ev.target.id
-          });
-        } else {
-          // If it's a hardcoded HTML card being dragged for the first time
-          await client.models.kanbanCard.create({
-            id: draggedItem.id,
-            colId: ev.target.id,
-            title: draggedItem.querySelector('.kanban-card-title')?.innerText || "Task",
-            priority: "Normal",
-            atlasId: `ATLAS-00`
-          });
-        }
-      }
-    } catch(e) { console.log('Drop sync error', e); }
+    await window.saveKanbanProject();
   }
   if (draggedItem) {
     draggedItem.style.opacity = "1";
@@ -588,7 +766,7 @@ window.drop = async function(ev) {
   updateKanbanCounts();
 };
 
-window.addKanbanCard = function(colId, inputId, existingData = null) {
+window.addKanbanCard = function(colId, inputId, existingData = null, skipSave = false) {
   const input = document.getElementById(inputId);
   if (!input && !existingData) return;
   
@@ -605,38 +783,32 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
     const opts = existingData && existingData.answers ? JSON.parse(existingData.answers) : { a: false, aText: 'Option A', b: false, bText: 'Option B', otherCheck: false, otherText: '' };
     newCard.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, true)">${text}</div>
-        <button onclick="window.deleteKanbanCard('${newCard.id}', true)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
+        <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle()">${text}</div>
+        <button onclick="window.deleteKanbanCard('${newCard.id}')" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
       </div>
       <div style="margin-top: 10px; font-size: 0.8rem;" class="kanban-poll-container">
         <label style="display: flex; margin-bottom: 5px; gap: 5px; align-items: center;">
-          <input type="checkbox" name="a" ${opts.a ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> 
-          <input type="text" name="aText" value="${opts.aText || 'Option A'}" onblur="window.saveKanbanPoll('${newCard.id}')" style="background: transparent; border: none; color: #fff; width: 100%; border-bottom: 1px dashed rgba(255,255,255,0.3);">
+          <input type="checkbox" name="a" ${opts.a ? 'checked' : ''} onchange="this.setAttribute('checked', this.checked ? 'true' : ''); window.saveKanbanProject();"> 
+          <input type="text" name="aText" value="${opts.aText || 'Option A'}" onblur="this.setAttribute('value', this.value); window.saveKanbanProject();" style="background: transparent; border: none; color: #fff; width: 100%; border-bottom: 1px dashed rgba(255,255,255,0.3);">
         </label>
         <label style="display: flex; margin-bottom: 5px; gap: 5px; align-items: center;">
-          <input type="checkbox" name="b" ${opts.b ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')"> 
-          <input type="text" name="bText" value="${opts.bText || 'Option B'}" onblur="window.saveKanbanPoll('${newCard.id}')" style="background: transparent; border: none; color: #fff; width: 100%; border-bottom: 1px dashed rgba(255,255,255,0.3);">
+          <input type="checkbox" name="b" ${opts.b ? 'checked' : ''} onchange="this.setAttribute('checked', this.checked ? 'true' : ''); window.saveKanbanProject();"> 
+          <input type="text" name="bText" value="${opts.bText || 'Option B'}" onblur="this.setAttribute('value', this.value); window.saveKanbanProject();" style="background: transparent; border: none; color: #fff; width: 100%; border-bottom: 1px dashed rgba(255,255,255,0.3);">
         </label>
         <div style="display: flex; gap: 5px; margin-top: 5px;">
-          <input type="checkbox" name="otherCheck" ${opts.otherCheck ? 'checked' : ''} onchange="window.saveKanbanPoll('${newCard.id}')">
-          <input type="text" name="otherText" placeholder="Other..." value="${opts.otherText || ''}" onblur="window.saveKanbanPoll('${newCard.id}')" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 100%; font-size: 0.75rem; padding: 2px;">
+          <input type="checkbox" name="otherCheck" ${opts.otherCheck ? 'checked' : ''} onchange="this.setAttribute('checked', this.checked ? 'true' : ''); window.saveKanbanProject();">
+          <input type="text" name="otherText" placeholder="Other..." value="${opts.otherText || ''}" onblur="this.setAttribute('value', this.value); window.saveKanbanProject();" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 100%; font-size: 0.75rem; padding: 2px;">
         </div>
       </div>
     `;
-    if (!existingData) {
-      window.createKanbanPollAWS(newCard.id, text);
-    }
   } else {
     newCard.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle('${newCard.id}', this.innerText, false)">${text}</div>
-        <button onclick="window.deleteKanbanCard('${newCard.id}', false)" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
+        <div class="kanban-card-title" contenteditable="true" onblur="window.saveKanbanTitle()">${text}</div>
+        <button onclick="window.deleteKanbanCard('${newCard.id}')" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;">&times;</button>
       </div>
       <div class="kanban-card-meta"><span>Priority: Normal</span><span>ATLAS-${cardCounter.toString().padStart(2, '0')}</span></div>
     `;
-    if (!existingData) {
-      window.createKanbanCardAWS(newCard.id, colId, text);
-    }
   }
   
   const col = document.getElementById(colId);
@@ -646,106 +818,23 @@ window.addKanbanCard = function(colId, inputId, existingData = null) {
   if (input) input.value = '';
   updateKanbanCounts();
   init3DTilt();
+  
+  if (!skipSave && !window._isLoadingKanban) {
+    window.saveKanbanProject();
+  }
 };
 
-window.createKanbanPollAWS = async function(id, question) {
-  try {
-    await client.models.kanbanQuestion.create({
-      id: id,
-      question: question,
-      answers: JSON.stringify({ a: false, b: false, otherCheck: false, otherText: '' })
-    });
-  } catch(e) { console.error('Failed to save poll to AWS', e); }
+window.saveKanbanTitle = async function() {
+  await window.saveKanbanProject();
 };
 
-window.createKanbanCardAWS = async function(id, colId, text) {
-  try {
-    await client.models.kanbanCard.create({
-      id: id,
-      colId: colId,
-      title: text,
-      priority: "Normal",
-      atlasId: `ATLAS-${cardCounter.toString().padStart(2, '0')}`
-    });
-  } catch(e) { console.error('Failed to save card to AWS', e); }
-};
-
-window.saveKanbanPoll = async function(cardId) {
-  const card = document.getElementById(cardId);
-  if(!card) return;
-  const state = {
-    a: card.querySelector('input[name="a"]').checked,
-    aText: card.querySelector('input[name="aText"]').value,
-    b: card.querySelector('input[name="b"]').checked,
-    bText: card.querySelector('input[name="bText"]').value,
-    otherCheck: card.querySelector('input[name="otherCheck"]').checked,
-    otherText: card.querySelector('input[name="otherText"]').value
-  };
-  try {
-    await client.models.kanbanQuestion.update({
-      id: cardId,
-      answers: JSON.stringify(state)
-    });
-  } catch(e) { console.error('Failed to update poll in AWS', e); }
-};
-
-window.saveKanbanTitle = async function(cardId, newTitle, isQuestion) {
-  try {
-    if (isQuestion) {
-      await client.models.kanbanQuestion.update({ id: cardId, question: newTitle });
-    } else {
-      await client.models.kanbanCard.update({ id: cardId, title: newTitle });
-    }
-  } catch(e) { console.error('Failed to update title in AWS', e); }
-};
-
-window.deleteKanbanCard = async function(cardId, isQuestion) {
+window.deleteKanbanCard = async function(cardId) {
   if (!confirm('Delete this card?')) return;
   const card = document.getElementById(cardId);
   if (card) card.remove();
   updateKanbanCounts();
-  try {
-    if (isQuestion) {
-      await client.models.kanbanQuestion.delete({ id: cardId });
-    } else {
-      await client.models.kanbanCard.delete({ id: cardId });
-    }
-  } catch(e) { console.error('Failed to delete card', e); }
+  await window.saveKanbanProject();
 };
-
-async function loadKanbanQuestionsAWS() {
-  try {
-    const { data: questions } = await client.models.kanbanQuestion.list();
-    if (questions) {
-      questions.forEach(q => {
-        if(!document.getElementById(q.id)) {
-          window.addKanbanCard('col-questions', null, q);
-        }
-      });
-    }
-  } catch (e) { console.error("Failed to load Kanban questions", e); }
-}
-
-async function loadKanbanCardsAWS() {
-  try {
-    const { data: cards } = await client.models.kanbanCard.list();
-    if (cards) {
-      cards.forEach(c => {
-        let card = document.getElementById(c.id);
-        if(!card) {
-          window.addKanbanCard(c.colId, null, { id: c.id, question: c.title }); 
-        } else {
-          const targetCol = document.getElementById(c.colId);
-          if (targetCol && card.parentElement !== targetCol) {
-            const addWrap = targetCol.querySelector('.add-card-wrap');
-            if (addWrap) targetCol.insertBefore(card, addWrap);
-            else targetCol.appendChild(card);
-          }
-        }
-      });
-    }
-  } catch (e) { console.error("Failed to load Kanban cards", e); }
-}
 
 function updateKanbanCounts() {
   document.querySelectorAll('.kanban-col').forEach(col => {
@@ -824,19 +913,76 @@ async function loadCanvasData() {
   }
 }
 
-async function loadMindmapFromAWS() {
+window.activeMindmapProjectId = 'default';
+
+window.loadMindmapProjects = async function() {
   try {
-    const { data: mindmaps } = await client.models.mindmap.list();
-    if (mindmaps && mindmaps.length > 0) {
-      const saved = mindmaps[0];
-      mindmapNodes = JSON.parse(saved.nodes);
-      mindmapLinks = JSON.parse(saved.edges);
-      return;
-    }
-  } catch(e) {
-    console.error("Could not load mindmap from AWS, falling back to JSON", e);
+    const { data: projects } = await client.models.AppElement.list({ filter: { type: { eq: 'mindmap-project' } } });
+    const select = document.getElementById('mindmap-project-select');
+    if (!select) return;
+    
+    let optionsHTML = '<option value="default">Default Project</option>';
+    projects.forEach(p => {
+      if (p.id !== 'mindmap-proj-default') {
+        const payload = JSON.parse(p.content || '{}');
+        const projId = p.id.replace('mindmap-proj-', '');
+        optionsHTML += `<option value="${projId}">${payload.name || projId}</option>`;
+      }
+    });
+    select.innerHTML = optionsHTML;
+    select.value = activeMindmapProjectId;
+  } catch(e) { console.error('Failed to load mindmap projects', e); }
+};
+
+window.newMindmapProject = async function() {
+  const name = prompt("Enter new mind map project name:");
+  if (!name) return;
+  const newId = 'proj-' + Date.now();
+  const payload = { name: name, nodes: [], edges: [] };
+  try {
+    await client.models.AppElement.create({
+      id: 'mindmap-proj-' + newId,
+      type: 'mindmap-project',
+      content: JSON.stringify(payload)
+    });
+    activeMindmapProjectId = newId;
+    await window.loadMindmapProjects();
+    document.getElementById('mindmap-project-select').value = activeMindmapProjectId;
+    await window.switchMindmapProject(activeMindmapProjectId);
+  } catch(e) { alert("Failed to create project"); }
+};
+
+window.switchMindmapProject = async function(projId) {
+  activeMindmapProjectId = projId;
+  
+  if (projId === 'default') {
+    await loadCanvasData();
+    renderMindmap();
+    return;
   }
-  await loadCanvasData();
+  
+  try {
+    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'mindmap-proj-' + projId } } });
+    if (existing && existing.length > 0) {
+      const payload = JSON.parse(existing[0].content || '{}');
+      mindmapNodes = payload.nodes || [];
+      mindmapLinks = payload.edges || [];
+    } else {
+      mindmapNodes = [];
+      mindmapLinks = [];
+    }
+  } catch(e) { console.error("Failed to switch mindmap project", e); }
+  
+  renderMindmap();
+};
+
+async function loadMindmapFromAWS() {
+  await window.loadMindmapProjects();
+  if (activeMindmapProjectId !== 'default') {
+    await window.switchMindmapProject(activeMindmapProjectId);
+  } else {
+    await loadCanvasData();
+  }
 }
 
 window.saveMindmapToAWS = async function() {
@@ -849,18 +995,24 @@ window.saveMindmapToAWS = async function() {
       target: typeof l.target === 'object' ? l.target.id : l.target
     }));
     
-    const { data: mindmaps } = await client.models.mindmap.list();
-    if (mindmaps && mindmaps.length > 0) {
-      await client.models.mindmap.update({
-        id: mindmaps[0].id,
-        nodes: JSON.stringify(mindmapNodes),
-        edges: JSON.stringify(safeEdges)
+    const select = document.getElementById('mindmap-project-select');
+    const payload = {
+      name: select ? select.options[select.selectedIndex]?.text : activeMindmapProjectId,
+      nodes: mindmapNodes,
+      edges: safeEdges
+    };
+    
+    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'mindmap-proj-' + activeMindmapProjectId } } });
+    if (existing && existing.length > 0) {
+      await client.models.AppElement.update({
+        id: existing[0].id,
+        content: JSON.stringify(payload)
       });
     } else {
-      await client.models.mindmap.create({
-        name: "Global Mindmap",
-        nodes: JSON.stringify(mindmapNodes),
-        edges: JSON.stringify(safeEdges)
+      await client.models.AppElement.create({
+        id: 'mindmap-proj-' + activeMindmapProjectId,
+        type: 'mindmap-project',
+        content: JSON.stringify(payload)
       });
     }
     
@@ -870,6 +1022,7 @@ window.saveMindmapToAWS = async function() {
     console.error("Failed to save mindmap to AWS", e);
     const btn = document.getElementById('save-cloud-btn');
     if (btn) btn.textContent = 'Error';
+    setTimeout(() => { if (btn) btn.textContent = 'Save to Cloud'; }, 2000);
   }
 };
 
@@ -1189,9 +1342,10 @@ async function initApp() {
   initGsapAnimations();
   initMindmap();
   init3DTilt();
-  updateKanbanCounts();
-  await loadKanbanQuestionsAWS();
-  await loadKanbanCardsAWS();
+  await loadKanbanProjects();
+  if (activeKanbanProjectId !== 'default') {
+    await switchKanbanProject(activeKanbanProjectId);
+  }
   await loadHubFiles();
   await window.loadHubChecklists();
   
@@ -1336,7 +1490,8 @@ async function loadHubFiles() {
     const uploadedFiles = storageResult.items || [];
     
     grid.innerHTML = '';
-    let readyCount = 0;
+    let totalRendered = 0;
+    let readyRendered = 0;
     
     const EMBLEMS = [
       `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
@@ -1350,6 +1505,9 @@ async function loadHubFiles() {
     const renderCard = (docId, defaultName, defaultSubtitle, status, fileMatch, isPreloaded) => {
       const docData = statusesData.find(s => s.docId === docId);
       if (docData && docData.isDeleted) return; // Hide deleted cards
+      
+      totalRendered++;
+      if (status === 'Verified/Ready') readyRendered++;
       
       const customTitle = docData?.customTitle || defaultName;
       const customSubtitle = docData?.customSubtitle || defaultSubtitle;
@@ -1393,7 +1551,6 @@ async function loadHubFiles() {
     // Render preloaded docs
     PRELOADED_DOCUMENTS.forEach(doc => {
       const status = statuses[doc.id] || 'Missing';
-      if (status === 'Verified/Ready') readyCount++;
       const fileMatch = uploadedFiles.find(f => f.path.includes(doc.name));
       renderCard(doc.id, doc.name, doc.subtitle, status, fileMatch, true);
     });
@@ -1405,7 +1562,6 @@ async function loadHubFiles() {
         try { content = JSON.parse(cardData.content); } catch(e) {}
         const docId = cardData.id;
         const status = statuses[docId] || 'Missing';
-        if (status === 'Verified/Ready') readyCount++;
         const fileMatch = uploadedFiles.find(f => f.path.includes(content.name)); // Custom docs might not match by name if they use explicit attach, which is handled in renderCard
         renderCard(docId, content.name || 'New Document Slot', content.subtitle || 'Pending description...', status, fileMatch, false);
       });
@@ -1419,18 +1575,16 @@ async function loadHubFiles() {
       const fileName = item.path.replace('documents/', '');
       const docId = 'uploaded-' + fileName;
       const status = statuses[docId] || 'In Progress';
-      if (status === 'Verified/Ready') readyCount++;
       
       renderCard(docId, fileName, 'User Uploaded File', status, item, false);
     });
 
     // Update Circle Chart
-    const totalDocs = PRELOADED_DOCUMENTS.length + uploadedFiles.filter(item => !PRELOADED_DOCUMENTS.some(d => item.path.includes(d.name))).length;
-    const percentage = Math.round((readyCount / (totalDocs || 1)) * 100);
+    const percentage = Math.round((readyRendered / (totalRendered || 1)) * 100);
     
     document.getElementById('hub-completion-circle').setAttribute('stroke-dasharray', `${percentage}, 100`);
     document.getElementById('hub-completion-text').textContent = `${percentage}%`;
-    document.getElementById('hub-completion-desc').textContent = `${readyCount} out of ${totalDocs} documents verified`;
+    document.getElementById('hub-completion-desc').textContent = `${readyRendered} out of ${totalRendered} documents verified`;
 
   } catch (error) {
     console.error('Failed to load hub files:', error);
