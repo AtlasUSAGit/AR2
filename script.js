@@ -363,6 +363,16 @@ function setupHomeEditableSync() {
     
     el.addEventListener('blur', async () => {
       try {
+        if (el.id.startsWith('glow-')) {
+          const cardId = el.id.replace('-title', '').replace('-text', '');
+          const card = glowCards.find(c => c.id === cardId);
+          if (card) {
+            if (el.id.endsWith('-title')) card.title = el.innerHTML;
+            if (el.id.endsWith('-text')) card.text = el.innerHTML;
+            await saveGlowCardsToAWS();
+          }
+        }
+        
         const { data: existing } = await client.models.HomeElement.list({ filter: { elementId: { eq: el.id } } });
         if (existing && existing.length > 0) {
           await client.models.HomeElement.update({ id: existing[0].id, elementId: el.id, content: el.innerHTML });
@@ -662,20 +672,21 @@ window.saveKanbanProject = async function() {
 
   const select = document.getElementById('kanban-project-select');
   const payload = {
+    projectId: activeKanbanProjectId,
     name: select ? select.options[select.selectedIndex]?.text : activeKanbanProjectId,
     cards: cards
   };
 
   try {
-    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'kanban-proj-' + activeKanbanProjectId } } });
-    if (existing && existing.length > 0) {
+    const { data: projects } = await client.models.AppElement.list({ filter: { type: { eq: 'kanban-project' } } });
+    const existing = projects.find(p => p.content && p.content.includes('"projectId":"' + activeKanbanProjectId + '"'));
+    if (existing) {
       await client.models.AppElement.update({
-        id: existing[0].id,
+        id: existing.id,
         content: JSON.stringify(payload)
       });
     } else {
       await client.models.AppElement.create({
-        id: 'kanban-proj-' + activeKanbanProjectId,
         type: 'kanban-project',
         content: JSON.stringify(payload)
       });
@@ -693,8 +704,9 @@ window.loadKanbanProjects = async function() {
     projects.forEach(p => {
       if (p.id !== 'kanban-proj-default') {
         const payload = JSON.parse(p.content || '{}');
-        const projId = p.id.replace('kanban-proj-', '');
-        optionsHTML += `<option value="${projId}">${payload.name || projId}</option>`;
+        if (payload.projectId && payload.projectId !== 'default') {
+          optionsHTML += `<option value="${payload.projectId}">${payload.name || payload.projectId}</option>`;
+        }
       }
     });
     select.innerHTML = optionsHTML;
@@ -706,10 +718,9 @@ window.newKanbanProject = async function() {
   const name = prompt("Enter new project name:");
   if (!name) return;
   const newId = 'proj-' + Date.now();
-  const payload = { name: name, cards: [] };
+  const payload = { projectId: newId, name: name, cards: [] };
   try {
     await client.models.AppElement.create({
-      id: 'kanban-proj-' + newId,
       type: 'kanban-project',
       content: JSON.stringify(payload)
     });
@@ -731,9 +742,10 @@ window.switchKanbanProject = async function(projId) {
   });
   
   try {
-    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'kanban-proj-' + projId } } });
-    if (existing && existing.length > 0) {
-      const payload = JSON.parse(existing[0].content || '{}');
+    const { data: projects } = await client.models.AppElement.list({ filter: { type: { eq: 'kanban-project' } } });
+    const existing = projects.find(p => p.content && p.content.includes('"projectId":"' + projId + '"'));
+    if (existing) {
+      const payload = JSON.parse(existing.content || '{}');
       if (payload.cards) {
         payload.cards.forEach(c => {
           // Temporarily disable save during load
@@ -925,8 +937,9 @@ window.loadMindmapProjects = async function() {
     projects.forEach(p => {
       if (p.id !== 'mindmap-proj-default') {
         const payload = JSON.parse(p.content || '{}');
-        const projId = p.id.replace('mindmap-proj-', '');
-        optionsHTML += `<option value="${projId}">${payload.name || projId}</option>`;
+        if (payload.projectId && payload.projectId !== 'default') {
+          optionsHTML += `<option value="${payload.projectId}">${payload.name || payload.projectId}</option>`;
+        }
       }
     });
     select.innerHTML = optionsHTML;
@@ -938,10 +951,9 @@ window.newMindmapProject = async function() {
   const name = prompt("Enter new mind map project name:");
   if (!name) return;
   const newId = 'proj-' + Date.now();
-  const payload = { name: name, nodes: [], edges: [] };
+  const payload = { projectId: newId, name: name, nodes: [], edges: [] };
   try {
     await client.models.AppElement.create({
-      id: 'mindmap-proj-' + newId,
       type: 'mindmap-project',
       content: JSON.stringify(payload)
     });
@@ -962,9 +974,10 @@ window.switchMindmapProject = async function(projId) {
   }
   
   try {
-    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'mindmap-proj-' + projId } } });
-    if (existing && existing.length > 0) {
-      const payload = JSON.parse(existing[0].content || '{}');
+    const { data: projects } = await client.models.AppElement.list({ filter: { type: { eq: 'mindmap-project' } } });
+    const existing = projects.find(p => p.content && p.content.includes('"projectId":"' + projId + '"'));
+    if (existing) {
+      const payload = JSON.parse(existing.content || '{}');
       mindmapNodes = payload.nodes || [];
       mindmapLinks = payload.edges || [];
     } else {
@@ -997,20 +1010,21 @@ window.saveMindmapToAWS = async function() {
     
     const select = document.getElementById('mindmap-project-select');
     const payload = {
+      projectId: activeMindmapProjectId,
       name: select ? select.options[select.selectedIndex]?.text : activeMindmapProjectId,
       nodes: mindmapNodes,
       edges: safeEdges
     };
     
-    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: 'mindmap-proj-' + activeMindmapProjectId } } });
-    if (existing && existing.length > 0) {
+    const { data: projects } = await client.models.AppElement.list({ filter: { type: { eq: 'mindmap-project' } } });
+    const existing = projects.find(p => p.content && p.content.includes('"projectId":"' + activeMindmapProjectId + '"'));
+    if (existing) {
       await client.models.AppElement.update({
-        id: existing[0].id,
+        id: existing.id,
         content: JSON.stringify(payload)
       });
     } else {
       await client.models.AppElement.create({
-        id: 'mindmap-proj-' + activeMindmapProjectId,
         type: 'mindmap-project',
         content: JSON.stringify(payload)
       });
