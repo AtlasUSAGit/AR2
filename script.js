@@ -192,17 +192,93 @@ function init3DTilt() {
 let isEditMode = false;
 const HOMEPAGE_ID = 'home-page-content-v2'; // Unique identifier for our AppElement
 
+let glowCards = [
+  { id: 'glow-1', title: 'Real-Time Sync', text: 'Connected to AWS Amplify, all changes stream globally across your organization instantly.', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' },
+  { id: 'glow-2', title: 'D3 Physics Engine', text: 'Force-directed mind mapping with embedded HTML nodes and data flow visualization.', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>' },
+  { id: 'glow-3', title: 'Secure Enclave', text: 'Military-grade document storage and organization via the integrated Document Hub.', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>' },
+  { id: 'glow-4', title: 'Automated Deployment', text: 'Continuous integration pipeline powering instant container scaling and redundancy.', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>' }
+];
+
 async function loadHomeElementsAWS() {
   try {
     const { data: elements } = await client.models.HomeElement.list();
     if (elements) {
       elements.forEach(elData => {
-        const domEl = document.getElementById(elData.elementId);
-        if (domEl) domEl.innerHTML = elData.content;
+        if (elData.elementId === 'home-glow-cards-data') {
+          glowCards = JSON.parse(elData.content);
+        } else {
+          const domEl = document.getElementById(elData.elementId);
+          if (domEl) domEl.innerHTML = elData.content;
+        }
       });
     }
+    renderGlowCards();
   } catch (error) {
     console.warn("Failed to load home elements from AWS", error);
+    renderGlowCards();
+  }
+}
+
+window.renderGlowCards = function() {
+  const container = document.getElementById('home-glow-grid');
+  if (!container) return;
+  
+  container.innerHTML = glowCards.map((card, i) => `
+    <div class="glow-card gsap-random">
+      ${isEditMode ? `<button class="delete-card-btn" onclick="window.deleteGlowCard('${card.id}')">X</button>` : ''}
+      <div class="glow-card-content">
+        <div class="glow-card-icon">${card.icon}</div>
+        <h3 class="glow-card-title editable" id="${card.id}-title">${card.title}</h3>
+        <p class="glow-card-text editable" id="${card.id}-text">${card.text}</p>
+      </div>
+    </div>
+  `).join('');
+  
+  // Re-attach editable listeners to the newly rendered cards
+  setupHomeEditableSync();
+};
+
+window.addGlowCard = async function() {
+  const newId = 'glow-' + Date.now();
+  const icons = [
+    '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-blue);"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>'
+  ];
+  const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+  
+  glowCards.push({
+    id: newId,
+    title: 'New Capability',
+    text: 'Describe this capability here...',
+    icon: randomIcon
+  });
+  renderGlowCards();
+  await saveGlowCardsToAWS();
+};
+
+window.deleteGlowCard = async function(id) {
+  if(!confirm("Are you sure you want to delete this card?")) return;
+  glowCards = glowCards.filter(c => c.id !== id);
+  renderGlowCards();
+  await saveGlowCardsToAWS();
+};
+
+async function saveGlowCardsToAWS() {
+  try {
+    const { data: existing } = await client.models.HomeElement.list({ filter: { elementId: { eq: 'home-glow-cards-data' } } });
+    
+    // We only save the ID and icon to structural data.
+    // The text will be saved via toggleEditMode when editing ends.
+    // However, to keep defaults working, we can just save the whole array.
+    
+    if (existing && existing.length > 0) {
+      await client.models.HomeElement.update({ id: existing[0].id, elementId: 'home-glow-cards-data', content: JSON.stringify(glowCards) });
+    } else {
+      await client.models.HomeElement.create({ elementId: 'home-glow-cards-data', content: JSON.stringify(glowCards) });
+    }
+  } catch(e) {
+    console.error('Failed to save glow cards structure', e);
   }
 }
 
@@ -262,6 +338,14 @@ window.toggleEditMode = async function() {
     if(addBtn) addBtn.style.display = 'block';
     if(toolbar) toolbar.classList.add('show');
     
+    const glowAddContainer = document.getElementById('home-glow-add-container');
+    if (glowAddContainer) glowAddContainer.style.display = 'block';
+    
+    const hubRepoAddContainer = document.getElementById('hub-repo-add-container');
+    if (hubRepoAddContainer) hubRepoAddContainer.style.display = 'block';
+    
+    renderGlowCards(); // Re-render to show delete buttons
+    
     document.querySelectorAll('#page-home .editable').forEach(el => el.setAttribute('contenteditable', 'true'));
   } else {
     // Disable editing & SAVE to AWS
@@ -269,6 +353,23 @@ window.toggleEditMode = async function() {
     editBtn.style.opacity = '0.5';
     if(addBtn) addBtn.style.display = 'none';
     if(toolbar) toolbar.classList.remove('show');
+    
+    const glowAddContainer = document.getElementById('home-glow-add-container');
+    if (glowAddContainer) glowAddContainer.style.display = 'none';
+    
+    const hubRepoAddContainer = document.getElementById('hub-repo-add-container');
+    if (hubRepoAddContainer) hubRepoAddContainer.style.display = 'none';
+    
+    renderGlowCards(); // Re-render to hide delete buttons
+    
+    // Update the glowCards array with the latest edited text before saving structural data
+    glowCards.forEach(card => {
+      const titleEl = document.getElementById(card.id + '-title');
+      const textEl = document.getElementById(card.id + '-text');
+      if (titleEl) card.title = titleEl.innerHTML;
+      if (textEl) card.text = textEl.innerHTML;
+    });
+    await saveGlowCardsToAWS();
     
     document.querySelectorAll('#page-home .editable').forEach(el => el.setAttribute('contenteditable', 'false'));
     
@@ -1221,9 +1322,10 @@ async function loadHubFiles() {
   if (!grid) return;
   
   try {
-    const [storageResult, { data: statusesData }] = await Promise.all([
+    const [storageResult, { data: statusesData }, { data: customCards }] = await Promise.all([
       list({ path: 'documents/' }),
-      client.models.HubDocumentStatus.list()
+      client.models.HubDocumentStatus.list(),
+      client.models.AppElement.list({ filter: { type: { eq: 'hub-card' } } })
     ]);
     
     const statuses = {};
@@ -1267,7 +1369,7 @@ async function loadHubFiles() {
       card.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div class="doc-icon">${emblem}</div>
-          <button onclick="${isPreloaded ? `window.updateDocStatus('${docId}', null, null, null, null, true)` : `window.deleteHubFile('${fileMatch ? fileMatch.path : ''}', event)`}" style="background:none; border:none; color:#ef4444; font-size:1rem; cursor:pointer;" title="Delete Card">&times;</button>
+          <button class="delete-card-btn" onclick="${docId.startsWith('custom-hub-') ? `window.deleteHubCard('${docId}')` : (isPreloaded ? `window.updateDocStatus('${docId}', null, null, null, null, true)` : `window.deleteHubFile('${fileMatch ? fileMatch.path : ''}', event)`)}" title="Delete Card">&times;</button>
         </div>
         <div class="doc-title" contenteditable="true" onblur="window.updateDocStatus('${docId}', null, this.innerText, null)">${customTitle}</div>
         <div class="doc-desc" contenteditable="true" onblur="window.updateDocStatus('${docId}', null, null, this.innerText)">${customSubtitle}</div>
@@ -1295,6 +1397,19 @@ async function loadHubFiles() {
       renderCard(doc.id, doc.name, doc.subtitle, status, fileMatch, true);
     });
     
+    // Render custom dynamic slots
+    if (customCards) {
+      customCards.forEach(cardData => {
+        let content = {};
+        try { content = JSON.parse(cardData.content); } catch(e) {}
+        const docId = cardData.id;
+        const status = statuses[docId] || 'Missing';
+        if (status === 'Verified/Ready') readyCount++;
+        const fileMatch = uploadedFiles.find(f => f.path.includes(content.name)); // Custom docs might not match by name if they use explicit attach, which is handled in renderCard
+        renderCard(docId, content.name || 'New Document Slot', content.subtitle || 'Pending description...', status, fileMatch, false);
+      });
+    }
+    
     // Render any uploaded files that aren't preloaded OR mapped to a specific card's explicit filePath
     uploadedFiles.forEach(item => {
       if (PRELOADED_DOCUMENTS.some(d => item.path.includes(d.name))) return; // skip if rough matched
@@ -1317,10 +1432,42 @@ async function loadHubFiles() {
     document.getElementById('hub-completion-desc').textContent = `${readyCount} out of ${totalDocs} documents verified`;
 
   } catch (error) {
-    console.error('Error listing hub files:', error);
-    grid.innerHTML = '<div style="color: #ef4444; font-family: \'Times New Roman\', serif;">Failed to load documents.</div>';
+    console.error('Failed to load hub files:', error);
   }
 }
+
+window.addHubCard = async function() {
+  try {
+    const newDocId = 'custom-hub-' + Date.now();
+    await client.models.AppElement.create({
+      id: newDocId,
+      type: 'hub-card',
+      content: JSON.stringify({
+        name: 'New Document Slot',
+        subtitle: 'Pending description...'
+      }),
+      isChecked: false
+    });
+    await loadHubFiles();
+  } catch (e) {
+    console.error("Failed to add new hub card", e);
+    alert("Failed to create document slot.");
+  }
+};
+
+window.deleteHubCard = async function(id) {
+  if(!confirm("Are you sure you want to delete this custom document slot?")) return;
+  try {
+    const { data: existing } = await client.models.AppElement.list({ filter: { id: { eq: id } } });
+    if (existing && existing.length > 0) {
+      await client.models.AppElement.delete({ id: existing[0].id });
+    }
+    await loadHubFiles();
+  } catch(e) {
+    console.error("Failed to delete hub card", e);
+    alert("Failed to delete document slot.");
+  }
+};
 
 // ==========================================
 // OPERATIONS BOARD LOGIC
