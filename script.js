@@ -749,7 +749,6 @@ window.switchKanbanProject = async function(projId) {
           window._isLoadingKanban = false;
         });
       }
-      }
     } else {
       if (projId !== 'default') {
         document.querySelectorAll('.kanban-card').forEach(c => c.remove());
