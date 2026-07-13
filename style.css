@@ -190,7 +190,10 @@ h1, h2, h3, h4, h5, h6 {
 
 /* GLOW CARDS */
 .glow-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; perspective: 1000px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; perspective: 1000px;
+}
+@media (max-width: 900px) {
+  .glow-grid { grid-template-columns: 1fr; }
 }
 .glow-card {
   background: var(--bg-panel); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
