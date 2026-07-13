@@ -360,8 +360,6 @@ window.toggleEditMode = async function() {
     const hubRepoAddContainer = document.getElementById('hub-repo-add-container');
     if (hubRepoAddContainer) hubRepoAddContainer.style.display = 'none';
     
-    renderGlowCards(); // Re-render to hide delete buttons
-    
     // Update the glowCards array with the latest edited text before saving structural data
     glowCards.forEach(card => {
       const titleEl = document.getElementById(card.id + '-title');
@@ -369,6 +367,9 @@ window.toggleEditMode = async function() {
       if (titleEl) card.title = titleEl.innerHTML;
       if (textEl) card.text = textEl.innerHTML;
     });
+    
+    renderGlowCards(); // Re-render to hide delete buttons
+    
     await saveGlowCardsToAWS();
     
     document.querySelectorAll('#page-home .editable').forEach(el => el.setAttribute('contenteditable', 'false'));

@@ -185,7 +185,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 #home-hero { border-top: none; min-height: 85vh; }
 .hero-content { position: relative; z-index: 10; }
-.hero-title { font-size: clamp(3rem, 8vw, 6rem); margin-bottom: 20px; line-height: 1; }
+.hero-title { font-size: clamp(3rem, 8vw, 6rem); margin-bottom: 20px; line-height: 1; text-shadow: none; }
 .hero-tagline { font-size: clamp(1.2rem, 3vw, 1.8rem); color: rgba(255,255,255,0.7); margin-bottom: 40px; font-weight: 300; }
 
 /* GLOW CARDS */
