@@ -1,0 +1,2080 @@
+{
+ "Parameters": {
+  "DynamoDBModelTableReadIOPS": {
+   "Type": "Number",
+   "Default": 5,
+   "Description": "The number of read IOPS the table should support."
+  },
+  "DynamoDBModelTableWriteIOPS": {
+   "Type": "Number",
+   "Default": 5,
+   "Description": "The number of write IOPS the table should support."
+  },
+  "DynamoDBBillingMode": {
+   "Type": "String",
+   "Default": "PAY_PER_REQUEST",
+   "AllowedValues": [
+    "PAY_PER_REQUEST",
+    "PROVISIONED"
+   ],
+   "Description": "Configure @model types to create DynamoDB tables with PAY_PER_REQUEST or PROVISIONED billing modes."
+  },
+  "DynamoDBEnablePointInTimeRecovery": {
+   "Type": "String",
+   "Default": "false",
+   "AllowedValues": [
+    "true",
+    "false"
+   ],
+   "Description": "Whether to enable Point in Time Recovery on the table."
+  },
+  "DynamoDBEnableServerSideEncryption": {
+   "Type": "String",
+   "Default": "true",
+   "AllowedValues": [
+    "true",
+    "false"
+   ],
+   "Description": "Enable server side encryption powered by KMS."
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResourceEEAF60DDOutputsamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerTableManagerC33C14AD7": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref": {
+   "Type": "String"
+  }
+ },
+ "Conditions": {
+  "HasEnvironmentParameter": {
+   "Fn::Not": [
+    {
+     "Fn::Equals": [
+      "NONE",
+      "NONE"
+     ]
+    }
+   ]
+  },
+  "ShouldUsePayPerRequestBilling": {
+   "Fn::Equals": [
+    {
+     "Ref": "DynamoDBBillingMode"
+    },
+    "PAY_PER_REQUEST"
+   ]
+  },
+  "ShouldUsePointInTimeRecovery": {
+   "Fn::Equals": [
+    {
+     "Ref": "DynamoDBEnablePointInTimeRecovery"
+    },
+    "true"
+   ]
+  },
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Resources": {
+  "KanbanQuestionTable": {
+   "Type": "Custom::AmplifyDynamoDBTable",
+   "Properties": {
+    "ServiceToken": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResourceEEAF60DDOutputsamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerTableManagerC33C14AD7"
+    },
+    "tableName": {
+     "Fn::Join": [
+      "",
+      [
+       "KanbanQuestion-",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "-NONE"
+      ]
+     ]
+    },
+    "attributeDefinitions": [
+     {
+      "attributeName": "id",
+      "attributeType": "S"
+     }
+    ],
+    "keySchema": [
+     {
+      "attributeName": "id",
+      "keyType": "HASH"
+     }
+    ],
+    "provisionedThroughput": {
+     "Fn::If": [
+      "ShouldUsePayPerRequestBilling",
+      {
+       "Ref": "AWS::NoValue"
+      },
+      {
+       "ReadCapacityUnits": {
+        "Ref": "DynamoDBModelTableReadIOPS"
+       },
+       "WriteCapacityUnits": {
+        "Ref": "DynamoDBModelTableWriteIOPS"
+       }
+      }
+     ]
+    },
+    "sseSpecification": {
+     "sseEnabled": false
+    },
+    "streamSpecification": {
+     "streamViewType": "NEW_AND_OLD_IMAGES"
+    },
+    "deletionProtectionEnabled": false,
+    "allowDestructiveGraphqlSchemaUpdates": true,
+    "replaceTableUponGsiUpdate": true,
+    "pointInTimeRecoverySpecification": {
+     "Fn::If": [
+      "ShouldUsePointInTimeRecovery",
+      {
+       "PointInTimeRecoveryEnabled": true
+      },
+      {
+       "Ref": "AWS::NoValue"
+      }
+     ]
+    },
+    "billingMode": {
+     "Fn::If": [
+      "ShouldUsePayPerRequestBilling",
+      "PAY_PER_REQUEST",
+      {
+       "Ref": "AWS::NoValue"
+      }
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/KanbanQuestionTable/Default/Default"
+   }
+  },
+  "KanbanQuestionIAMRole2574A4CF": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "dynamodb:BatchGetItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:Scan",
+          "dynamodb:Query",
+          "dynamodb:UpdateItem",
+          "dynamodb:ConditionCheckItem",
+          "dynamodb:DescribeTable",
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::Sub": [
+            "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}",
+            {
+             "tablename": {
+              "Fn::Join": [
+               "",
+               [
+                "KanbanQuestion-",
+                {
+                 "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+                },
+                "-NONE"
+               ]
+              ]
+             }
+            }
+           ]
+          },
+          {
+           "Fn::Sub": [
+            "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/*",
+            {
+             "tablename": {
+              "Fn::Join": [
+               "",
+               [
+                "KanbanQuestion-",
+                {
+                 "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+                },
+                "-NONE"
+               ]
+              ]
+             }
+            }
+           ]
+          }
+         ]
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "DynamoDBAccess"
+     }
+    ],
+    "RoleName": {
+     "Fn::Join": [
+      "",
+      [
+       "KanbanQuestionIAMRolb9d2f2-",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "-NONE"
+      ]
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "amplify:friendly-name",
+      "Value": "amplifyData"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/KanbanQuestionIAMRole/Resource"
+   }
+  },
+  "KanbanQuestionDataSource": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Fn::Select": [
+       1,
+       {
+        "Fn::Split": [
+         "/",
+         {
+          "Fn::Select": [
+           5,
+           {
+            "Fn::Split": [
+             ":",
+             {
+              "Fn::GetAtt": [
+               "KanbanQuestionTable",
+               "TableArn"
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    },
+    "Name": "KanbanQuestionTable",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "KanbanQuestionIAMRole2574A4CF",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "DependsOn": [
+    "KanbanQuestionIAMRole2574A4CF"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/KanbanQuestionDataSource/Resource"
+   }
+  },
+  "QuerygetKanbanQuestionauth0FunctionQuerygetKanbanQuestionauth0FunctionAppSyncFunction3A7CCA45": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerygetKanbanQuestionauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c198324ea51bbec9cebb98ea3502cd4efb8cea55edece7e137710efb94ab930b.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/QuerygetKanbanQuestionauth0Function/QuerygetKanbanQuestionauth0Function.AppSyncFunction"
+   }
+  },
+  "QuerygetKanbanQuestionpostAuth0FunctionQuerygetKanbanQuestionpostAuth0FunctionAppSyncFunction04F2A0BB": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerygetKanbanQuestionpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/QuerygetKanbanQuestionpostAuth0Function/QuerygetKanbanQuestionpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "QueryGetKanbanQuestionDataResolverFnQueryGetKanbanQuestionDataResolverFnAppSyncFunction4E8BC591": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanQuestionDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QueryGetKanbanQuestionDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/08f4d557693d96c1a4efba0f9dc91330e4b19772fd5477c156468843e3d9cb5e.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4c6a2d29f01c6091bd1d9afe16e5849d456c96f17c3b215938c8067399532719.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanQuestionDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/QueryGetKanbanQuestionDataResolverFn/QueryGetKanbanQuestionDataResolverFn.AppSyncFunction"
+   }
+  },
+  "GetKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "getKanbanQuestion",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "QuerygetKanbanQuestionauth0FunctionQuerygetKanbanQuestionauth0FunctionAppSyncFunction3A7CCA45",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QuerygetKanbanQuestionpostAuth0FunctionQuerygetKanbanQuestionpostAuth0FunctionAppSyncFunction04F2A0BB",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QueryGetKanbanQuestionDataResolverFnQueryGetKanbanQuestionDataResolverFnAppSyncFunction4E8BC591",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Query\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"getKanbanQuestion\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanQuestionTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Query"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/queryGetKanbanQuestionResolver"
+   }
+  },
+  "QuerylistKanbanQuestionsauth0FunctionQuerylistKanbanQuestionsauth0FunctionAppSyncFunction061905B7": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerylistKanbanQuestionsauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c198324ea51bbec9cebb98ea3502cd4efb8cea55edece7e137710efb94ab930b.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/QuerylistKanbanQuestionsauth0Function/QuerylistKanbanQuestionsauth0Function.AppSyncFunction"
+   }
+  },
+  "QuerylistKanbanQuestionspostAuth0FunctionQuerylistKanbanQuestionspostAuth0FunctionAppSyncFunction95ECFE79": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerylistKanbanQuestionspostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/QuerylistKanbanQuestionspostAuth0Function/QuerylistKanbanQuestionspostAuth0Function.AppSyncFunction"
+   }
+  },
+  "QueryListKanbanQuestionsDataResolverFnQueryListKanbanQuestionsDataResolverFnAppSyncFunction1DD64006": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanQuestionDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QueryListKanbanQuestionsDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9fcbe070ecd3023c5bf5b966fa9584757db9762eef123bad0820bd87591b2174.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/cc01911d0269d4080ea57505dc445dfc315ef7ad85d3d9d4ea1357858bff451d.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanQuestionDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/QueryListKanbanQuestionsDataResolverFn/QueryListKanbanQuestionsDataResolverFn.AppSyncFunction"
+   }
+  },
+  "ListKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "listKanbanQuestions",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "QuerylistKanbanQuestionsauth0FunctionQuerylistKanbanQuestionsauth0FunctionAppSyncFunction061905B7",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QuerylistKanbanQuestionspostAuth0FunctionQuerylistKanbanQuestionspostAuth0FunctionAppSyncFunction95ECFE79",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QueryListKanbanQuestionsDataResolverFnQueryListKanbanQuestionsDataResolverFnAppSyncFunction1DD64006",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Query\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"listKanbanQuestions\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanQuestionTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Query"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/queryListKanbanQuestionsResolver"
+   }
+  },
+  "MutationcreateKanbanQuestioninit0FunctionMutationcreateKanbanQuestioninit0FunctionAppSyncFunction7DC5FC5F": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationcreateKanbanQuestioninit0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/a183ddccbd956316c38ef97177b8f088ef0826f62023323f5ae6053d348ccffc.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationcreateKanbanQuestioninit0Function/MutationcreateKanbanQuestioninit0Function.AppSyncFunction"
+   }
+  },
+  "MutationcreateKanbanQuestionauth0FunctionMutationcreateKanbanQuestionauth0FunctionAppSyncFunctionEF04FC82": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationcreateKanbanQuestionauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/13358b36bef4868cbdc0a39d73a7bd8e921b77cc06a5fea6dad940706fc98ced.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationcreateKanbanQuestionauth0Function/MutationcreateKanbanQuestionauth0Function.AppSyncFunction"
+   }
+  },
+  "MutationcreateKanbanQuestionpostAuth0FunctionMutationcreateKanbanQuestionpostAuth0FunctionAppSyncFunctionA460CA8B": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationcreateKanbanQuestionpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationcreateKanbanQuestionpostAuth0Function/MutationcreateKanbanQuestionpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "MutationCreateKanbanQuestionDataResolverFnMutationCreateKanbanQuestionDataResolverFnAppSyncFunction5EA49D0F": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanQuestionDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationCreateKanbanQuestionDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/28dffe85c8249176e9e9de54529fa70e7abc05e572dab650b68ce8d20e7e5d71.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f4a52b72209a9dfa197b5e7367a5c378c5bb86de6e29ddd9e48b49a3fe54b249.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanQuestionDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationCreateKanbanQuestionDataResolverFn/MutationCreateKanbanQuestionDataResolverFn.AppSyncFunction"
+   }
+  },
+  "CreateKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "createKanbanQuestion",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "MutationcreateKanbanQuestioninit0FunctionMutationcreateKanbanQuestioninit0FunctionAppSyncFunction7DC5FC5F",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationcreateKanbanQuestionauth0FunctionMutationcreateKanbanQuestionauth0FunctionAppSyncFunctionEF04FC82",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationcreateKanbanQuestionpostAuth0FunctionMutationcreateKanbanQuestionpostAuth0FunctionAppSyncFunctionA460CA8B",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationCreateKanbanQuestionDataResolverFnMutationCreateKanbanQuestionDataResolverFnAppSyncFunction5EA49D0F",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Mutation\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"createKanbanQuestion\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanQuestionTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Mutation"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/mutationCreateKanbanQuestionResolver"
+   }
+  },
+  "MutationupdateKanbanQuestioninit0FunctionMutationupdateKanbanQuestioninit0FunctionAppSyncFunctionD4FA0E7D": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationupdateKanbanQuestioninit0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/06db846fd14e6fc371f22b12b5545ba8e2dbfeda85d8c8d586c71c282166657b.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationupdateKanbanQuestioninit0Function/MutationupdateKanbanQuestioninit0Function.AppSyncFunction"
+   }
+  },
+  "MutationupdateKanbanQuestionauth0FunctionMutationupdateKanbanQuestionauth0FunctionAppSyncFunction2DC71E1E": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanQuestionDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationupdateKanbanQuestionauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1f5fed297da9c32ae3af922bf3a38ccf23b956078887d16891ec06c20c64722c.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f7fc6438a7dc3ba253976da4e682a79a9d2aff30ce5e553d228901ed70d9e7b0.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanQuestionDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationupdateKanbanQuestionauth0Function/MutationupdateKanbanQuestionauth0Function.AppSyncFunction"
+   }
+  },
+  "MutationupdateKanbanQuestionpostAuth0FunctionMutationupdateKanbanQuestionpostAuth0FunctionAppSyncFunction5FB28675": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationupdateKanbanQuestionpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationupdateKanbanQuestionpostAuth0Function/MutationupdateKanbanQuestionpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "MutationUpdateKanbanQuestionDataResolverFnMutationUpdateKanbanQuestionDataResolverFnAppSyncFunction3232D122": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanQuestionDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationUpdateKanbanQuestionDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/474bf0776ec2164a13191d1a0a9e057154931e4918fea5086f49850d02a5371b.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f4a52b72209a9dfa197b5e7367a5c378c5bb86de6e29ddd9e48b49a3fe54b249.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanQuestionDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationUpdateKanbanQuestionDataResolverFn/MutationUpdateKanbanQuestionDataResolverFn.AppSyncFunction"
+   }
+  },
+  "UpdateKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "updateKanbanQuestion",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "MutationupdateKanbanQuestioninit0FunctionMutationupdateKanbanQuestioninit0FunctionAppSyncFunctionD4FA0E7D",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationupdateKanbanQuestionauth0FunctionMutationupdateKanbanQuestionauth0FunctionAppSyncFunction2DC71E1E",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationupdateKanbanQuestionpostAuth0FunctionMutationupdateKanbanQuestionpostAuth0FunctionAppSyncFunction5FB28675",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationUpdateKanbanQuestionDataResolverFnMutationUpdateKanbanQuestionDataResolverFnAppSyncFunction3232D122",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Mutation\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"updateKanbanQuestion\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanQuestionTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Mutation"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/mutationUpdateKanbanQuestionResolver"
+   }
+  },
+  "MutationdeleteKanbanQuestionauth0FunctionMutationdeleteKanbanQuestionauth0FunctionAppSyncFunctionEA727293": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanQuestionDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationdeleteKanbanQuestionauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1f5fed297da9c32ae3af922bf3a38ccf23b956078887d16891ec06c20c64722c.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/2eb662c96443f037258baf77a6b5a1d6ef4ade2ef9edb4619d4a697bc49b265a.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanQuestionDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationdeleteKanbanQuestionauth0Function/MutationdeleteKanbanQuestionauth0Function.AppSyncFunction"
+   }
+  },
+  "MutationdeleteKanbanQuestionpostAuth0FunctionMutationdeleteKanbanQuestionpostAuth0FunctionAppSyncFunction6D4D9698": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationdeleteKanbanQuestionpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationdeleteKanbanQuestionpostAuth0Function/MutationdeleteKanbanQuestionpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "MutationDeleteKanbanQuestionDataResolverFnMutationDeleteKanbanQuestionDataResolverFnAppSyncFunctionCBF17E3F": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanQuestionDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationDeleteKanbanQuestionDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4f7907d1209a2c9953a0c053df402c634e359546d70c7cc5c2e8e21ea734880f.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f4a52b72209a9dfa197b5e7367a5c378c5bb86de6e29ddd9e48b49a3fe54b249.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanQuestionDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/MutationDeleteKanbanQuestionDataResolverFn/MutationDeleteKanbanQuestionDataResolverFn.AppSyncFunction"
+   }
+  },
+  "DeleteKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "deleteKanbanQuestion",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "MutationdeleteKanbanQuestionauth0FunctionMutationdeleteKanbanQuestionauth0FunctionAppSyncFunctionEA727293",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationdeleteKanbanQuestionpostAuth0FunctionMutationdeleteKanbanQuestionpostAuth0FunctionAppSyncFunction6D4D9698",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationDeleteKanbanQuestionDataResolverFnMutationDeleteKanbanQuestionDataResolverFnAppSyncFunctionCBF17E3F",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Mutation\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"deleteKanbanQuestion\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanQuestionTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Mutation"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/mutationDeleteKanbanQuestionResolver"
+   }
+  },
+  "SubscriptiononCreateKanbanQuestionauth0FunctionSubscriptiononCreateKanbanQuestionauth0FunctionAppSyncFunction613A00BE": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononCreateKanbanQuestionauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1d1fc1ddf435f301f89c9d0239d1040afb5fa61ba26cd289c29b8349f558e43d.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptiononCreateKanbanQuestionauth0Function/SubscriptiononCreateKanbanQuestionauth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptiononCreateKanbanQuestionpostAuth0FunctionSubscriptiononCreateKanbanQuestionpostAuth0FunctionAppSyncFunctionAD33296F": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononCreateKanbanQuestionpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptiononCreateKanbanQuestionpostAuth0Function/SubscriptiononCreateKanbanQuestionpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptionOnCreateKanbanQuestionDataResolverFnSubscriptionOnCreateKanbanQuestionDataResolverFnAppSyncFunction2A7A90C3": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptionOnCreateKanbanQuestionDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/fe3c43ada4b9d681a5e2312663ef7a73386424d73b73e51f8e2e9d4b50f7c502.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e0cff47fb007f0bbf2a4e43ca256d6aa7ec109821769fd79fa7c5e83f0e7f9fc.vtl"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptionOnCreateKanbanQuestionDataResolverFn/SubscriptionOnCreateKanbanQuestionDataResolverFn.AppSyncFunction"
+   }
+  },
+  "SubscriptiononCreateKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "onCreateKanbanQuestion",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononCreateKanbanQuestionauth0FunctionSubscriptiononCreateKanbanQuestionauth0FunctionAppSyncFunction613A00BE",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononCreateKanbanQuestionpostAuth0FunctionSubscriptiononCreateKanbanQuestionpostAuth0FunctionAppSyncFunctionAD33296F",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptionOnCreateKanbanQuestionDataResolverFnSubscriptionOnCreateKanbanQuestionDataResolverFnAppSyncFunction2A7A90C3",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Subscription\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"onCreateKanbanQuestion\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"NONE\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Subscription"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/subscriptionOnCreateKanbanQuestionResolver"
+   }
+  },
+  "SubscriptiononUpdateKanbanQuestionauth0FunctionSubscriptiononUpdateKanbanQuestionauth0FunctionAppSyncFunctionCB8258BE": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononUpdateKanbanQuestionauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1d1fc1ddf435f301f89c9d0239d1040afb5fa61ba26cd289c29b8349f558e43d.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptiononUpdateKanbanQuestionauth0Function/SubscriptiononUpdateKanbanQuestionauth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptiononUpdateKanbanQuestionpostAuth0FunctionSubscriptiononUpdateKanbanQuestionpostAuth0FunctionAppSyncFunction3DFA3774": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononUpdateKanbanQuestionpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptiononUpdateKanbanQuestionpostAuth0Function/SubscriptiononUpdateKanbanQuestionpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptionOnUpdateKanbanQuestionDataResolverFnSubscriptionOnUpdateKanbanQuestionDataResolverFnAppSyncFunction225EAC85": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptionOnUpdateKanbanQuestionDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/fe3c43ada4b9d681a5e2312663ef7a73386424d73b73e51f8e2e9d4b50f7c502.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e0cff47fb007f0bbf2a4e43ca256d6aa7ec109821769fd79fa7c5e83f0e7f9fc.vtl"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptionOnUpdateKanbanQuestionDataResolverFn/SubscriptionOnUpdateKanbanQuestionDataResolverFn.AppSyncFunction"
+   }
+  },
+  "SubscriptiononUpdateKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "onUpdateKanbanQuestion",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononUpdateKanbanQuestionauth0FunctionSubscriptiononUpdateKanbanQuestionauth0FunctionAppSyncFunctionCB8258BE",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononUpdateKanbanQuestionpostAuth0FunctionSubscriptiononUpdateKanbanQuestionpostAuth0FunctionAppSyncFunction3DFA3774",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptionOnUpdateKanbanQuestionDataResolverFnSubscriptionOnUpdateKanbanQuestionDataResolverFnAppSyncFunction225EAC85",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Subscription\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"onUpdateKanbanQuestion\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"NONE\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Subscription"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/subscriptionOnUpdateKanbanQuestionResolver"
+   }
+  },
+  "SubscriptiononDeleteKanbanQuestionauth0FunctionSubscriptiononDeleteKanbanQuestionauth0FunctionAppSyncFunction9284C94B": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononDeleteKanbanQuestionauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1d1fc1ddf435f301f89c9d0239d1040afb5fa61ba26cd289c29b8349f558e43d.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptiononDeleteKanbanQuestionauth0Function/SubscriptiononDeleteKanbanQuestionauth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptiononDeleteKanbanQuestionpostAuth0FunctionSubscriptiononDeleteKanbanQuestionpostAuth0FunctionAppSyncFunctionC851D337": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononDeleteKanbanQuestionpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptiononDeleteKanbanQuestionpostAuth0Function/SubscriptiononDeleteKanbanQuestionpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptionOnDeleteKanbanQuestionDataResolverFnSubscriptionOnDeleteKanbanQuestionDataResolverFnAppSyncFunction7AE6B7DA": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptionOnDeleteKanbanQuestionDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/fe3c43ada4b9d681a5e2312663ef7a73386424d73b73e51f8e2e9d4b50f7c502.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e0cff47fb007f0bbf2a4e43ca256d6aa7ec109821769fd79fa7c5e83f0e7f9fc.vtl"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/SubscriptionOnDeleteKanbanQuestionDataResolverFn/SubscriptionOnDeleteKanbanQuestionDataResolverFn.AppSyncFunction"
+   }
+  },
+  "SubscriptiononDeleteKanbanQuestionResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "onDeleteKanbanQuestion",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononDeleteKanbanQuestionauth0FunctionSubscriptiononDeleteKanbanQuestionauth0FunctionAppSyncFunction9284C94B",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononDeleteKanbanQuestionpostAuth0FunctionSubscriptiononDeleteKanbanQuestionpostAuth0FunctionAppSyncFunctionC851D337",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptionOnDeleteKanbanQuestionDataResolverFnSubscriptionOnDeleteKanbanQuestionDataResolverFnAppSyncFunction7AE6B7DA",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Subscription\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"onDeleteKanbanQuestion\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"NONE\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Subscription"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/subscriptionOnDeleteKanbanQuestionResolver"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOwW6DMAyGn6X31GNU2n0F7dhNsHtlEoNSwEGx06pCvPsEnTrt9PuTP9l/DvnbK2Q7vMneun4/+AbmE4mSqxVtb4qWvzDiSEpxhSKw8+oDm4okpGjJFEk0jH/Y8nPGm5xnd2ccg2vgG5uBjihkPI4wV2F42GGgxeA0yZ0tzOWml02JivXz5H/6SGzXEkXg1ncp4tbo9/NwpbgYOZxRhFTgfQ0jBzgm25OuBZbV/Uw6JTXbulbsPHeL4eAILvJyzXPIM8h2F/F+HxOrHwmqR/4AKvpInzYBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanQuestion/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "GetAttKanbanQuestionTableStreamArn": {
+   "Description": "Your DynamoDB table StreamArn.",
+   "Value": {
+    "Fn::GetAtt": [
+     "KanbanQuestionTable",
+     "TableStreamArn"
+    ]
+   },
+   "Export": {
+    "Name": {
+     "Fn::Join": [
+      ":",
+      [
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "GetAtt:KanbanQuestionTable:StreamArn"
+      ]
+     ]
+    }
+   }
+  },
+  "GetAttKanbanQuestionTableName": {
+   "Description": "Your DynamoDB table name.",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "KanbanQuestion-",
+      {
+       "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+      },
+      "-NONE"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": {
+     "Fn::Join": [
+      ":",
+      [
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "GetAtt:KanbanQuestionTable:Name"
+      ]
+     ]
+    }
+   }
+  }
+ }
+}

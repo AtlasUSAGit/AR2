@@ -1,0 +1,66 @@
+type AppElement @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  type: String
+  content: String
+  isChecked: Boolean
+  position: Int
+}
+
+type Mindmap @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  name: String
+  nodes: String
+  edges: String
+}
+
+type KanbanQuestion @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  question: String
+  options: String
+  answers: String
+}
+
+type KanbanCard @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  colId: String
+  title: String
+  priority: String
+  atlasId: String
+}
+
+type HomeElement @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  elementId: String
+  content: String
+}
+
+type HubDocumentStatus @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  docId: String
+  status: String
+  customTitle: String
+  customSubtitle: String
+  isDeleted: Boolean
+  filePath: String
+}
+
+type HubChecklist @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  title: String
+  items: String
+}
+
+type AppUser @model @auth(rules: [{allow: public, provider: apiKey},
+  {allow: private}])
+{
+  username: String!
+  passwordHash: String!
+  role: String
+}

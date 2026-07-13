@@ -1,6 +1,6 @@
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, remove, list } from 'aws-amplify/storage';
+import { uploadData, remove, list, getUrl } from 'aws-amplify/storage';
 import * as d3 from 'd3';
 import outputs from './amplify_outputs.json';
 import canvasData from './mindmap.json';
@@ -734,17 +734,12 @@ window.newKanbanProject = async function() {
 window.switchKanbanProject = async function(projId) {
   activeKanbanProjectId = projId;
   
-  // Clear board
-  document.querySelectorAll('.kanban-card').forEach(c => {
-    // Only remove dynamically added cards to preserve potential hardcoded HTML if we want, but safer to remove all
-    // Since default project might just use the old hardcoded ones, we clear all and rebuild from AWS
-    c.remove();
-  });
-  
   try {
     const { data: projects } = await client.models.AppElement.list({ filter: { type: { eq: 'kanban-project' } } });
     const existing = projects.find(p => p.content && p.content.includes('"projectId":"' + projId + '"'));
+    
     if (existing) {
+      document.querySelectorAll('.kanban-card').forEach(c => c.remove());
       const payload = JSON.parse(existing.content || '{}');
       if (payload.cards) {
         payload.cards.forEach(c => {
@@ -753,6 +748,11 @@ window.switchKanbanProject = async function(projId) {
           window.addKanbanCard(c.colId, null, { id: c.id, question: c.question, answers: c.answers }, true);
           window._isLoadingKanban = false;
         });
+      }
+      }
+    } else {
+      if (projId !== 'default') {
+        document.querySelectorAll('.kanban-card').forEach(c => c.remove());
       }
     }
   } catch(e) {}
@@ -980,13 +980,15 @@ window.switchMindmapProject = async function(projId) {
       const payload = JSON.parse(existing.content || '{}');
       mindmapNodes = payload.nodes || [];
       mindmapLinks = payload.edges || [];
+      renderMindmap();
     } else {
-      mindmapNodes = [];
-      mindmapLinks = [];
+      if (projId !== 'default') {
+        mindmapNodes = [];
+        mindmapLinks = [];
+        renderMindmap();
+      }
     }
   } catch(e) { console.error("Failed to switch mindmap project", e); }
-  
-  renderMindmap();
 };
 
 async function loadMindmapFromAWS() {
@@ -1357,9 +1359,7 @@ async function initApp() {
   initMindmap();
   init3DTilt();
   await loadKanbanProjects();
-  if (activeKanbanProjectId !== 'default') {
-    await switchKanbanProject(activeKanbanProjectId);
-  }
+  await switchKanbanProject(activeKanbanProjectId);
   await loadHubFiles();
   await window.loadHubChecklists();
   
@@ -1401,7 +1401,7 @@ window.handleFileUpload = async function(event) {
     if (btn) btn.textContent = 'Uploading...';
     
     await uploadData({
-      path: `documents/${file.name}`,
+      path: `documenthub/${file.name}`,
       data: file
     });
     
@@ -1472,7 +1472,7 @@ window.handleCardFileUpload = async function(docId, event) {
     const btn = event.target.nextElementSibling;
     if (btn) btn.textContent = 'Uploading...';
     
-    const newPath = `documents/${docId}_${file.name}`;
+    const newPath = `documenthub/${docId}_${file.name}`;
     await uploadData({
       path: newPath,
       data: file
@@ -1492,7 +1492,7 @@ async function loadHubFiles() {
   
   try {
     const [storageResult, { data: statusesData }, { data: customCards }] = await Promise.all([
-      list({ path: 'documents/' }),
+      list({ path: 'documenthub/' }),
       client.models.HubDocumentStatus.list(),
       client.models.AppElement.list({ filter: { type: { eq: 'hub-card' } } })
     ]);
@@ -1586,7 +1586,7 @@ async function loadHubFiles() {
       if (PRELOADED_DOCUMENTS.some(d => item.path.includes(d.name))) return; // skip if rough matched
       if (statusesData.some(d => d.filePath === item.path)) return; // skip if explicitly attached to a card
       
-      const fileName = item.path.replace('documents/', '');
+      const fileName = item.path.replace('documenthub/', '');
       const docId = 'uploaded-' + fileName;
       const status = statuses[docId] || 'In Progress';
       

@@ -1,0 +1,773 @@
+type AppElement @aws_iam @aws_cognito_user_pools @aws_api_key {
+  type: String
+  content: String
+  isChecked: Boolean
+  position: Int
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Mindmap @aws_iam @aws_cognito_user_pools @aws_api_key {
+  name: String
+  nodes: String
+  edges: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type KanbanQuestion @aws_iam @aws_cognito_user_pools @aws_api_key {
+  question: String
+  options: String
+  answers: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type KanbanCard @aws_iam @aws_cognito_user_pools @aws_api_key {
+  colId: String
+  title: String
+  priority: String
+  atlasId: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type HomeElement @aws_iam @aws_cognito_user_pools @aws_api_key {
+  elementId: String
+  content: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type HubDocumentStatus @aws_iam @aws_cognito_user_pools @aws_api_key {
+  docId: String
+  status: String
+  customTitle: String
+  customSubtitle: String
+  isDeleted: Boolean
+  filePath: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type HubChecklist @aws_iam @aws_cognito_user_pools @aws_api_key {
+  title: String
+  items: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type AppUser @aws_iam @aws_cognito_user_pools @aws_api_key {
+  username: String!
+  passwordHash: String!
+  role: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+input AmplifyAIConversationTurnErrorInput {
+  errorType: String!
+  message: String!
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelAppElementConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [AppElement]!
+  nextToken: String
+}
+
+input ModelAppElementFilterInput {
+  type: ModelStringInput
+  content: ModelStringInput
+  isChecked: ModelBooleanInput
+  position: ModelIntInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelAppElementFilterInput]
+  or: [ModelAppElementFilterInput]
+  not: ModelAppElementFilterInput
+}
+
+type Query {
+  getAppElement(id: ID!): AppElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  listAppElements(filter: ModelAppElementFilterInput, limit: Int, nextToken: String): ModelAppElementConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getMindmap(id: ID!): Mindmap @aws_api_key @aws_iam @aws_cognito_user_pools
+  listMindmaps(filter: ModelMindmapFilterInput, limit: Int, nextToken: String): ModelMindmapConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getKanbanQuestion(id: ID!): KanbanQuestion @aws_api_key @aws_iam @aws_cognito_user_pools
+  listKanbanQuestions(filter: ModelKanbanQuestionFilterInput, limit: Int, nextToken: String): ModelKanbanQuestionConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getKanbanCard(id: ID!): KanbanCard @aws_api_key @aws_iam @aws_cognito_user_pools
+  listKanbanCards(filter: ModelKanbanCardFilterInput, limit: Int, nextToken: String): ModelKanbanCardConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getHomeElement(id: ID!): HomeElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  listHomeElements(filter: ModelHomeElementFilterInput, limit: Int, nextToken: String): ModelHomeElementConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getHubDocumentStatus(id: ID!): HubDocumentStatus @aws_api_key @aws_iam @aws_cognito_user_pools
+  listHubDocumentStatuses(filter: ModelHubDocumentStatusFilterInput, limit: Int, nextToken: String): ModelHubDocumentStatusConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getHubChecklist(id: ID!): HubChecklist @aws_api_key @aws_iam @aws_cognito_user_pools
+  listHubChecklists(filter: ModelHubChecklistFilterInput, limit: Int, nextToken: String): ModelHubChecklistConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+  getAppUser(id: ID!): AppUser @aws_api_key @aws_iam @aws_cognito_user_pools
+  listAppUsers(filter: ModelAppUserFilterInput, limit: Int, nextToken: String): ModelAppUserConnection @aws_api_key @aws_iam @aws_cognito_user_pools
+}
+
+input ModelAppElementConditionInput {
+  type: ModelStringInput
+  content: ModelStringInput
+  isChecked: ModelBooleanInput
+  position: ModelIntInput
+  and: [ModelAppElementConditionInput]
+  or: [ModelAppElementConditionInput]
+  not: ModelAppElementConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateAppElementInput {
+  type: String
+  content: String
+  isChecked: Boolean
+  position: Int
+  id: ID
+}
+
+input UpdateAppElementInput {
+  type: String
+  content: String
+  isChecked: Boolean
+  position: Int
+  id: ID!
+}
+
+input DeleteAppElementInput {
+  id: ID!
+}
+
+type Mutation {
+  createAppElement(input: CreateAppElementInput!, condition: ModelAppElementConditionInput): AppElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateAppElement(input: UpdateAppElementInput!, condition: ModelAppElementConditionInput): AppElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteAppElement(input: DeleteAppElementInput!, condition: ModelAppElementConditionInput): AppElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  createMindmap(input: CreateMindmapInput!, condition: ModelMindmapConditionInput): Mindmap @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateMindmap(input: UpdateMindmapInput!, condition: ModelMindmapConditionInput): Mindmap @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteMindmap(input: DeleteMindmapInput!, condition: ModelMindmapConditionInput): Mindmap @aws_api_key @aws_iam @aws_cognito_user_pools
+  createKanbanQuestion(input: CreateKanbanQuestionInput!, condition: ModelKanbanQuestionConditionInput): KanbanQuestion @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateKanbanQuestion(input: UpdateKanbanQuestionInput!, condition: ModelKanbanQuestionConditionInput): KanbanQuestion @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteKanbanQuestion(input: DeleteKanbanQuestionInput!, condition: ModelKanbanQuestionConditionInput): KanbanQuestion @aws_api_key @aws_iam @aws_cognito_user_pools
+  createKanbanCard(input: CreateKanbanCardInput!, condition: ModelKanbanCardConditionInput): KanbanCard @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateKanbanCard(input: UpdateKanbanCardInput!, condition: ModelKanbanCardConditionInput): KanbanCard @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteKanbanCard(input: DeleteKanbanCardInput!, condition: ModelKanbanCardConditionInput): KanbanCard @aws_api_key @aws_iam @aws_cognito_user_pools
+  createHomeElement(input: CreateHomeElementInput!, condition: ModelHomeElementConditionInput): HomeElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateHomeElement(input: UpdateHomeElementInput!, condition: ModelHomeElementConditionInput): HomeElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteHomeElement(input: DeleteHomeElementInput!, condition: ModelHomeElementConditionInput): HomeElement @aws_api_key @aws_iam @aws_cognito_user_pools
+  createHubDocumentStatus(input: CreateHubDocumentStatusInput!, condition: ModelHubDocumentStatusConditionInput): HubDocumentStatus @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateHubDocumentStatus(input: UpdateHubDocumentStatusInput!, condition: ModelHubDocumentStatusConditionInput): HubDocumentStatus @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteHubDocumentStatus(input: DeleteHubDocumentStatusInput!, condition: ModelHubDocumentStatusConditionInput): HubDocumentStatus @aws_api_key @aws_iam @aws_cognito_user_pools
+  createHubChecklist(input: CreateHubChecklistInput!, condition: ModelHubChecklistConditionInput): HubChecklist @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateHubChecklist(input: UpdateHubChecklistInput!, condition: ModelHubChecklistConditionInput): HubChecklist @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteHubChecklist(input: DeleteHubChecklistInput!, condition: ModelHubChecklistConditionInput): HubChecklist @aws_api_key @aws_iam @aws_cognito_user_pools
+  createAppUser(input: CreateAppUserInput!, condition: ModelAppUserConditionInput): AppUser @aws_api_key @aws_iam @aws_cognito_user_pools
+  updateAppUser(input: UpdateAppUserInput!, condition: ModelAppUserConditionInput): AppUser @aws_api_key @aws_iam @aws_cognito_user_pools
+  deleteAppUser(input: DeleteAppUserInput!, condition: ModelAppUserConditionInput): AppUser @aws_api_key @aws_iam @aws_cognito_user_pools
+}
+
+input ModelSubscriptionAppElementFilterInput {
+  type: ModelSubscriptionStringInput
+  content: ModelSubscriptionStringInput
+  isChecked: ModelSubscriptionBooleanInput
+  position: ModelSubscriptionIntInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionAppElementFilterInput]
+  or: [ModelSubscriptionAppElementFilterInput]
+}
+
+type Subscription {
+  onCreateAppElement(filter: ModelSubscriptionAppElementFilterInput): AppElement @aws_subscribe(mutations: ["createAppElement"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateAppElement(filter: ModelSubscriptionAppElementFilterInput): AppElement @aws_subscribe(mutations: ["updateAppElement"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteAppElement(filter: ModelSubscriptionAppElementFilterInput): AppElement @aws_subscribe(mutations: ["deleteAppElement"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateMindmap(filter: ModelSubscriptionMindmapFilterInput): Mindmap @aws_subscribe(mutations: ["createMindmap"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateMindmap(filter: ModelSubscriptionMindmapFilterInput): Mindmap @aws_subscribe(mutations: ["updateMindmap"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteMindmap(filter: ModelSubscriptionMindmapFilterInput): Mindmap @aws_subscribe(mutations: ["deleteMindmap"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateKanbanQuestion(filter: ModelSubscriptionKanbanQuestionFilterInput): KanbanQuestion @aws_subscribe(mutations: ["createKanbanQuestion"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateKanbanQuestion(filter: ModelSubscriptionKanbanQuestionFilterInput): KanbanQuestion @aws_subscribe(mutations: ["updateKanbanQuestion"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteKanbanQuestion(filter: ModelSubscriptionKanbanQuestionFilterInput): KanbanQuestion @aws_subscribe(mutations: ["deleteKanbanQuestion"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateKanbanCard(filter: ModelSubscriptionKanbanCardFilterInput): KanbanCard @aws_subscribe(mutations: ["createKanbanCard"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateKanbanCard(filter: ModelSubscriptionKanbanCardFilterInput): KanbanCard @aws_subscribe(mutations: ["updateKanbanCard"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteKanbanCard(filter: ModelSubscriptionKanbanCardFilterInput): KanbanCard @aws_subscribe(mutations: ["deleteKanbanCard"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateHomeElement(filter: ModelSubscriptionHomeElementFilterInput): HomeElement @aws_subscribe(mutations: ["createHomeElement"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateHomeElement(filter: ModelSubscriptionHomeElementFilterInput): HomeElement @aws_subscribe(mutations: ["updateHomeElement"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteHomeElement(filter: ModelSubscriptionHomeElementFilterInput): HomeElement @aws_subscribe(mutations: ["deleteHomeElement"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateHubDocumentStatus(filter: ModelSubscriptionHubDocumentStatusFilterInput): HubDocumentStatus @aws_subscribe(mutations: ["createHubDocumentStatus"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateHubDocumentStatus(filter: ModelSubscriptionHubDocumentStatusFilterInput): HubDocumentStatus @aws_subscribe(mutations: ["updateHubDocumentStatus"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteHubDocumentStatus(filter: ModelSubscriptionHubDocumentStatusFilterInput): HubDocumentStatus @aws_subscribe(mutations: ["deleteHubDocumentStatus"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateHubChecklist(filter: ModelSubscriptionHubChecklistFilterInput): HubChecklist @aws_subscribe(mutations: ["createHubChecklist"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateHubChecklist(filter: ModelSubscriptionHubChecklistFilterInput): HubChecklist @aws_subscribe(mutations: ["updateHubChecklist"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteHubChecklist(filter: ModelSubscriptionHubChecklistFilterInput): HubChecklist @aws_subscribe(mutations: ["deleteHubChecklist"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onCreateAppUser(filter: ModelSubscriptionAppUserFilterInput): AppUser @aws_subscribe(mutations: ["createAppUser"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onUpdateAppUser(filter: ModelSubscriptionAppUserFilterInput): AppUser @aws_subscribe(mutations: ["updateAppUser"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+  onDeleteAppUser(filter: ModelSubscriptionAppUserFilterInput): AppUser @aws_subscribe(mutations: ["deleteAppUser"]) @aws_api_key @aws_iam @aws_cognito_user_pools
+}
+
+type ModelMindmapConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [Mindmap]!
+  nextToken: String
+}
+
+input ModelMindmapFilterInput {
+  name: ModelStringInput
+  nodes: ModelStringInput
+  edges: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelMindmapFilterInput]
+  or: [ModelMindmapFilterInput]
+  not: ModelMindmapFilterInput
+}
+
+input ModelMindmapConditionInput {
+  name: ModelStringInput
+  nodes: ModelStringInput
+  edges: ModelStringInput
+  and: [ModelMindmapConditionInput]
+  or: [ModelMindmapConditionInput]
+  not: ModelMindmapConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateMindmapInput {
+  name: String
+  nodes: String
+  edges: String
+  id: ID
+}
+
+input UpdateMindmapInput {
+  name: String
+  nodes: String
+  edges: String
+  id: ID!
+}
+
+input DeleteMindmapInput {
+  id: ID!
+}
+
+input ModelSubscriptionMindmapFilterInput {
+  name: ModelSubscriptionStringInput
+  nodes: ModelSubscriptionStringInput
+  edges: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionMindmapFilterInput]
+  or: [ModelSubscriptionMindmapFilterInput]
+}
+
+type ModelKanbanQuestionConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [KanbanQuestion]!
+  nextToken: String
+}
+
+input ModelKanbanQuestionFilterInput {
+  question: ModelStringInput
+  options: ModelStringInput
+  answers: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelKanbanQuestionFilterInput]
+  or: [ModelKanbanQuestionFilterInput]
+  not: ModelKanbanQuestionFilterInput
+}
+
+input ModelKanbanQuestionConditionInput {
+  question: ModelStringInput
+  options: ModelStringInput
+  answers: ModelStringInput
+  and: [ModelKanbanQuestionConditionInput]
+  or: [ModelKanbanQuestionConditionInput]
+  not: ModelKanbanQuestionConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateKanbanQuestionInput {
+  question: String
+  options: String
+  answers: String
+  id: ID
+}
+
+input UpdateKanbanQuestionInput {
+  question: String
+  options: String
+  answers: String
+  id: ID!
+}
+
+input DeleteKanbanQuestionInput {
+  id: ID!
+}
+
+input ModelSubscriptionKanbanQuestionFilterInput {
+  question: ModelSubscriptionStringInput
+  options: ModelSubscriptionStringInput
+  answers: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionKanbanQuestionFilterInput]
+  or: [ModelSubscriptionKanbanQuestionFilterInput]
+}
+
+type ModelKanbanCardConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [KanbanCard]!
+  nextToken: String
+}
+
+input ModelKanbanCardFilterInput {
+  colId: ModelStringInput
+  title: ModelStringInput
+  priority: ModelStringInput
+  atlasId: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelKanbanCardFilterInput]
+  or: [ModelKanbanCardFilterInput]
+  not: ModelKanbanCardFilterInput
+}
+
+input ModelKanbanCardConditionInput {
+  colId: ModelStringInput
+  title: ModelStringInput
+  priority: ModelStringInput
+  atlasId: ModelStringInput
+  and: [ModelKanbanCardConditionInput]
+  or: [ModelKanbanCardConditionInput]
+  not: ModelKanbanCardConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateKanbanCardInput {
+  colId: String
+  title: String
+  priority: String
+  atlasId: String
+  id: ID
+}
+
+input UpdateKanbanCardInput {
+  colId: String
+  title: String
+  priority: String
+  atlasId: String
+  id: ID!
+}
+
+input DeleteKanbanCardInput {
+  id: ID!
+}
+
+input ModelSubscriptionKanbanCardFilterInput {
+  colId: ModelSubscriptionStringInput
+  title: ModelSubscriptionStringInput
+  priority: ModelSubscriptionStringInput
+  atlasId: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionKanbanCardFilterInput]
+  or: [ModelSubscriptionKanbanCardFilterInput]
+}
+
+type ModelHomeElementConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [HomeElement]!
+  nextToken: String
+}
+
+input ModelHomeElementFilterInput {
+  elementId: ModelStringInput
+  content: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelHomeElementFilterInput]
+  or: [ModelHomeElementFilterInput]
+  not: ModelHomeElementFilterInput
+}
+
+input ModelHomeElementConditionInput {
+  elementId: ModelStringInput
+  content: ModelStringInput
+  and: [ModelHomeElementConditionInput]
+  or: [ModelHomeElementConditionInput]
+  not: ModelHomeElementConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateHomeElementInput {
+  elementId: String
+  content: String
+  id: ID
+}
+
+input UpdateHomeElementInput {
+  elementId: String
+  content: String
+  id: ID!
+}
+
+input DeleteHomeElementInput {
+  id: ID!
+}
+
+input ModelSubscriptionHomeElementFilterInput {
+  elementId: ModelSubscriptionStringInput
+  content: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionHomeElementFilterInput]
+  or: [ModelSubscriptionHomeElementFilterInput]
+}
+
+type ModelHubDocumentStatusConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [HubDocumentStatus]!
+  nextToken: String
+}
+
+input ModelHubDocumentStatusFilterInput {
+  docId: ModelStringInput
+  status: ModelStringInput
+  customTitle: ModelStringInput
+  customSubtitle: ModelStringInput
+  isDeleted: ModelBooleanInput
+  filePath: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelHubDocumentStatusFilterInput]
+  or: [ModelHubDocumentStatusFilterInput]
+  not: ModelHubDocumentStatusFilterInput
+}
+
+input ModelHubDocumentStatusConditionInput {
+  docId: ModelStringInput
+  status: ModelStringInput
+  customTitle: ModelStringInput
+  customSubtitle: ModelStringInput
+  isDeleted: ModelBooleanInput
+  filePath: ModelStringInput
+  and: [ModelHubDocumentStatusConditionInput]
+  or: [ModelHubDocumentStatusConditionInput]
+  not: ModelHubDocumentStatusConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateHubDocumentStatusInput {
+  docId: String
+  status: String
+  customTitle: String
+  customSubtitle: String
+  isDeleted: Boolean
+  filePath: String
+  id: ID
+}
+
+input UpdateHubDocumentStatusInput {
+  docId: String
+  status: String
+  customTitle: String
+  customSubtitle: String
+  isDeleted: Boolean
+  filePath: String
+  id: ID!
+}
+
+input DeleteHubDocumentStatusInput {
+  id: ID!
+}
+
+input ModelSubscriptionHubDocumentStatusFilterInput {
+  docId: ModelSubscriptionStringInput
+  status: ModelSubscriptionStringInput
+  customTitle: ModelSubscriptionStringInput
+  customSubtitle: ModelSubscriptionStringInput
+  isDeleted: ModelSubscriptionBooleanInput
+  filePath: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionHubDocumentStatusFilterInput]
+  or: [ModelSubscriptionHubDocumentStatusFilterInput]
+}
+
+type ModelHubChecklistConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [HubChecklist]!
+  nextToken: String
+}
+
+input ModelHubChecklistFilterInput {
+  title: ModelStringInput
+  items: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelHubChecklistFilterInput]
+  or: [ModelHubChecklistFilterInput]
+  not: ModelHubChecklistFilterInput
+}
+
+input ModelHubChecklistConditionInput {
+  title: ModelStringInput
+  items: ModelStringInput
+  and: [ModelHubChecklistConditionInput]
+  or: [ModelHubChecklistConditionInput]
+  not: ModelHubChecklistConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateHubChecklistInput {
+  title: String
+  items: String
+  id: ID
+}
+
+input UpdateHubChecklistInput {
+  title: String
+  items: String
+  id: ID!
+}
+
+input DeleteHubChecklistInput {
+  id: ID!
+}
+
+input ModelSubscriptionHubChecklistFilterInput {
+  title: ModelSubscriptionStringInput
+  items: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionHubChecklistFilterInput]
+  or: [ModelSubscriptionHubChecklistFilterInput]
+}
+
+type ModelAppUserConnection @aws_api_key @aws_iam @aws_cognito_user_pools {
+  items: [AppUser]!
+  nextToken: String
+}
+
+input ModelAppUserFilterInput {
+  username: ModelStringInput
+  passwordHash: ModelStringInput
+  role: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelAppUserFilterInput]
+  or: [ModelAppUserFilterInput]
+  not: ModelAppUserFilterInput
+}
+
+input ModelAppUserConditionInput {
+  username: ModelStringInput
+  passwordHash: ModelStringInput
+  role: ModelStringInput
+  and: [ModelAppUserConditionInput]
+  or: [ModelAppUserConditionInput]
+  not: ModelAppUserConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+}
+
+input CreateAppUserInput {
+  username: String!
+  passwordHash: String!
+  role: String
+  id: ID
+}
+
+input UpdateAppUserInput {
+  username: String
+  passwordHash: String
+  role: String
+  id: ID!
+}
+
+input DeleteAppUserInput {
+  id: ID!
+}
+
+input ModelSubscriptionAppUserFilterInput {
+  username: ModelSubscriptionStringInput
+  passwordHash: ModelSubscriptionStringInput
+  role: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionAppUserFilterInput]
+  or: [ModelSubscriptionAppUserFilterInput]
+}

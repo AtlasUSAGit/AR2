@@ -1,0 +1,2080 @@
+{
+ "Parameters": {
+  "DynamoDBModelTableReadIOPS": {
+   "Type": "Number",
+   "Default": 5,
+   "Description": "The number of read IOPS the table should support."
+  },
+  "DynamoDBModelTableWriteIOPS": {
+   "Type": "Number",
+   "Default": 5,
+   "Description": "The number of write IOPS the table should support."
+  },
+  "DynamoDBBillingMode": {
+   "Type": "String",
+   "Default": "PAY_PER_REQUEST",
+   "AllowedValues": [
+    "PAY_PER_REQUEST",
+    "PROVISIONED"
+   ],
+   "Description": "Configure @model types to create DynamoDB tables with PAY_PER_REQUEST or PROVISIONED billing modes."
+  },
+  "DynamoDBEnablePointInTimeRecovery": {
+   "Type": "String",
+   "Default": "false",
+   "AllowedValues": [
+    "true",
+    "false"
+   ],
+   "Description": "Whether to enable Point in Time Recovery on the table."
+  },
+  "DynamoDBEnableServerSideEncryption": {
+   "Type": "String",
+   "Default": "true",
+   "AllowedValues": [
+    "true",
+    "false"
+   ],
+   "Description": "Enable server side encryption powered by KMS."
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResourceEEAF60DDOutputsamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerTableManagerC33C14AD7": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref": {
+   "Type": "String"
+  },
+  "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref": {
+   "Type": "String"
+  }
+ },
+ "Conditions": {
+  "HasEnvironmentParameter": {
+   "Fn::Not": [
+    {
+     "Fn::Equals": [
+      "NONE",
+      "NONE"
+     ]
+    }
+   ]
+  },
+  "ShouldUsePayPerRequestBilling": {
+   "Fn::Equals": [
+    {
+     "Ref": "DynamoDBBillingMode"
+    },
+    "PAY_PER_REQUEST"
+   ]
+  },
+  "ShouldUsePointInTimeRecovery": {
+   "Fn::Equals": [
+    {
+     "Ref": "DynamoDBEnablePointInTimeRecovery"
+    },
+    "true"
+   ]
+  },
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Resources": {
+  "KanbanCardTable": {
+   "Type": "Custom::AmplifyDynamoDBTable",
+   "Properties": {
+    "ServiceToken": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResourceEEAF60DDOutputsamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataAmplifyTableManagerTableManagerC33C14AD7"
+    },
+    "tableName": {
+     "Fn::Join": [
+      "",
+      [
+       "KanbanCard-",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "-NONE"
+      ]
+     ]
+    },
+    "attributeDefinitions": [
+     {
+      "attributeName": "id",
+      "attributeType": "S"
+     }
+    ],
+    "keySchema": [
+     {
+      "attributeName": "id",
+      "keyType": "HASH"
+     }
+    ],
+    "provisionedThroughput": {
+     "Fn::If": [
+      "ShouldUsePayPerRequestBilling",
+      {
+       "Ref": "AWS::NoValue"
+      },
+      {
+       "ReadCapacityUnits": {
+        "Ref": "DynamoDBModelTableReadIOPS"
+       },
+       "WriteCapacityUnits": {
+        "Ref": "DynamoDBModelTableWriteIOPS"
+       }
+      }
+     ]
+    },
+    "sseSpecification": {
+     "sseEnabled": false
+    },
+    "streamSpecification": {
+     "streamViewType": "NEW_AND_OLD_IMAGES"
+    },
+    "deletionProtectionEnabled": false,
+    "allowDestructiveGraphqlSchemaUpdates": true,
+    "replaceTableUponGsiUpdate": true,
+    "pointInTimeRecoverySpecification": {
+     "Fn::If": [
+      "ShouldUsePointInTimeRecovery",
+      {
+       "PointInTimeRecoveryEnabled": true
+      },
+      {
+       "Ref": "AWS::NoValue"
+      }
+     ]
+    },
+    "billingMode": {
+     "Fn::If": [
+      "ShouldUsePayPerRequestBilling",
+      "PAY_PER_REQUEST",
+      {
+       "Ref": "AWS::NoValue"
+      }
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/KanbanCardTable/Default/Default"
+   }
+  },
+  "KanbanCardIAMRole0A330CAD": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "appsync.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "dynamodb:BatchGetItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:Scan",
+          "dynamodb:Query",
+          "dynamodb:UpdateItem",
+          "dynamodb:ConditionCheckItem",
+          "dynamodb:DescribeTable",
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator"
+         ],
+         "Effect": "Allow",
+         "Resource": [
+          {
+           "Fn::Sub": [
+            "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}",
+            {
+             "tablename": {
+              "Fn::Join": [
+               "",
+               [
+                "KanbanCard-",
+                {
+                 "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+                },
+                "-NONE"
+               ]
+              ]
+             }
+            }
+           ]
+          },
+          {
+           "Fn::Sub": [
+            "arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${tablename}/*",
+            {
+             "tablename": {
+              "Fn::Join": [
+               "",
+               [
+                "KanbanCard-",
+                {
+                 "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+                },
+                "-NONE"
+               ]
+              ]
+             }
+            }
+           ]
+          }
+         ]
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "DynamoDBAccess"
+     }
+    ],
+    "RoleName": {
+     "Fn::Join": [
+      "",
+      [
+       "KanbanCardIAMRole12213e-",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "-NONE"
+      ]
+     ]
+    },
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "amplify:friendly-name",
+      "Value": "amplifyData"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/KanbanCardIAMRole/Resource"
+   }
+  },
+  "KanbanCardDataSource": {
+   "Type": "AWS::AppSync::DataSource",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DynamoDBConfig": {
+     "AwsRegion": {
+      "Ref": "AWS::Region"
+     },
+     "TableName": {
+      "Fn::Select": [
+       1,
+       {
+        "Fn::Split": [
+         "/",
+         {
+          "Fn::Select": [
+           5,
+           {
+            "Fn::Split": [
+             ":",
+             {
+              "Fn::GetAtt": [
+               "KanbanCardTable",
+               "TableArn"
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    },
+    "Name": "KanbanCardTable",
+    "ServiceRoleArn": {
+     "Fn::GetAtt": [
+      "KanbanCardIAMRole0A330CAD",
+      "Arn"
+     ]
+    },
+    "Type": "AMAZON_DYNAMODB"
+   },
+   "DependsOn": [
+    "KanbanCardIAMRole0A330CAD"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/KanbanCardDataSource/Resource"
+   }
+  },
+  "QuerygetKanbanCardauth0FunctionQuerygetKanbanCardauth0FunctionAppSyncFunction14C02DF2": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerygetKanbanCardauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c198324ea51bbec9cebb98ea3502cd4efb8cea55edece7e137710efb94ab930b.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/QuerygetKanbanCardauth0Function/QuerygetKanbanCardauth0Function.AppSyncFunction"
+   }
+  },
+  "QuerygetKanbanCardpostAuth0FunctionQuerygetKanbanCardpostAuth0FunctionAppSyncFunction778BA6D5": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerygetKanbanCardpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/QuerygetKanbanCardpostAuth0Function/QuerygetKanbanCardpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "QueryGetKanbanCardDataResolverFnQueryGetKanbanCardDataResolverFnAppSyncFunction74966D52": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanCardDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QueryGetKanbanCardDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/08f4d557693d96c1a4efba0f9dc91330e4b19772fd5477c156468843e3d9cb5e.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4c6a2d29f01c6091bd1d9afe16e5849d456c96f17c3b215938c8067399532719.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanCardDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/QueryGetKanbanCardDataResolverFn/QueryGetKanbanCardDataResolverFn.AppSyncFunction"
+   }
+  },
+  "GetKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "getKanbanCard",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "QuerygetKanbanCardauth0FunctionQuerygetKanbanCardauth0FunctionAppSyncFunction14C02DF2",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QuerygetKanbanCardpostAuth0FunctionQuerygetKanbanCardpostAuth0FunctionAppSyncFunction778BA6D5",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QueryGetKanbanCardDataResolverFnQueryGetKanbanCardDataResolverFnAppSyncFunction74966D52",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Query\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"getKanbanCard\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanCardTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Query"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/queryGetKanbanCardResolver"
+   }
+  },
+  "QuerylistKanbanCardsauth0FunctionQuerylistKanbanCardsauth0FunctionAppSyncFunction8A2D736B": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerylistKanbanCardsauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c198324ea51bbec9cebb98ea3502cd4efb8cea55edece7e137710efb94ab930b.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/QuerylistKanbanCardsauth0Function/QuerylistKanbanCardsauth0Function.AppSyncFunction"
+   }
+  },
+  "QuerylistKanbanCardspostAuth0FunctionQuerylistKanbanCardspostAuth0FunctionAppSyncFunctionAAC6D4C7": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QuerylistKanbanCardspostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/QuerylistKanbanCardspostAuth0Function/QuerylistKanbanCardspostAuth0Function.AppSyncFunction"
+   }
+  },
+  "QueryListKanbanCardsDataResolverFnQueryListKanbanCardsDataResolverFnAppSyncFunctionDC87DBCB": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanCardDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "QueryListKanbanCardsDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9fcbe070ecd3023c5bf5b966fa9584757db9762eef123bad0820bd87591b2174.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/cc01911d0269d4080ea57505dc445dfc315ef7ad85d3d9d4ea1357858bff451d.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanCardDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/QueryListKanbanCardsDataResolverFn/QueryListKanbanCardsDataResolverFn.AppSyncFunction"
+   }
+  },
+  "ListKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "listKanbanCards",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "QuerylistKanbanCardsauth0FunctionQuerylistKanbanCardsauth0FunctionAppSyncFunction8A2D736B",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QuerylistKanbanCardspostAuth0FunctionQuerylistKanbanCardspostAuth0FunctionAppSyncFunctionAAC6D4C7",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "QueryListKanbanCardsDataResolverFnQueryListKanbanCardsDataResolverFnAppSyncFunctionDC87DBCB",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Query\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"listKanbanCards\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanCardTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Query"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/queryListKanbanCardsResolver"
+   }
+  },
+  "MutationcreateKanbanCardinit0FunctionMutationcreateKanbanCardinit0FunctionAppSyncFunctionB3ADC534": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationcreateKanbanCardinit0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/a183ddccbd956316c38ef97177b8f088ef0826f62023323f5ae6053d348ccffc.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationcreateKanbanCardinit0Function/MutationcreateKanbanCardinit0Function.AppSyncFunction"
+   }
+  },
+  "MutationcreateKanbanCardauth0FunctionMutationcreateKanbanCardauth0FunctionAppSyncFunction5DD53952": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationcreateKanbanCardauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/13358b36bef4868cbdc0a39d73a7bd8e921b77cc06a5fea6dad940706fc98ced.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationcreateKanbanCardauth0Function/MutationcreateKanbanCardauth0Function.AppSyncFunction"
+   }
+  },
+  "MutationcreateKanbanCardpostAuth0FunctionMutationcreateKanbanCardpostAuth0FunctionAppSyncFunctionFD0FB39B": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationcreateKanbanCardpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationcreateKanbanCardpostAuth0Function/MutationcreateKanbanCardpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "MutationCreateKanbanCardDataResolverFnMutationCreateKanbanCardDataResolverFnAppSyncFunctionC6E93A8E": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanCardDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationCreateKanbanCardDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/2c5c73ec4e468bf5f1ad2b91779b5931b0076fcac1a8d031bd445793fe54dd9f.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f4a52b72209a9dfa197b5e7367a5c378c5bb86de6e29ddd9e48b49a3fe54b249.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanCardDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationCreateKanbanCardDataResolverFn/MutationCreateKanbanCardDataResolverFn.AppSyncFunction"
+   }
+  },
+  "CreateKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "createKanbanCard",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "MutationcreateKanbanCardinit0FunctionMutationcreateKanbanCardinit0FunctionAppSyncFunctionB3ADC534",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationcreateKanbanCardauth0FunctionMutationcreateKanbanCardauth0FunctionAppSyncFunction5DD53952",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationcreateKanbanCardpostAuth0FunctionMutationcreateKanbanCardpostAuth0FunctionAppSyncFunctionFD0FB39B",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationCreateKanbanCardDataResolverFnMutationCreateKanbanCardDataResolverFnAppSyncFunctionC6E93A8E",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Mutation\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"createKanbanCard\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanCardTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Mutation"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/mutationCreateKanbanCardResolver"
+   }
+  },
+  "MutationupdateKanbanCardinit0FunctionMutationupdateKanbanCardinit0FunctionAppSyncFunction157E351B": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationupdateKanbanCardinit0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/06db846fd14e6fc371f22b12b5545ba8e2dbfeda85d8c8d586c71c282166657b.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationupdateKanbanCardinit0Function/MutationupdateKanbanCardinit0Function.AppSyncFunction"
+   }
+  },
+  "MutationupdateKanbanCardauth0FunctionMutationupdateKanbanCardauth0FunctionAppSyncFunctionE1891C75": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanCardDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationupdateKanbanCardauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1f5fed297da9c32ae3af922bf3a38ccf23b956078887d16891ec06c20c64722c.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f7fc6438a7dc3ba253976da4e682a79a9d2aff30ce5e553d228901ed70d9e7b0.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanCardDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationupdateKanbanCardauth0Function/MutationupdateKanbanCardauth0Function.AppSyncFunction"
+   }
+  },
+  "MutationupdateKanbanCardpostAuth0FunctionMutationupdateKanbanCardpostAuth0FunctionAppSyncFunction97737105": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationupdateKanbanCardpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationupdateKanbanCardpostAuth0Function/MutationupdateKanbanCardpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "MutationUpdateKanbanCardDataResolverFnMutationUpdateKanbanCardDataResolverFnAppSyncFunction7623536F": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanCardDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationUpdateKanbanCardDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/474bf0776ec2164a13191d1a0a9e057154931e4918fea5086f49850d02a5371b.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f4a52b72209a9dfa197b5e7367a5c378c5bb86de6e29ddd9e48b49a3fe54b249.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanCardDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationUpdateKanbanCardDataResolverFn/MutationUpdateKanbanCardDataResolverFn.AppSyncFunction"
+   }
+  },
+  "UpdateKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "updateKanbanCard",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "MutationupdateKanbanCardinit0FunctionMutationupdateKanbanCardinit0FunctionAppSyncFunction157E351B",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationupdateKanbanCardauth0FunctionMutationupdateKanbanCardauth0FunctionAppSyncFunctionE1891C75",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationupdateKanbanCardpostAuth0FunctionMutationupdateKanbanCardpostAuth0FunctionAppSyncFunction97737105",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationUpdateKanbanCardDataResolverFnMutationUpdateKanbanCardDataResolverFnAppSyncFunction7623536F",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Mutation\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"updateKanbanCard\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanCardTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Mutation"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/mutationUpdateKanbanCardResolver"
+   }
+  },
+  "MutationdeleteKanbanCardauth0FunctionMutationdeleteKanbanCardauth0FunctionAppSyncFunctionB40079E6": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanCardDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationdeleteKanbanCardauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1f5fed297da9c32ae3af922bf3a38ccf23b956078887d16891ec06c20c64722c.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/2eb662c96443f037258baf77a6b5a1d6ef4ade2ef9edb4619d4a697bc49b265a.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanCardDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationdeleteKanbanCardauth0Function/MutationdeleteKanbanCardauth0Function.AppSyncFunction"
+   }
+  },
+  "MutationdeleteKanbanCardpostAuth0FunctionMutationdeleteKanbanCardpostAuth0FunctionAppSyncFunction39AC6311": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationdeleteKanbanCardpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationdeleteKanbanCardpostAuth0Function/MutationdeleteKanbanCardpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "MutationDeleteKanbanCardDataResolverFnMutationDeleteKanbanCardDataResolverFnAppSyncFunctionEDC09511": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Fn::GetAtt": [
+      "KanbanCardDataSource",
+      "Name"
+     ]
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "MutationDeleteKanbanCardDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4f7907d1209a2c9953a0c053df402c634e359546d70c7cc5c2e8e21ea734880f.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f4a52b72209a9dfa197b5e7367a5c378c5bb86de6e29ddd9e48b49a3fe54b249.vtl"
+    }
+   },
+   "DependsOn": [
+    "KanbanCardDataSource"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/MutationDeleteKanbanCardDataResolverFn/MutationDeleteKanbanCardDataResolverFn.AppSyncFunction"
+   }
+  },
+  "DeleteKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "deleteKanbanCard",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "MutationdeleteKanbanCardauth0FunctionMutationdeleteKanbanCardauth0FunctionAppSyncFunctionB40079E6",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationdeleteKanbanCardpostAuth0FunctionMutationdeleteKanbanCardpostAuth0FunctionAppSyncFunction39AC6311",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "MutationDeleteKanbanCardDataResolverFnMutationDeleteKanbanCardDataResolverFnAppSyncFunctionEDC09511",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Mutation\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"deleteKanbanCard\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"AMAZON_DYNAMODB\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n$util.qr($ctx.stash.put(\"tableName\", \"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "/",
+           {
+            "Fn::Select": [
+             5,
+             {
+              "Fn::Split": [
+               ":",
+               {
+                "Fn::GetAtt": [
+                 "KanbanCardTable",
+                 "TableArn"
+                ]
+               }
+              ]
+             }
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Mutation"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/mutationDeleteKanbanCardResolver"
+   }
+  },
+  "SubscriptiononCreateKanbanCardauth0FunctionSubscriptiononCreateKanbanCardauth0FunctionAppSyncFunction9D6E7390": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononCreateKanbanCardauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1d1fc1ddf435f301f89c9d0239d1040afb5fa61ba26cd289c29b8349f558e43d.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptiononCreateKanbanCardauth0Function/SubscriptiononCreateKanbanCardauth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptiononCreateKanbanCardpostAuth0FunctionSubscriptiononCreateKanbanCardpostAuth0FunctionAppSyncFunctionFDF17DB1": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononCreateKanbanCardpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptiononCreateKanbanCardpostAuth0Function/SubscriptiononCreateKanbanCardpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptionOnCreateKanbanCardDataResolverFnSubscriptionOnCreateKanbanCardDataResolverFnAppSyncFunction34A5C209": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptionOnCreateKanbanCardDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/fe3c43ada4b9d681a5e2312663ef7a73386424d73b73e51f8e2e9d4b50f7c502.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e0cff47fb007f0bbf2a4e43ca256d6aa7ec109821769fd79fa7c5e83f0e7f9fc.vtl"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptionOnCreateKanbanCardDataResolverFn/SubscriptionOnCreateKanbanCardDataResolverFn.AppSyncFunction"
+   }
+  },
+  "SubscriptiononCreateKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "onCreateKanbanCard",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononCreateKanbanCardauth0FunctionSubscriptiononCreateKanbanCardauth0FunctionAppSyncFunction9D6E7390",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononCreateKanbanCardpostAuth0FunctionSubscriptiononCreateKanbanCardpostAuth0FunctionAppSyncFunctionFDF17DB1",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptionOnCreateKanbanCardDataResolverFnSubscriptionOnCreateKanbanCardDataResolverFnAppSyncFunction34A5C209",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Subscription\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"onCreateKanbanCard\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"NONE\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Subscription"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/subscriptionOnCreateKanbanCardResolver"
+   }
+  },
+  "SubscriptiononUpdateKanbanCardauth0FunctionSubscriptiononUpdateKanbanCardauth0FunctionAppSyncFunction975C82F8": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononUpdateKanbanCardauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1d1fc1ddf435f301f89c9d0239d1040afb5fa61ba26cd289c29b8349f558e43d.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptiononUpdateKanbanCardauth0Function/SubscriptiononUpdateKanbanCardauth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptiononUpdateKanbanCardpostAuth0FunctionSubscriptiononUpdateKanbanCardpostAuth0FunctionAppSyncFunction9E058D83": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononUpdateKanbanCardpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptiononUpdateKanbanCardpostAuth0Function/SubscriptiononUpdateKanbanCardpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptionOnUpdateKanbanCardDataResolverFnSubscriptionOnUpdateKanbanCardDataResolverFnAppSyncFunction7F0F79F4": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptionOnUpdateKanbanCardDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/fe3c43ada4b9d681a5e2312663ef7a73386424d73b73e51f8e2e9d4b50f7c502.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e0cff47fb007f0bbf2a4e43ca256d6aa7ec109821769fd79fa7c5e83f0e7f9fc.vtl"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptionOnUpdateKanbanCardDataResolverFn/SubscriptionOnUpdateKanbanCardDataResolverFn.AppSyncFunction"
+   }
+  },
+  "SubscriptiononUpdateKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "onUpdateKanbanCard",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononUpdateKanbanCardauth0FunctionSubscriptiononUpdateKanbanCardauth0FunctionAppSyncFunction975C82F8",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononUpdateKanbanCardpostAuth0FunctionSubscriptiononUpdateKanbanCardpostAuth0FunctionAppSyncFunction9E058D83",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptionOnUpdateKanbanCardDataResolverFnSubscriptionOnUpdateKanbanCardDataResolverFnAppSyncFunction7F0F79F4",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Subscription\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"onUpdateKanbanCard\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"NONE\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Subscription"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/subscriptionOnUpdateKanbanCardResolver"
+   }
+  },
+  "SubscriptiononDeleteKanbanCardauth0FunctionSubscriptiononDeleteKanbanCardauth0FunctionAppSyncFunction7D284081": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononDeleteKanbanCardauth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1d1fc1ddf435f301f89c9d0239d1040afb5fa61ba26cd289c29b8349f558e43d.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptiononDeleteKanbanCardauth0Function/SubscriptiononDeleteKanbanCardauth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptiononDeleteKanbanCardpostAuth0FunctionSubscriptiononDeleteKanbanCardpostAuth0FunctionAppSyncFunction551DAD4A": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptiononDeleteKanbanCardpostAuth0Function",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/c1721bcd774e27c514d3454b5be4f9bdd094c0161b57ddf053d618e3b0086a77.vtl"
+    },
+    "ResponseMappingTemplate": "$util.toJson({})"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptiononDeleteKanbanCardpostAuth0Function/SubscriptiononDeleteKanbanCardpostAuth0Function.AppSyncFunction"
+   }
+  },
+  "SubscriptionOnDeleteKanbanCardDataResolverFnSubscriptionOnDeleteKanbanCardDataResolverFnAppSyncFunctionF5ED30C3": {
+   "Type": "AWS::AppSync::FunctionConfiguration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "DataSourceName": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPINONEDS6C5A806CName"
+    },
+    "FunctionVersion": "2018-05-29",
+    "Name": "SubscriptionOnDeleteKanbanCardDataResolverFn",
+    "RequestMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/fe3c43ada4b9d681a5e2312663ef7a73386424d73b73e51f8e2e9d4b50f7c502.vtl"
+    },
+    "ResponseMappingTemplateS3Location": {
+     "Fn::Sub": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e0cff47fb007f0bbf2a4e43ca256d6aa7ec109821769fd79fa7c5e83f0e7f9fc.vtl"
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/SubscriptionOnDeleteKanbanCardDataResolverFn/SubscriptionOnDeleteKanbanCardDataResolverFn.AppSyncFunction"
+   }
+  },
+  "SubscriptiononDeleteKanbanCardResolver": {
+   "Type": "AWS::AppSync::Resolver",
+   "Properties": {
+    "ApiId": {
+     "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+    },
+    "FieldName": "onDeleteKanbanCard",
+    "Kind": "PIPELINE",
+    "PipelineConfig": {
+     "Functions": [
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononDeleteKanbanCardauth0FunctionSubscriptiononDeleteKanbanCardauth0FunctionAppSyncFunction7D284081",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptiononDeleteKanbanCardpostAuth0FunctionSubscriptiononDeleteKanbanCardpostAuth0FunctionAppSyncFunction551DAD4A",
+        "FunctionId"
+       ]
+      },
+      {
+       "Fn::GetAtt": [
+        "SubscriptionOnDeleteKanbanCardDataResolverFnSubscriptionOnDeleteKanbanCardDataResolverFnAppSyncFunctionF5ED30C3",
+        "FunctionId"
+       ]
+      }
+     ]
+    },
+    "RequestMappingTemplate": {
+     "Fn::Join": [
+      "",
+      [
+       "$util.qr($ctx.stash.put(\"typeName\", \"Subscription\"))\n$util.qr($ctx.stash.put(\"fieldName\", \"onDeleteKanbanCard\"))\n$util.qr($ctx.stash.put(\"conditions\", []))\n$util.qr($ctx.stash.put(\"metadata\", {}))\n$util.qr($ctx.stash.metadata.put(\"dataSourceType\", \"NONE\"))\n$util.qr($ctx.stash.metadata.put(\"apiId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"connectionAttributes\", {}))\n\n$util.qr($ctx.stash.put(\"authRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthauthenticatedUserRoleE512DB0FRef"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"unauthRole\", \"arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":sts::",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":assumed-role/",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthunauthenticatedUserRole2574C5B9Ref"
+       },
+       "/CognitoIdentityCredentials\"))\n$util.qr($ctx.stash.put(\"identityPoolId\", \"",
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4authNestedStackauthNestedStackResource7248105FOutputsamplifyreactexamplesammybsandboxe931f313c4authamplifyAuthIdentityPoolEDF9F049Ref"
+       },
+       "\"))\n$util.qr($ctx.stash.put(\"adminRoles\", []))\n$util.toJson({})"
+      ]
+     ]
+    },
+    "ResponseMappingTemplate": "$util.toJson($ctx.prev.result)",
+    "TypeName": "Subscription"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/subscriptionOnDeleteKanbanCardResolver"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOwW6DMAyGn6X31GNU2n0F7dhNsHtlEoNSwEGx06pCvPsEnTrt9PuTP9l/DvnbK2Q7vMneun4/+AbmE4mSqxVtb4qWvzDiSEpxhSKw8+oDm4okpGjJFEk0jH/Y8nPGm5xnd2ccg2vgG5uBjihkPI4wV2F42GGgxeA0yZ0tzOWml02JivXz5H/6SGzXEkXg1ncp4tbo9/NwpbgYOZxRhFTgfQ0jBzgm25OuBZbV/Uw6JTXbulbsPHeL4eAILvJyzXPIM8h2F/F+HxOrHwmqR/4AKvpInzYBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "amplify-reactexample-sammyb-sandbox-e931f313c4/data/amplifyData/KanbanCard/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "GetAttKanbanCardTableStreamArn": {
+   "Description": "Your DynamoDB table StreamArn.",
+   "Value": {
+    "Fn::GetAtt": [
+     "KanbanCardTable",
+     "TableStreamArn"
+    ]
+   },
+   "Export": {
+    "Name": {
+     "Fn::Join": [
+      ":",
+      [
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "GetAtt:KanbanCardTable:StreamArn"
+      ]
+     ]
+    }
+   }
+  },
+  "GetAttKanbanCardTableName": {
+   "Description": "Your DynamoDB table name.",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "KanbanCard-",
+      {
+       "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+      },
+      "-NONE"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": {
+     "Fn::Join": [
+      ":",
+      [
+       {
+        "Ref": "referencetoamplifyreactexamplesammybsandboxe931f313c4dataamplifyDataGraphQLAPI4BE09EC7ApiId"
+       },
+       "GetAtt:KanbanCardTable:Name"
+      ]
+     ]
+    }
+   }
+  }
+ }
+}
