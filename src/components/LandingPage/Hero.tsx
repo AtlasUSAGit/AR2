@@ -5,72 +5,23 @@ import { useLandingPage } from "./LandingPageContext";
 import EditableText from "./EditableText";
 import { Pencil } from "lucide-react";
 
-const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-
 const Hero = () => {
   const { data, isEditMode, updateStringArrayData } = useLandingPage();
   const containerRef = useRef<HTMLDivElement>(null);
   const imageIndex = useRef(0);
-  const pRefs = useRef<HTMLParagraphElement[]>([]);
 
   useEffect(() => {
     if (!containerRef.current) return;
     
-    // CPU Optimization: Bypass the extremely heavy letter scrambling effect on mobile
-    if (window.innerWidth < 768) {
-      gsap.to(pRefs.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.3,
-        ease: "power3.out",
-        delay: 0.5
-      });
-      return;
-    }
-
-    const letters = containerRef.current.querySelectorAll<HTMLSpanElement>(".letter");
-    const tl = gsap.timeline();
-
-    letters.forEach((letterEl, index) => {
-      const finalChar = letterEl.getAttribute("data-char") || "";
-      if (finalChar === " ") return; // skip space
-
-      tl.to(
-        letterEl,
-        {
-          delay: 1.5,
-          duration: 0.4,
-          onStart: () => {
-            let scrambleCount = 0;
-            const interval = setInterval(() => {
-              letterEl.textContent = chars.charAt(
-                Math.floor(Math.random() * chars.length)
-              );
-              scrambleCount++;
-              if (scrambleCount > 6) {
-                clearInterval(interval);
-                letterEl.textContent = finalChar;
-              }
-            }, 40);
-          },
-        },
-        index * 0.08 + 0.5
-      );
+    // Simple fade in for the hero elements
+    gsap.to(".hero-fade", {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      stagger: 0.3,
+      ease: "power3.out",
+      delay: 0.5
     });
-
-    // after last letter animates → reveal paragraphs
-    tl.to(
-      pRefs.current,
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.3,
-        ease: "power3.out",
-      },
-      "+=0.5" // wait a bit after last letter
-    );
   }, [data.hero.word1, data.hero.word3]); // Re-run when text changes
 
   // mouse trail effect
@@ -123,8 +74,8 @@ const Hero = () => {
 
       gsap.fromTo(
         img,
-        { scale: 0.6, opacity: 0, borderRadius: "50%", x: `-=${dirX * 80}`, y: `-=${dirY * 80}` },
-        { scale: 1, opacity: 1, borderRadius: 0, duration: 1.4, rotate: rotation, ease: "power3.out", x: `+=${dirX * 180}`, y: `+=${dirY * 180}` }
+        { opacity: 0 },
+        { opacity: 1, duration: 1.4, ease: "power3.out" }
       );
 
       gsap.to(img, {
@@ -169,25 +120,15 @@ const Hero = () => {
 
       <div className="flex flex-col md:flex-row items-center justify-center w-full gap-4 md:gap-8 px-4">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-fahkwang font-bold overflow-hidden tracking-widest uppercase flex flex-col md:flex-row items-center flex-wrap justify-center md:whitespace-nowrap text-center">
-          <EditableText section="hero" field="word1" as="span" className="flex">
-            {data.hero.word1.split("").map((char, ci) => (
-              <span key={`w1-${ci}`} data-char={char} className="letter inline-block will-change-transform">
-                &nbsp;
-              </span>
-            ))}
-          </EditableText>
-          <span className="flex items-center mx-4 md:mx-8">
-            <span ref={(el) => { if (el && !pRefs.current.includes(el)) pRefs.current.push(el); }} className="hero-text opacity-0 translate-y-6 text-lg md:text-2xl text-[#A493F7] tracking-normal font-medium" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+          <EditableText section="hero" field="word1" as="span" className="flex hero-fade opacity-0 translate-y-6" />
+          
+          <span className="flex items-center mx-4 md:mx-8 hero-fade opacity-0 translate-y-6">
+            <span className="hero-text text-lg md:text-2xl text-[#A493F7] tracking-normal font-medium" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
               {new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
             </span>
           </span>
-          <EditableText section="hero" field="word3" as="span" className="flex">
-            {data.hero.word3.split("").map((char, ci) => (
-              <span key={`w3-${ci}`} data-char={char} className="letter inline-block will-change-transform">
-                &nbsp;
-              </span>
-            ))}
-          </EditableText>
+          
+          <EditableText section="hero" field="word3" as="span" className="flex hero-fade opacity-0 translate-y-6" />
         </h1>
       </div>
     </div>
