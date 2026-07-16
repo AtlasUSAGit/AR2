@@ -579,6 +579,21 @@ function initGsapAnimations() {
   gsap.registerPlugin(ScrollTrigger);
   ScrollTrigger.getAll().forEach(t => t.kill());
 
+  const heroFadeElements = document.querySelectorAll('.gsap-hero-fade');
+  heroFadeElements.forEach((el) => {
+    gsap.fromTo(el, 
+      { opacity: 0 },
+      {
+        opacity: 1, duration: 1.5, ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 90%", 
+          toggleActions: "play reverse play reverse"
+        }
+      }
+    );
+  });
+
   const elements = document.querySelectorAll('.gsap-random');
   elements.forEach((el) => {
     // Assign a random animation if it doesn't have one stored
