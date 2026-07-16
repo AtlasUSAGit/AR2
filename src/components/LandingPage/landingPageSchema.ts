@@ -65,6 +65,19 @@ export interface FreeformTextsData {
   items: { id: string; content: string }[];
 }
 
+export interface MetricData {
+  label: string;
+  value: string;
+  trend: string;
+  isPositive: boolean;
+}
+
+export interface DashboardData {
+  title: string;
+  subtitle: string;
+  metrics: MetricData[];
+}
+
 export interface LandingPageVersion {
   id: string;
   name: string;
@@ -79,6 +92,7 @@ export interface LandingPageVersion {
     nav: NavData;
     footer: FooterData;
     freeformTexts: FreeformTextsData;
+    dashboard: DashboardData;
     styles: Record<string, React.CSSProperties>;
   };
 }
@@ -199,6 +213,16 @@ export const defaultLandingPageData: LandingPageVersion['content'] = {
   },
   freeformTexts: {
     items: []
+  },
+  dashboard: {
+    title: "EXECUTIVE DASHBOARD",
+    subtitle: "Real-time key performance indicators and growth metrics.",
+    metrics: [
+      { label: "REVENUE GROWTH", value: "+124%", trend: "vs last quarter", isPositive: true },
+      { label: "ACTIVE USERS", value: "84.2K", trend: "+12% this month", isPositive: true },
+      { label: "CONVERSION RATE", value: "4.8%", trend: "+1.2% this week", isPositive: true },
+      { label: "CHURN RATE", value: "1.2%", trend: "-0.5% this month", isPositive: true }
+    ]
   },
   styles: {
     about_title: {

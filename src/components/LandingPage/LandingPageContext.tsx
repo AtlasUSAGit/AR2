@@ -56,6 +56,17 @@ function mergeLandingPageData(savedContent: any): LandingPageVersion['content'] 
       ...(savedContent.freeformTexts || {}),
       items: savedContent.freeformTexts?.items || defaultLandingPageData.freeformTexts.items
     },
+    dashboard: { 
+      ...defaultLandingPageData.dashboard, 
+      ...(savedContent.dashboard || {}),
+      metrics: (savedContent.dashboard?.metrics || defaultLandingPageData.dashboard.metrics).map((item: any, iIdx: number) => {
+        const defaultItem = defaultLandingPageData.dashboard.metrics[iIdx] || defaultLandingPageData.dashboard.metrics[0];
+        return {
+          ...defaultItem,
+          ...item
+        };
+      })
+    },
     styles: { ...defaultLandingPageData.styles, ...(savedContent.styles || {}) }
   };
 }

@@ -239,8 +239,8 @@ const EditableText: React.FC<EditableTextProps> = ({
             defaultValue={displayValue as string}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
-            className={`${className} bg-zinc-900 text-white border border-purple-500 rounded p-2 min-w-[100px] w-full focus:outline-none focus:ring-2 focus:ring-purple-500 whitespace-pre-wrap overflow-hidden resize`}
-            style={{ ...customStyle, display: 'block', zIndex: 1000, position: 'relative' }}
+            className={`${className} bg-zinc-900 text-white border border-purple-500 rounded p-2 min-w-[100px] w-full focus:outline-none focus:ring-2 focus:ring-purple-500 whitespace-pre-wrap overflow-wrap-anywhere break-words resize`}
+            style={{ ...customStyle, display: 'block', zIndex: 1000, position: 'relative', wordBreak: 'break-word', overflowWrap: 'anywhere' }}
             rows={1}
           />
         </div>
@@ -265,8 +265,8 @@ const EditableText: React.FC<EditableTextProps> = ({
           setIsEditing(true);
         }}
         {...extraProps}
-        className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap max-w-full break-words ${isDragging ? 'opacity-70' : ''}`}
-        style={{ display: computedDisplay, minHeight: '1.5em', minWidth: '3em', maxWidth: '100vw', ...customStyle, transform: liveTransform }}
+        className={`${className} hover:outline hover:outline-2 hover:outline-dashed hover:outline-purple-500 cursor-text transition-all duration-200 relative group whitespace-pre-wrap max-w-full break-words overflow-wrap-anywhere ${isDragging ? 'opacity-70' : ''}`}
+        style={{ display: computedDisplay, minHeight: '1.5em', minWidth: '3em', maxWidth: '100vw', wordBreak: 'break-word', overflowWrap: 'anywhere', ...customStyle, transform: liveTransform }}
         title="Click to edit"
       >
         {renderBefore}
@@ -296,7 +296,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   const computedDisplay = customStyle.display || ((ComponentToRender === 'span' || ComponentToRender === 'a') ? 'inline-block' : undefined);
 
   return (
-    <ComponentToRender {...extraProps} className={`${className} whitespace-pre-wrap max-w-full break-words`} style={{ display: computedDisplay, maxWidth: '100vw', ...customStyle }}>
+    <ComponentToRender {...extraProps} className={`${className} whitespace-pre-wrap max-w-full break-words overflow-wrap-anywhere`} style={{ display: computedDisplay, maxWidth: '100vw', wordBreak: 'break-word', overflowWrap: 'anywhere', ...customStyle }}>
       {renderBefore}
       {displayValue}
     </ComponentToRender>

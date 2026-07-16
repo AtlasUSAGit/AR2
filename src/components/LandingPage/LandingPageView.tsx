@@ -9,6 +9,7 @@ import About from "./About";
 import Achievements from "./Achievements";
 import Work from "./Work";
 import Testimonials from "./Testimonials";
+import Dashboard from "./Dashboard";
 import { useLandingPage } from "./LandingPageContext";
 import VersionControlPanel from "./VersionControlPanel";
 import gsap from "gsap";
@@ -82,6 +83,10 @@ const LandingPageViewContent = () => {
       
       <div id="contact">
         <Testimonials />
+      </div>
+
+      <div id="dashboard">
+        <Dashboard />
       </div>
 
       <div className="absolute inset-0 pointer-events-none z-[990]">
